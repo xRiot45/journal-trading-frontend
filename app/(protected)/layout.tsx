@@ -1,7 +1,14 @@
+import { DockBar } from "@/components/dock"
+
 export default function ProtectedLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode
+    children: React.ReactNode
 }>) {
-  return <>{children}</>
+    return (
+        <>
+            {children}
+            <DockBar />
+        </>
+    )
 }
