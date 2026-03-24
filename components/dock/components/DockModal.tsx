@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import { motion, AnimatePresence } from "framer-motion"
 import { Icon } from "@iconify/react"
@@ -53,9 +53,9 @@ export function DockModal({ open, onOpenChange }: DockModalProps) {
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent
                 className={cn(
-                    "flex max-h-[80vh] w-full max-w-2xl flex-col overflow-hidden",
+                    "flex max-h-full w-full flex-col overflow-hidden",
                     "border border-white/10 bg-[#0d0d1a]/95 backdrop-blur-2xl",
-                    "rounded-2xl shadow-2xl shadow-black/60"
+                    "rounded-2xl shadow-2xl shadow-black/60 sm:max-w-7xl"
                 )}
             >
                 <DialogHeader className="shrink-0 pb-0">

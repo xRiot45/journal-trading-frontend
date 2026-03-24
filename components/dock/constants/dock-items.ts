@@ -28,7 +28,7 @@ export const PINNED_DOCK_ITEMS: DockItem[] = [
     {
         id: "terminal",
         label: "Terminal",
-        icon: "solar:command-square-bold-duotone",
+        icon: "boxicons:terminal-filled",
         href: "/terminal",
     },
     {
