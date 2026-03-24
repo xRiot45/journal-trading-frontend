@@ -1,17 +1,9 @@
-import { DockBar } from "@/components/dock"
-import { AppHeader } from "@/components/headers/app-header"
-import { Container } from "@/components/ui/container"
+import ProtectedLayout from "@/components/layouts/protected-layout"
 
-export default function ProtectedLayout({
+export default function Layout({
     children,
 }: Readonly<{
     children: React.ReactNode
 }>) {
-    return (
-        <main>
-            <AppHeader />
-            <Container size="full">{children}</Container>
-            <DockBar />
-        </main>
-    )
+    return <ProtectedLayout>{children}</ProtectedLayout>
 }
