@@ -1,14 +1,7 @@
 "use client"
 
-import * as React from "react"
 import Link from "next/link"
-import {
-    ChevronsUpDown,
-    CreditCard,
-    LogOut,
-    Settings,
-    UserCircle2,
-} from "lucide-react"
+import { CreditCard, LogOut, Settings, UserCircle2 } from "lucide-react"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -37,6 +30,7 @@ function getInitials(name: string): string {
     const initials = parts
         .slice(0, 2)
         .map((part) => part[0]?.toUpperCase() ?? "")
+
     return initials.join("")
 }
 
@@ -44,10 +38,7 @@ export function UserMenu({ user }: UserMenuProps) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button
-                    variant="ghost"
-                    className="h-11 cursor-pointer gap-3 rounded-2xl px-3"
-                >
+                <Button variant="ghost" className="h-11 gap-3 rounded-2xl px-3">
                     <Avatar className="h-8 w-8">
                         <AvatarImage src={user.avatarUrl} alt={user.name} />
                         <AvatarFallback>

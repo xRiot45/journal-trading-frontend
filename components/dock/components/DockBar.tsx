@@ -88,14 +88,14 @@ export function DockBar({
                         })}
 
                         {/* Divider */}
-                        <div className="mx-1 h-8 w-px self-center bg-white/12" />
+                        {/* <div className="mx-1 h-8 w-px self-center bg-white/12" /> */}
 
                         {/* "All apps" button */}
-                        <AllAppsButton
+                        {/* <AllAppsButton
                             index={items.length}
                             mouseX={mouseX}
                             onClick={() => setModalOpen(true)}
-                        />
+                        /> */}
                     </motion.div>
                 </div>
 

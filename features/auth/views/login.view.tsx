@@ -40,55 +40,59 @@ export default function LoginView() {
         .fade-in-4 { animation: float-up 0.5s 0.3s ease both; }
         .grid-overlay {
           background-image:
-            linear-gradient(rgba(99,179,237,0.06) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(99,179,237,0.06) 1px, transparent 1px);
+            linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
           background-size: 52px 52px;
+        }
+        .dark .grid-overlay {
+          background-image:
+            linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
         }
       `}</style>
 
-            <div className="relative flex min-h-screen w-full overflow-hidden bg-[#070C18] font-[Outfit,system-ui,sans-serif]">
+            <div className="relative flex min-h-screen w-full overflow-hidden bg-white font-[Outfit,system-ui,sans-serif] text-black transition-colors dark:bg-black dark:text-white">
                 {/* ── LEFT PANEL — Form ───────────────────────────────────────── */}
                 <div className="relative z-10 flex w-full flex-col lg:w-[45%] xl:w-[42%]">
-                    {/* Subtle left panel bg */}
-                    <div className="absolute inset-0 bg-[#0B1120]" />
-                    <div className="absolute inset-y-0 right-0 w-px bg-linear-to-b from-transparent via-white/8 to-transparent" />
+                    <div className="absolute inset-0 bg-[#fafafa] dark:bg-[#0a0a0a]" />
+                    <div className="absolute inset-y-0 right-0 w-px bg-linear-to-b from-transparent via-black/10 to-transparent dark:via-white/10" />
 
-                    <div className="relative flex flex-1 flex-col justify-center px-8 py-14 sm:px-12 lg:px-14 xl:px-16">
+                    <div className="relative flex flex-1 flex-col justify-center px-8 py-14 sm:px-12 lg:px-14 xl:px-32">
                         {/* Logo */}
                         <div className="mb-12 flex items-center gap-2.5">
-                            <div className="flex size-9 items-center justify-center rounded-xl bg-blue-500 shadow-[0_0_12px_rgba(59,130,246,0.5)]">
-                                <TrendingUp className="size-4.5 text-white" />
+                            <div className="flex size-9 items-center justify-center rounded-xl bg-black text-white shadow-[0_0_20px_rgba(0,0,0,0.08)] dark:bg-white dark:text-black dark:shadow-[0_0_20px_rgba(255,255,255,0.12)]">
+                                <TrendingUp className="size-4.5" />
                             </div>
-                            <span className="text-[15px] font-semibold tracking-tight text-white">
+                            <span className="text-[15px] font-semibold tracking-tight text-black dark:text-white">
                                 TradeJournal
                             </span>
                         </div>
 
                         {/* Heading */}
                         <div className="mb-8 fade-in-1">
-                            <p className="mb-1.5 text-xs font-medium tracking-[0.15em] text-blue-400/80 uppercase">
+                            <p className="mb-1.5 text-xs font-medium tracking-[0.15em] text-black/55 uppercase dark:text-white/55">
                                 Welcome back
                             </p>
-                            <h1 className="text-[28px] leading-tight font-semibold tracking-tight text-white">
+                            <h1 className="text-[28px] leading-tight font-semibold tracking-tight text-black dark:text-white">
                                 Sign in to your
                                 <br />
-                                <span className="bg-linear-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                                <span className="text-black/70 dark:text-white/75">
                                     trading dashboard
                                 </span>
                             </h1>
-                            <p className="mt-3 text-sm leading-relaxed text-white/40">
+                            <p className="mt-3 text-sm leading-relaxed text-black/45 dark:text-white/40">
                                 Access your journal, analytics, and performance
                                 insights.
                             </p>
                         </div>
 
                         {/* Form card */}
-                        <div className="rounded-2xl border border-white/8 bg-white/4 p-6 backdrop-blur-sm fade-in-2">
+                        <div className="rounded-2xl backdrop-blur-sm fade-in-2">
                             <LoginForm />
                         </div>
 
                         {/* Footer */}
-                        <p className="mt-5 text-center text-[11px] text-white/15">
+                        <p className="mt-5 text-center text-[11px] text-black/20 dark:text-white/15">
                             © {new Date().getFullYear()} TradeJournal · All
                             rights reserved
                         </p>
@@ -98,29 +102,51 @@ export default function LoginView() {
                 {/* ── RIGHT PANEL — Marketing ─────────────────────────────────── */}
                 <div className="relative hidden overflow-hidden lg:grid lg:flex-1">
                     {/* Background */}
-                    <div className="absolute inset-0 bg-linear-to-br from-[#060B18] via-[#0C1A3D] to-[#060B18]" />
+                    <div className="absolute inset-0 bg-linear-to-br from-white via-[#f4f4f4] to-white dark:from-black dark:via-[#111111] dark:to-black" />
                     <div className="grid-overlay absolute inset-0" />
 
                     {/* Glow blobs */}
                     <div
-                        className="absolute top-[18%] left-[18%] size-96 rounded-full opacity-60 blur-3xl"
+                        className="blob-1 absolute top-[18%] left-[18%] size-96 rounded-full opacity-60 blur-3xl dark:opacity-50"
                         style={{
                             background:
-                                "radial-gradient(circle, rgba(59,130,246,0.18) 0%, transparent 70%)",
+                                "radial-gradient(circle, rgba(0,0,0,0.08) 0%, transparent 70%)",
                         }}
                     />
                     <div
-                        className="absolute right-[10%] bottom-[18%] size-80 rounded-full opacity-50 blur-3xl"
+                        className="blob-2 absolute right-[10%] bottom-[18%] size-80 rounded-full opacity-50 blur-3xl dark:opacity-40"
                         style={{
                             background:
-                                "radial-gradient(circle, rgba(34,211,238,0.14) 0%, transparent 70%)",
+                                "radial-gradient(circle, rgba(0,0,0,0.06) 0%, transparent 70%)",
                         }}
                     />
                     <div
-                        className="absolute top-[52%] left-[58%] size-64 rounded-full opacity-30 blur-3xl"
+                        className="absolute top-[52%] left-[58%] size-64 rounded-full opacity-40 blur-3xl dark:opacity-30"
                         style={{
                             background:
-                                "radial-gradient(circle, rgba(99,102,241,0.18) 0%, transparent 70%)",
+                                "radial-gradient(circle, rgba(0,0,0,0.05) 0%, transparent 70%)",
+                        }}
+                    />
+
+                    <div
+                        className="pointer-events-none absolute top-[18%] left-[18%] hidden size-96 rounded-full blur-3xl dark:block"
+                        style={{
+                            background:
+                                "radial-gradient(circle, rgba(255,255,255,0.10) 0%, transparent 70%)",
+                        }}
+                    />
+                    <div
+                        className="pointer-events-none absolute right-[10%] bottom-[18%] hidden size-80 rounded-full blur-3xl dark:block"
+                        style={{
+                            background:
+                                "radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%)",
+                        }}
+                    />
+                    <div
+                        className="pointer-events-none absolute top-[52%] left-[58%] hidden size-64 rounded-full blur-3xl dark:block"
+                        style={{
+                            background:
+                                "radial-gradient(circle, rgba(255,255,255,0.07) 0%, transparent 70%)",
                         }}
                     />
 
@@ -130,27 +156,21 @@ export default function LoginView() {
                         <div className="col-span-12 grid content-start gap-6 xl:col-span-7">
                             {/* Hero */}
                             <div className="grid gap-4">
-                                <div className="inline-flex w-fit items-center gap-2 rounded-full border border-blue-500/25 bg-blue-500/10 px-3.5 py-1.5 text-xs font-medium text-blue-300">
-                                    <span className="size-1.5 animate-pulse rounded-full bg-blue-400" />
+                                <div className="inline-flex w-fit items-center gap-2 rounded-full border border-black/10 bg-black/5 px-3.5 py-1.5 text-xs font-medium text-black/80 dark:border-white/10 dark:bg-white/5 dark:text-white/80">
+                                    <span className="size-1.5 animate-pulse rounded-full bg-black/75 dark:bg-white/80" />
                                     Trusted by 12,000+ traders worldwide
                                 </div>
 
                                 <div className="grid gap-3">
-                                    <h2 className="max-w-xl text-4xl leading-[1.1] font-semibold tracking-tight xl:text-[42px]">
+                                    <h2 className="max-w-xl text-4xl leading-[1.1] font-semibold tracking-tight text-black xl:text-[42px] dark:text-white">
                                         Track your edge.
                                         <br />
-                                        <span
-                                            className="bg-clip-text text-transparent"
-                                            style={{
-                                                backgroundImage:
-                                                    "linear-gradient(135deg, #60A5FA 0%, #22D3EE 60%, #34D399 100%)",
-                                            }}
-                                        >
+                                        <span className="text-black/65 dark:text-white/65">
                                             Grow your capital.
                                         </span>
                                     </h2>
 
-                                    <p className="max-w-lg text-sm leading-7 text-blue-100/60 xl:text-base">
+                                    <p className="max-w-lg text-sm leading-7 text-black/55 xl:text-base dark:text-white/55">
                                         The professional trading journal that
                                         helps you analyze performance, discover
                                         repeatable patterns, and make sharper
@@ -164,17 +184,17 @@ export default function LoginView() {
                                 <StatBadge
                                     value="68.4%"
                                     label="Win Rate"
-                                    accent="text-emerald-400"
+                                    accent="text-black dark:text-white"
                                 />
                                 <StatBadge
                                     value="2.3×"
                                     label="Avg R:R"
-                                    accent="text-blue-300"
+                                    accent="text-black dark:text-white"
                                 />
                                 <StatBadge
                                     value="1.2k+"
                                     label="Trades"
-                                    accent="text-cyan-300"
+                                    accent="text-black dark:text-white"
                                 />
                             </div>
 
@@ -203,16 +223,16 @@ export default function LoginView() {
                             </div>
 
                             {/* Trust bar */}
-                            <div className="grid gap-3 pt-2 text-[11px] text-blue-200/40 xl:grid-cols-3">
-                                <span className="flex items-center gap-2 rounded-lg border border-white/8 bg-white/4 px-3 py-2 backdrop-blur-sm">
+                            <div className="grid gap-3 pt-2 text-[11px] text-black/45 xl:grid-cols-3 dark:text-white/45">
+                                <span className="flex items-center gap-2 rounded-lg border border-black/10 bg-black/5 px-3 py-2 backdrop-blur-sm dark:border-white/10 dark:bg-white/5">
                                     <Shield className="size-3.5" />
                                     End-to-end encrypted
                                 </span>
-                                <span className="flex items-center gap-2 rounded-lg border border-white/8 bg-white/4 px-3 py-2 backdrop-blur-sm">
+                                <span className="flex items-center gap-2 rounded-lg border border-black/10 bg-black/5 px-3 py-2 backdrop-blur-sm dark:border-white/10 dark:bg-white/5">
                                     <CheckCircle2 className="size-3.5" />
                                     SOC 2 compliant
                                 </span>
-                                <span className="flex items-center gap-2 rounded-lg border border-white/8 bg-white/4 px-3 py-2 backdrop-blur-sm">
+                                <span className="flex items-center gap-2 rounded-lg border border-black/10 bg-black/5 px-3 py-2 backdrop-blur-sm dark:border-white/10 dark:bg-white/5">
                                     <Activity className="size-3.5" />
                                     99.9% uptime
                                 </span>
@@ -222,18 +242,18 @@ export default function LoginView() {
                         {/* Right content */}
                         <div className="col-span-12 grid content-start gap-6 xl:col-span-5">
                             {/* Chart card */}
-                            <div className="rounded-2xl border border-white/8 bg-white/5 p-5 backdrop-blur-md">
+                            <div className="rounded-2xl border border-black/10 bg-black/5 p-5 backdrop-blur-md dark:border-white/10 dark:bg-white/5">
                                 <div className="mb-4 grid gap-3">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-[11px] font-medium tracking-widest text-blue-200/60 uppercase">
+                                        <span className="text-[11px] font-medium tracking-widest text-black/50 uppercase dark:text-white/50">
                                             Portfolio Performance
                                         </span>
-                                        <span className="rounded-full bg-emerald-500/15 px-2.5 py-1 text-[11px] font-semibold text-emerald-400">
+                                        <span className="rounded-full bg-black/10 px-2.5 py-1 text-[11px] font-semibold text-black dark:bg-white/10 dark:text-white">
                                             +24.6% YTD
                                         </span>
                                     </div>
 
-                                    <p className="text-sm leading-6 text-blue-100/55">
+                                    <p className="text-sm leading-6 text-black/50 dark:text-white/50">
                                         Track monthly growth and evaluate how
                                         your strategy performs across changing
                                         market conditions.
@@ -242,7 +262,7 @@ export default function LoginView() {
 
                                 <ChartBars />
 
-                                <div className="mt-3 flex items-center justify-between text-[10px] text-blue-200/30">
+                                <div className="mt-3 flex items-center justify-between text-[10px] text-black/25 dark:text-white/25">
                                     <span>Jan</span>
                                     <span>Mar</span>
                                     <span>Jun</span>
@@ -252,12 +272,12 @@ export default function LoginView() {
                             </div>
 
                             {/* Testimonial card */}
-                            <div className="rounded-2xl border border-white/8 bg-white/5 p-5 backdrop-blur-md">
+                            <div className="rounded-2xl border border-black/10 bg-black/5 p-5 backdrop-blur-md dark:border-white/10 dark:bg-white/5">
                                 <div className="mb-3 flex gap-0.5">
                                     {Array.from({ length: 5 }).map((_, i) => (
                                         <svg
                                             key={i}
-                                            className="size-3.5 text-amber-400"
+                                            className="size-3.5 text-black/85 dark:text-white/85"
                                             viewBox="0 0 20 20"
                                             fill="currentColor"
                                         >
@@ -266,21 +286,21 @@ export default function LoginView() {
                                     ))}
                                 </div>
 
-                                <p className="text-sm leading-7 text-blue-100/60">
+                                <p className="text-sm leading-7 text-black/60 dark:text-white/60">
                                     &ldquo;TradeJournal completely changed how I
                                     review my trades. My consistency improved
                                     significantly within the first month.&rdquo;
                                 </p>
 
                                 <div className="mt-4 grid grid-cols-[auto_1fr] items-center gap-3">
-                                    <div className="flex size-9 items-center justify-center rounded-full bg-linear-to-br from-blue-400 to-cyan-400 text-xs font-semibold text-white">
+                                    <div className="flex size-9 items-center justify-center rounded-full bg-black text-xs font-semibold text-white dark:bg-white dark:text-black">
                                         AR
                                     </div>
                                     <div>
-                                        <p className="text-sm font-medium text-white/85">
+                                        <p className="text-sm font-medium text-black/85 dark:text-white/85">
                                             Alex R.
                                         </p>
-                                        <p className="text-xs text-blue-200/40">
+                                        <p className="text-xs text-black/35 dark:text-white/35">
                                             Futures trader · 4 yrs experience
                                         </p>
                                     </div>

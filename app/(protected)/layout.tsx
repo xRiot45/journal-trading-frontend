@@ -1,5 +1,6 @@
 import { DockBar } from "@/components/dock"
 import { AppHeader } from "@/components/headers/app-header"
+import { Container } from "@/components/ui/container"
 
 export default function ProtectedLayout({
     children,
@@ -9,7 +10,7 @@ export default function ProtectedLayout({
     return (
         <main>
             <AppHeader />
-            {children}
+            <Container size="full">{children}</Container>
             <DockBar />
         </main>
     )

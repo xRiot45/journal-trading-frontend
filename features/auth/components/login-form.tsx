@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils"
 
 import { loginSchema, type LoginFormValues } from "../schemas/login.schema"
 import { useLoginMutation } from "../application/mutations"
+import { toast } from "sonner"
 
 export function LoginForm() {
     const [showPassword, setShowPassword] = useState(false)
@@ -28,7 +29,10 @@ export function LoginForm() {
 
     const onSubmit = (values: LoginFormValues) => {
         doLogin(values, {
-            onSuccess: () => router.push("/dashboard"),
+            onSuccess: () => {
+                toast.success("Login successful")
+                router.push("/dashboard")
+            },
         })
     }
 
@@ -43,8 +47,8 @@ export function LoginForm() {
         >
             {/* API Error Banner */}
             {apiErrorMessage && (
-                <div className="flex items-start gap-2.5 rounded-lg border border-red-500/25 bg-red-500/10 px-4 py-3 text-sm text-red-400">
-                    <span className="mt-0.5 size-1.5 shrink-0 rounded-full bg-red-400" />
+                <div className="flex items-start gap-2.5 rounded-lg border border-black/15 bg-black/5 px-4 py-3 text-sm text-black/80 dark:border-white/15 dark:bg-white/5 dark:text-white/80">
+                    <span className="mt-0.5 size-1.5 shrink-0 rounded-full bg-black/70 dark:bg-white/70" />
                     {apiErrorMessage}
                 </div>
             )}
@@ -53,31 +57,34 @@ export function LoginForm() {
             <div className="space-y-1.5">
                 <Label
                     htmlFor="email"
-                    className="text-xs font-medium tracking-wider text-white/60 uppercase"
+                    className="text-xs font-medium tracking-wider text-black/60 uppercase dark:text-white/60"
                 >
                     Email address
                 </Label>
                 <div className="relative">
-                    <Mail className="absolute top-1/2 left-3.5 size-3.75 -translate-y-1/2 text-white/30" />
+                    <Mail className="absolute top-1/2 left-3.5 size-3.75 -translate-y-1/2 text-black/30 dark:text-white/30" />
                     <Input
                         id="email"
                         type="email"
                         placeholder="trader@example.com"
                         autoComplete="email"
                         className={cn(
-                            "h-11 rounded-xl border-white/10 bg-white/5 pl-10 text-sm text-white placeholder:text-white/20",
-                            "transition-all focus-visible:border-blue-500/60 focus-visible:ring-1 focus-visible:ring-blue-500/30",
-                            "hover:border-white/20",
+                            "h-11 rounded-lg border-black/10 bg-black/5 pl-10 text-sm text-black placeholder:text-black/20",
+                            "transition-all focus-visible:border-black/30 focus-visible:ring-1 focus-visible:ring-black/20",
+                            "hover:border-black/20",
+                            "dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-white/20",
+                            "dark:focus-visible:border-white/30 dark:focus-visible:ring-white/20",
+                            "dark:hover:border-white/20",
                             errors.email &&
-                                "border-red-500/40 focus-visible:border-red-500/60 focus-visible:ring-red-500/20"
+                                "border-black/25 focus-visible:border-black/35 focus-visible:ring-black/20 dark:border-white/25 dark:focus-visible:border-white/35 dark:focus-visible:ring-white/20"
                         )}
                         aria-invalid={!!errors.email}
                         {...register("email")}
                     />
                 </div>
                 {errors.email && (
-                    <p className="flex items-center gap-1.5 text-xs text-red-400">
-                        <span className="size-1 rounded-full bg-red-400" />
+                    <p className="flex items-center gap-1.5 text-xs text-black/65 dark:text-white/65">
+                        <span className="size-1 rounded-full bg-black/65 dark:bg-white/65" />
                         {errors.email.message}
                     </p>
                 )}
@@ -88,30 +95,33 @@ export function LoginForm() {
                 <div className="flex items-center justify-between">
                     <Label
                         htmlFor="password"
-                        className="text-xs font-medium tracking-wider text-white/60 uppercase"
+                        className="text-xs font-medium tracking-wider text-black/60 uppercase dark:text-white/60"
                     >
                         Password
                     </Label>
                     <button
                         type="button"
-                        className="text-[11px] text-blue-400/80 transition-colors hover:text-blue-400"
+                        className="text-[11px] text-black/55 transition-colors hover:text-black/80 dark:text-white/55 dark:hover:text-white/80"
                     >
                         Forgot password?
                     </button>
                 </div>
                 <div className="relative">
-                    <Lock className="absolute top-1/2 left-3.5 size-3.75 -translate-y-1/2 text-white/30" />
+                    <Lock className="absolute top-1/2 left-3.5 size-3.75 -translate-y-1/2 text-black/30 dark:text-white/30" />
                     <Input
                         id="password"
                         type={showPassword ? "text" : "password"}
                         placeholder="••••••••"
                         autoComplete="current-password"
                         className={cn(
-                            "h-11 rounded-xl border-white/10 bg-white/5 pr-10 pl-10 text-sm text-white placeholder:text-white/20",
-                            "transition-all focus-visible:border-blue-500/60 focus-visible:ring-1 focus-visible:ring-blue-500/30",
-                            "hover:border-white/20",
+                            "h-11 rounded-lg border-black/10 bg-black/5 pr-10 pl-10 text-sm text-black placeholder:text-black/20",
+                            "transition-all focus-visible:border-black/30 focus-visible:ring-1 focus-visible:ring-black/20",
+                            "hover:border-black/20",
+                            "dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-white/20",
+                            "dark:focus-visible:border-white/30 dark:focus-visible:ring-white/20",
+                            "dark:hover:border-white/20",
                             errors.password &&
-                                "border-red-500/40 focus-visible:border-red-500/60 focus-visible:ring-red-500/20"
+                                "border-black/25 focus-visible:border-black/35 focus-visible:ring-black/20 dark:border-white/25 dark:focus-visible:border-white/35 dark:focus-visible:ring-white/20"
                         )}
                         aria-invalid={!!errors.password}
                         {...register("password")}
@@ -122,7 +132,7 @@ export function LoginForm() {
                         aria-label={
                             showPassword ? "Hide password" : "Show password"
                         }
-                        className="absolute top-1/2 right-3.5 -translate-y-1/2 text-white/30 transition-colors hover:text-white/60 focus:outline-none"
+                        className="absolute top-1/2 right-3.5 -translate-y-1/2 text-black/30 transition-colors hover:text-black/60 focus:outline-none dark:text-white/30 dark:hover:text-white/60"
                     >
                         {showPassword ? (
                             <EyeOff className="size-3.75" />
@@ -132,8 +142,8 @@ export function LoginForm() {
                     </button>
                 </div>
                 {errors.password && (
-                    <p className="flex items-center gap-1.5 text-xs text-red-400">
-                        <span className="size-1 rounded-full bg-red-400" />
+                    <p className="flex items-center gap-1.5 text-xs text-black/65 dark:text-white/65">
+                        <span className="size-1 rounded-full bg-black/65 dark:bg-white/65" />
                         {errors.password.message}
                     </p>
                 )}
@@ -145,9 +155,10 @@ export function LoginForm() {
                     type="submit"
                     disabled={isPending}
                     className={cn(
-                        "group relative h-11 w-full overflow-hidden rounded-xl text-sm font-semibold",
-                        "bg-blue-500 text-white transition-all",
-                        "hover:bg-blue-400 hover:shadow-[0_0_20px_rgba(59,130,246,0.4)]",
+                        "group relative h-11 w-full overflow-hidden rounded-lg text-sm font-semibold",
+                        "bg-black text-white transition-all",
+                        "hover:bg-black/90 hover:shadow-[0_0_20px_rgba(0,0,0,0.12)]",
+                        "dark:bg-white dark:text-black dark:hover:bg-white/90 dark:hover:shadow-[0_0_20px_rgba(255,255,255,0.12)]",
                         "disabled:cursor-not-allowed disabled:opacity-50"
                     )}
                 >

@@ -49,7 +49,9 @@ export function HeaderSheetList({
                                     key={item.id}
                                     className={cn(
                                         "rounded-xl border p-4 transition-colors",
-                                        item.unread && "bg-muted/50"
+                                        item.unread
+                                            ? "bg-muted/50"
+                                            : "bg-background"
                                     )}
                                 >
                                     <div className="flex items-start justify-between gap-3">

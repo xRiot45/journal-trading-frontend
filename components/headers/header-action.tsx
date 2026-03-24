@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/sheet"
 import { HeaderSheetItem, HeaderSheetList } from "./header-sheet-list"
 import { UserMenu, UserMenuData } from "./user-menu"
+import { ThemeToggle } from "../theme-toggle"
 
 type HeaderActionsProps = {
     notifications: HeaderSheetItem[]
@@ -66,6 +67,8 @@ export function HeaderActions({
 
     return (
         <div className="flex items-center gap-2 sm:gap-3">
+            <ThemeToggle />
+
             <Sheet>
                 <SheetTrigger asChild>
                     <div>

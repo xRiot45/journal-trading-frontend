@@ -1,7 +1,5 @@
 "use client"
 
-import * as React from "react"
-
 import { cn } from "@/lib/utils"
 import { UserMenuData } from "./user-menu"
 import { HeaderSheetItem } from "./header-sheet-list"
@@ -76,7 +74,7 @@ const defaultMessages: HeaderSheetItem[] = [
 
 export function AppHeader({
     className,
-    logoTitle = "MyDashboard",
+    logoTitle = "Journal Trading",
     logoHref = "/",
     user = defaultUser,
     notifications = defaultNotifications,
@@ -85,7 +83,7 @@ export function AppHeader({
     return (
         <header
             className={cn(
-                "sticky top-0 z-40 mx-auto w-full border-b bg-background/80 backdrop-blur-xl",
+                "sticky top-0 z-40 w-full border-b bg-background/80 backdrop-blur-xl",
                 className
             )}
         >

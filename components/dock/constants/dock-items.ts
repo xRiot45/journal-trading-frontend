@@ -2,12 +2,6 @@ import type { DockItem, DockModalItem } from "../types/dock.types"
 
 export const PINNED_DOCK_ITEMS: DockItem[] = [
     {
-        id: "home",
-        label: "Home",
-        icon: "solar:home-2-bold-duotone",
-        href: "/",
-    },
-    {
         id: "dashboard",
         label: "Dashboard",
         icon: "solar:widget-5-bold-duotone",
