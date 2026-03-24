@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useRef } from "react"
+import { useRef } from "react"
 import Link from "next/link"
 import {
     motion,
@@ -24,12 +24,7 @@ interface DockItemProps {
     index?: number
 }
 
-export function DockItemComponent({
-    item,
-    isActive,
-    mouseX,
-    index = 0,
-}: DockItemProps) {
+export function DockItem({ item, isActive, mouseX, index = 0 }: DockItemProps) {
     const ref = useRef<HTMLDivElement>(null)
 
     const distance = useTransform(mouseX, (val) => {
@@ -82,14 +77,13 @@ export function DockItemComponent({
                     transition={{ duration: 0.15 }}
                     className={cn(
                         "absolute -top-10 rounded-lg px-2.5 py-1 text-xs font-medium whitespace-nowrap",
-                        "border border-white/10 bg-[#1a1a2e]/90 text-white/90 backdrop-blur-md",
-                        "pointer-events-none opacity-0 shadow-xl shadow-black/30 group-hover:opacity-100",
+                        "border border-black/10 bg-white/90 text-black/90 backdrop-blur-md dark:border-white/10 dark:bg-black/90 dark:text-white/90",
+                        "pointer-events-none opacity-0 shadow-xl shadow-black/10 group-hover:opacity-100 dark:shadow-black/30",
                         "transition-opacity duration-150"
                     )}
                 >
                     {item.label}
-                    {/* Tooltip arrow */}
-                    <span className="absolute -bottom-1 left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 border-r border-b border-white/10 bg-[#1a1a2e]/90" />
+                    <span className="absolute -bottom-1 left-1/2 h-2 w-2 -translate-x-1/2 rotate-45 border-r border-b border-black/10 bg-white/90 dark:border-white/10 dark:bg-black/90" />
                 </motion.div>
 
                 {/* Icon Wrapper */}
@@ -101,13 +95,12 @@ export function DockItemComponent({
                             "relative flex cursor-pointer items-center justify-center rounded-[22%]",
                             "transition-shadow duration-200",
                             isActive
-                                ? "shadow-lg ring-2 shadow-white/10 ring-white/20"
-                                : "hover:shadow-xl hover:shadow-black/40",
-                            // macOS-like glass tile bg
-                            "bg-linear-to-br from-white/12 to-white/5 backdrop-blur-md",
-                            "border border-white/10",
+                                ? "shadow-lg ring-2 shadow-black/10 ring-black/20 dark:shadow-white/10 dark:ring-white/20"
+                                : "hover:shadow-xl hover:shadow-black/20 dark:hover:shadow-black/40",
+                            "bg-linear-to-br from-black/12 to-black/5 backdrop-blur-md dark:from-white/12 dark:to-white/5",
+                            "border border-black/10 dark:border-white/10",
                             isActive &&
-                                "border-white/20 from-white/20 to-white/10"
+                                "border-black/20 from-black/20 to-black/10 dark:border-white/20 dark:from-white/20 dark:to-white/10"
                         )}
                     >
                         <Icon
@@ -115,8 +108,8 @@ export function DockItemComponent({
                             className={cn(
                                 "h-[55%] w-[55%] transition-colors duration-200",
                                 isActive
-                                    ? "text-white"
-                                    : "text-white/80 group-hover:text-white"
+                                    ? "text-black dark:text-white"
+                                    : "text-black/80 group-hover:text-black dark:text-white/80 dark:group-hover:text-white"
                             )}
                         />
 
@@ -127,9 +120,9 @@ export function DockItemComponent({
                                 animate={{ scale: 1 }}
                                 className={cn(
                                     "absolute -top-1 -right-1 h-4.5 min-w-4.5 px-1",
-                                    "rounded-full bg-red-500 text-[10px] font-bold text-white",
-                                    "flex items-center justify-center shadow-lg shadow-red-500/40",
-                                    "border border-red-400/50"
+                                    "flex items-center justify-center rounded-full",
+                                    "border border-black/20 bg-black text-[10px] font-bold text-white shadow-lg shadow-black/20",
+                                    "dark:border-white/20 dark:bg-white dark:text-black dark:shadow-white/10"
                                 )}
                             >
                                 {item.badge > 9 ? "9+" : item.badge}
@@ -140,7 +133,7 @@ export function DockItemComponent({
 
                 {/* Active dot indicator */}
                 <motion.span
-                    className="mt-1 h-1 w-1 rounded-full bg-white/70"
+                    className="mt-1 h-1 w-1 rounded-full bg-black/70 dark:bg-white/70"
                     initial={{ opacity: 0, scale: 0 }}
                     animate={{
                         opacity: isActive ? 1 : 0,

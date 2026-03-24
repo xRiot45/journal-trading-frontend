@@ -38,7 +38,10 @@ export function UserMenu({ user }: UserMenuProps) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-11 gap-3 rounded-2xl px-3">
+                <Button
+                    variant="ghost"
+                    className="h-11 cursor-pointer gap-3 rounded-2xl hover:bg-transparent dark:hover:bg-transparent"
+                >
                     <Avatar className="h-8 w-8">
                         <AvatarImage src={user.avatarUrl} alt={user.name} />
                         <AvatarFallback>
