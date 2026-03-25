@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query"
-import { login } from "../services/auth.service"
+import { login, logout } from "../services/auth.service"
 import type { LoginRequest, LoginResponse } from "../interfaces/auth.interface"
-import { setAuthTokens } from "@/configs/token-storage"
+import { clearAuthTokens, setAuthTokens } from "@/configs/token-storage"
 
 export function useLoginMutation() {
     return useMutation<LoginResponse, Error, LoginRequest>({
@@ -12,6 +12,16 @@ export function useLoginMutation() {
                 accessToken,
                 refreshToken,
             })
+        },
+    })
+}
+
+export function useLogoutMutation() {
+    return useMutation<void, Error>({
+        mutationFn: logout,
+        onSuccess: () => {
+            clearAuthTokens()
+            window.location.href = "/"
         },
     })
 }

@@ -35,3 +35,17 @@ export async function getCurrentUser(): Promise<UserResponse> {
         throw new Error("Failed to fetch current user. Please try again later.")
     }
 }
+
+export async function logout(): Promise<void> {
+    try {
+        return await httpClient.post("/api/auth/logout", {
+            withCredentials: true,
+        })
+    } catch (err: unknown) {
+        if (isHttpError(err) && err.response?.data?.message) {
+            throw new Error(err.response.data.message)
+        }
+
+        throw new Error("Logout failed. Please try again later.")
+    }
+}

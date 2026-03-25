@@ -16,7 +16,7 @@ import { toast } from "sonner"
 export function LoginForm() {
     const [showPassword, setShowPassword] = useState(false)
     const router = useRouter()
-    const { mutate: doLogin, isPending, error, isError } = useLoginMutation()
+    const { mutate: doLogin, isPending } = useLoginMutation()
 
     const {
         register,
@@ -32,11 +32,11 @@ export function LoginForm() {
                 toast.success("Login successful")
                 router.push("/dashboard")
             },
+            onError: (err) => {
+                toast.error(err.message)
+            },
         })
     }
-
-    const apiErrorMessage =
-        isError && error instanceof Error ? error.message : null
 
     return (
         <form
@@ -44,14 +44,6 @@ export function LoginForm() {
             noValidate
             className="space-y-4"
         >
-            {/* API Error Banner */}
-            {apiErrorMessage && (
-                <div className="flex items-start gap-2.5 rounded-lg border border-black/15 bg-black/5 px-4 py-3 text-sm text-black/80 dark:border-white/15 dark:bg-white/5 dark:text-white/80">
-                    <span className="mt-0.5 size-1.5 shrink-0 rounded-full bg-black/70 dark:bg-white/70" />
-                    {apiErrorMessage}
-                </div>
-            )}
-
             {/* Email */}
             <div className="space-y-1.5">
                 <Label
@@ -68,12 +60,7 @@ export function LoginForm() {
                         placeholder="trader@example.com"
                         autoComplete="email"
                         className={cn(
-                            "h-11 rounded-lg border-black/10 bg-black/5 pl-10 text-sm text-black placeholder:text-black/20",
-                            "transition-all focus-visible:border-black/30 focus-visible:ring-1 focus-visible:ring-black/20",
-                            "hover:border-black/20",
-                            "dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-white/20",
-                            "dark:focus-visible:border-white/30 dark:focus-visible:ring-white/20",
-                            "dark:hover:border-white/20",
+                            "h-11 rounded-lg pl-10",
                             errors.email &&
                                 "border-black/25 focus-visible:border-black/35 focus-visible:ring-black/20 dark:border-white/25 dark:focus-visible:border-white/35 dark:focus-visible:ring-white/20"
                         )}
@@ -113,12 +100,7 @@ export function LoginForm() {
                         placeholder="••••••••"
                         autoComplete="current-password"
                         className={cn(
-                            "h-11 rounded-lg border-black/10 bg-black/5 pr-10 pl-10 text-sm text-black placeholder:text-black/20",
-                            "transition-all focus-visible:border-black/30 focus-visible:ring-1 focus-visible:ring-black/20",
-                            "hover:border-black/20",
-                            "dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-white/20",
-                            "dark:focus-visible:border-white/30 dark:focus-visible:ring-white/20",
-                            "dark:hover:border-white/20",
+                            "h-11 rounded-lg pl-10",
                             errors.password &&
                                 "border-black/25 focus-visible:border-black/35 focus-visible:ring-black/20 dark:border-white/25 dark:focus-visible:border-white/35 dark:focus-visible:ring-white/20"
                         )}

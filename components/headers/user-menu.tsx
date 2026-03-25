@@ -14,9 +14,11 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useGetCurrentUserQuery } from "@/features/auth/application/queries"
+import { useLogoutMutation } from "@/features/auth/application/mutations"
 
 export function UserMenu() {
     const { data, isLoading, isError } = useGetCurrentUserQuery()
+    const { mutate: logout, isPending } = useLogoutMutation()
 
     // Loading state
     if (isLoading) {
@@ -99,21 +101,21 @@ export function UserMenu() {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuGroup>
-                    <DropdownMenuItem asChild>
+                    <DropdownMenuItem asChild className="p-2">
                         <Link href="/profile" className="cursor-pointer">
                             <UserCircle2 className="mr-2 h-4 w-4" />
                             Profile
                         </Link>
                     </DropdownMenuItem>
 
-                    <DropdownMenuItem asChild>
+                    <DropdownMenuItem asChild className="p-2">
                         <Link href="/billing" className="cursor-pointer">
                             <CreditCard className="mr-2 h-4 w-4" />
                             Billing
                         </Link>
                     </DropdownMenuItem>
 
-                    <DropdownMenuItem asChild>
+                    <DropdownMenuItem asChild className="p-2">
                         <Link href="/settings" className="cursor-pointer">
                             <Settings className="mr-2 h-4 w-4" />
                             Settings
@@ -123,9 +125,13 @@ export function UserMenu() {
 
                 <DropdownMenuSeparator />
 
-                <DropdownMenuItem className="cursor-pointer text-destructive focus:text-destructive">
+                <DropdownMenuItem
+                    onClick={() => logout()}
+                    disabled={isPending}
+                    className="cursor-pointer p-2 text-destructive focus:text-destructive"
+                >
                     <LogOut className="mr-2 h-4 w-4" />
-                    Logout
+                    {isPending ? "Logging out..." : "Logout"}
                 </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
