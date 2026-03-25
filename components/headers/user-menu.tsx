@@ -2,7 +2,6 @@
 
 import Link from "next/link"
 import { CreditCard, LogOut, Settings, UserCircle2 } from "lucide-react"
-
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
@@ -14,27 +13,35 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useGetCurrentUserQuery } from "@/features/auth/application/queries"
 
-export type UserMenuData = {
-    name: string
-    email: string
-    avatarUrl?: string
-}
+export function UserMenu() {
+    const { data, isLoading, isError } = useGetCurrentUserQuery()
 
-type UserMenuProps = {
-    user: UserMenuData
-}
+    // Loading state
+    if (isLoading) {
+        return (
+            <Button variant="ghost" className="h-11 gap-3 rounded-2xl" disabled>
+                <div className="h-8 w-8 animate-pulse rounded-full bg-muted" />
+                <div className="hidden space-y-1 sm:block">
+                    <div className="h-3 w-24 animate-pulse rounded bg-muted" />
+                    <div className="h-3 w-16 animate-pulse rounded bg-muted" />
+                </div>
+            </Button>
+        )
+    }
 
-function getInitials(name: string): string {
-    const parts = name.trim().split(/\s+/)
-    const initials = parts
-        .slice(0, 2)
-        .map((part) => part[0]?.toUpperCase() ?? "")
+    // Error state
+    if (isError || !data) {
+        return (
+            <Button variant="ghost" className="h-11 rounded-2xl">
+                Failed to load user
+            </Button>
+        )
+    }
 
-    return initials.join("")
-}
+    const user = data
 
-export function UserMenu({ user }: UserMenuProps) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -43,18 +50,19 @@ export function UserMenu({ user }: UserMenuProps) {
                     className="h-11 cursor-pointer gap-3 rounded-2xl hover:bg-transparent dark:hover:bg-transparent"
                 >
                     <Avatar className="h-8 w-8">
-                        <AvatarImage src={user.avatarUrl} alt={user.name} />
-                        <AvatarFallback>
-                            {getInitials(user.name)}
-                        </AvatarFallback>
+                        <AvatarImage
+                            src="https://github.com/maxleiter.png"
+                            alt={user?.data?.fullName}
+                        />
+                        <AvatarFallback>{user?.data?.fullName}</AvatarFallback>
                     </Avatar>
 
                     <div className="hidden min-w-0 text-left sm:block">
                         <p className="truncate text-sm leading-none font-medium">
-                            {user.name}
+                            {user?.data?.fullName}
                         </p>
                         <p className="mt-1 truncate text-xs text-muted-foreground">
-                            {user.email}
+                            {user?.data?.email}
                         </p>
                     </div>
                 </Button>
@@ -68,18 +76,21 @@ export function UserMenu({ user }: UserMenuProps) {
                 <DropdownMenuLabel className="pb-2">
                     <div className="flex items-center gap-3">
                         <Avatar className="h-9 w-9">
-                            <AvatarImage src={user.avatarUrl} alt={user.name} />
+                            <AvatarImage
+                                src="https://github.com/maxleiter.png"
+                                alt={user?.data?.fullName}
+                            />
                             <AvatarFallback>
-                                {getInitials(user.name)}
+                                {user?.data?.fullName}
                             </AvatarFallback>
                         </Avatar>
 
                         <div className="min-w-0">
                             <p className="truncate text-sm font-medium">
-                                {user.name}
+                                {user?.data?.fullName}
                             </p>
                             <p className="truncate text-xs text-muted-foreground">
-                                {user.email}
+                                {user?.data?.email}
                             </p>
                         </div>
                     </div>
