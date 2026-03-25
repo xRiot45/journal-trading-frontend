@@ -11,9 +11,9 @@ import {
     CheckCircle2,
 } from "lucide-react"
 import { LoginForm } from "../components/login-form"
-import ChartBars from "../components/charts-bar"
-import StatBadge from "../components/stat-badge"
-import FeatureItem from "../components/feature-item"
+import ChartBars from "../components/ui/charts-bar"
+import StatBadge from "../components/ui/stat-badge"
+import FeatureItem from "../components/ui/feature-item"
 
 export default function LoginView() {
     return (
