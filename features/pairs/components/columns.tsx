@@ -17,7 +17,15 @@ import { Button } from "@/components/ui/button"
 import { Ellipsis } from "lucide-react"
 import { PairResponseData } from "../interfaces/pair.interface"
 
-export const Columns: ColumnDef<PairResponseData>[] = [
+interface ColumnsOptionsProps {
+    onEdit: (pair: PairResponseData) => void
+    onDelete: (pair: PairResponseData) => void
+}
+
+export const Columns = ({
+    onEdit,
+    onDelete,
+}: ColumnsOptionsProps): ColumnDef<PairResponseData>[] => [
     {
         id: "id",
         accessorKey: "id",
@@ -93,7 +101,7 @@ export const Columns: ColumnDef<PairResponseData>[] = [
     {
         id: "actions",
         header: "Actions",
-        cell: () => (
+        cell: ({ row }) => (
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button mode="icon" variant="ghost">
@@ -101,8 +109,13 @@ export const Columns: ColumnDef<PairResponseData>[] = [
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent side="bottom" align="start">
-                    <DropdownMenuItem>Edit pair</DropdownMenuItem>
-                    <DropdownMenuItem variant="destructive">
+                    <DropdownMenuItem onClick={() => onEdit(row.original)}>
+                        Edit pair
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        variant="destructive"
+                        onClick={() => onDelete(row.original)}
+                    >
                         Delete pair
                     </DropdownMenuItem>
                 </DropdownMenuContent>

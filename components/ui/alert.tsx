@@ -1,76 +1,324 @@
 import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
-
 import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import { cva, type VariantProps } from "class-variance-authority"
+import { X } from "lucide-react"
 
 const alertVariants = cva(
-  "group/alert relative grid w-full gap-0.5 rounded-lg border px-2.5 py-2 text-left text-sm has-data-[slot=alert-action]:relative has-data-[slot=alert-action]:pr-18 has-[>svg]:grid-cols-[auto_1fr] has-[>svg]:gap-x-2 *:[svg]:row-span-2 *:[svg]:translate-y-0.5 *:[svg]:text-current *:[svg:not([class*='size-'])]:size-4",
-  {
-    variants: {
-      variant: {
-        default: "bg-card text-card-foreground",
-        destructive:
-          "bg-card text-destructive *:data-[slot=alert-description]:text-destructive/90 *:[svg]:text-current",
-      },
-    },
-    defaultVariants: {
-      variant: "default",
-    },
-  }
+    "flex w-full items-stretch gap-2 group-[.toaster]:w-(--width)",
+    {
+        variants: {
+            variant: {
+                secondary: "",
+                primary: "",
+                destructive: "",
+                success: "",
+                info: "",
+                mono: "",
+                warning: "",
+            },
+            icon: {
+                primary: "",
+                destructive: "",
+                success: "",
+                info: "",
+                warning: "",
+            },
+            appearance: {
+                solid: "",
+                outline: "",
+                light: "",
+                stroke: "text-foreground",
+            },
+            size: {
+                lg: "*:data-slot=alert-icon:mt-0.5 gap-3 rounded-lg p-4 text-base [&_[data-slot=alert-close]]:mt-1 [&>[data-slot=alert-icon]>svg]:size-6",
+                md: "*:data-slot=alert-icon:mt-0 gap-2.5 rounded-lg p-3.5 text-sm [&_[data-slot=alert-close]]:mt-0.5 [&>[data-slot=alert-icon]>svg]:size-5",
+                sm: "gap-2 rounded-md px-3 py-2.5 text-xs *:data-alert-icon:mt-0.5 [&_[data-slot=alert-close]]:mt-0.25 [&_[data-slot=alert-close]_svg]:size-3.5 [&>[data-slot=alert-icon]>svg]:size-4",
+            },
+        },
+        compoundVariants: [
+            /* Solid */
+            {
+                variant: "secondary",
+                appearance: "solid",
+                className: "bg-muted text-foreground",
+            },
+            {
+                variant: "primary",
+                appearance: "solid",
+                className: "bg-primary text-primary-foreground",
+            },
+            {
+                variant: "destructive",
+                appearance: "solid",
+                className: "text-destructive-foreground bg-destructive",
+            },
+            {
+                variant: "success",
+                appearance: "solid",
+                className:
+                    "bg-[var(--color-success,var(--color-green-500))] text-[var(--color-success-foreground,var(--color-white))]",
+            },
+            {
+                variant: "info",
+                appearance: "solid",
+                className:
+                    "bg-[var(--color-info,var(--color-violet-600))] text-[var(--color-info-foreground,var(--color-white))]",
+            },
+            {
+                variant: "warning",
+                appearance: "solid",
+                className:
+                    "bg-[var(--color-warning,var(--color-yellow-500))] text-[var(--color-warning-foreground,var(--color-white))]",
+            },
+            {
+                variant: "mono",
+                appearance: "solid",
+                className:
+                    "*:data-slot-[alert=close]:text-white bg-zinc-950 text-white dark:bg-zinc-300 dark:text-black",
+            },
+
+            /* Outline */
+            {
+                variant: "secondary",
+                appearance: "outline",
+                className:
+                    "border border-border bg-background text-foreground [&_[data-slot=alert-close]]:text-foreground",
+            },
+            {
+                variant: "primary",
+                appearance: "outline",
+                className:
+                    "border border-border bg-background text-primary [&_[data-slot=alert-close]]:text-foreground",
+            },
+            {
+                variant: "destructive",
+                appearance: "outline",
+                className:
+                    "border border-border bg-background text-destructive [&_[data-slot=alert-close]]:text-foreground",
+            },
+            {
+                variant: "success",
+                appearance: "outline",
+                className:
+                    "border border-border bg-background text-[var(--color-success,var(--color-green-500))] [&_[data-slot=alert-close]]:text-foreground",
+            },
+            {
+                variant: "info",
+                appearance: "outline",
+                className:
+                    "border border-border bg-background text-[var(--color-info,var(--color-violet-600))] [&_[data-slot=alert-close]]:text-foreground",
+            },
+            {
+                variant: "warning",
+                appearance: "outline",
+                className:
+                    "border border-border bg-background text-[var(--color-warning,var(--color-yellow-500))] [&_[data-slot=alert-close]]:text-foreground",
+            },
+            {
+                variant: "mono",
+                appearance: "outline",
+                className:
+                    "border border-border bg-background text-foreground [&_[data-slot=alert-close]]:text-foreground",
+            },
+
+            /* Light */
+            {
+                variant: "secondary",
+                appearance: "light",
+                className: "border border-border bg-muted text-foreground",
+            },
+            {
+                variant: "primary",
+                appearance: "light",
+                className:
+                    "border border-[var(--color-primary-alpha,var(--color-blue-100))] bg-[var(--color-primary-soft,var(--color-blue-50))] text-foreground dark:border-[var(--color-primary-alpha,var(--color-blue-900))] dark:bg-[var(--color-primary-soft,var(--color-blue-950))] [&_[data-slot=alert-icon]]:text-primary",
+            },
+            {
+                variant: "destructive",
+                appearance: "light",
+                className:
+                    "border border-[var(--color-destructive-alpha,var(--color-red-100))] bg-[var(--color-destructive-soft,var(--color-red-50))] text-foreground dark:border-[var(--color-destructive-alpha,var(--color-red-900))] dark:bg-[var(--color-destructive-soft,var(--color-red-950))] [&_[data-slot=alert-icon]]:text-destructive",
+            },
+            {
+                variant: "success",
+                appearance: "light",
+                className:
+                    "border border-[var(--color-success-alpha,var(--color-green-200))] bg-[var(--color-success-soft,var(--color-green-50))] text-foreground dark:border-[var(--color-success-alpha,var(--color-green-900))] dark:bg-[var(--color-success-soft,var(--color-green-950))] [&_[data-slot=alert-icon]]:text-[var(--color-success-foreground,var(--color-green-600))]",
+            },
+            {
+                variant: "info",
+                appearance: "light",
+                className:
+                    "border border-[var(--color-info-alpha,var(--color-violet-100))] bg-[var(--color-info-soft,var(--color-violet-50))] text-foreground dark:border-[var(--color-info-alpha,var(--color-violet-900))] dark:bg-[var(--color-info-soft,var(--color-violet-950))] [&_[data-slot=alert-icon]]:text-[var(--color-info-foreground,var(--color-violet-600))]",
+            },
+            {
+                variant: "warning",
+                appearance: "light",
+                className:
+                    "border border-[var(--color-warning-alpha,var(--color-yellow-200))] bg-[var(--color-warning-soft,var(--color-yellow-50))] text-foreground dark:border-[var(--color-warning-alpha,var(--color-yellow-900))] dark:bg-[var(--color-warning-soft,var(--color-yellow-950))] [&_[data-slot=alert-icon]]:text-[var(--color-warning-foreground,var(--color-yellow-600))]",
+            },
+
+            /* Mono */
+            {
+                variant: "mono",
+                icon: "primary",
+                className: "[&_[data-slot=alert-icon]]:text-primary",
+            },
+            {
+                variant: "mono",
+                icon: "warning",
+                className:
+                    "[&_[data-slot=alert-icon]]:text-[var(--color-warning-foreground,var(--color-yellow-600))]",
+            },
+            {
+                variant: "mono",
+                icon: "success",
+                className:
+                    "[&_[data-slot=alert-icon]]:text-[var(--color-success-foreground,var(--color-green-600))]",
+            },
+            {
+                variant: "mono",
+                icon: "destructive",
+                className: "[&_[data-slot=alert-icon]]:text-destructive",
+            },
+            {
+                variant: "mono",
+                icon: "info",
+                className:
+                    "[&_[data-slot=alert-icon]]:text-[var(--color-info-foreground,var(--color-violet-600))]",
+            },
+        ],
+        defaultVariants: {
+            variant: "secondary",
+            appearance: "solid",
+            size: "md",
+        },
+    }
 )
 
-function Alert({
-  className,
-  variant,
-  ...props
-}: React.ComponentProps<"div"> & VariantProps<typeof alertVariants>) {
-  return (
-    <div
-      data-slot="alert"
-      role="alert"
-      className={cn(alertVariants({ variant }), className)}
-      {...props}
-    />
-  )
+interface AlertProps
+    extends
+        React.HTMLAttributes<HTMLDivElement>,
+        VariantProps<typeof alertVariants> {
+    close?: boolean
+    onClose?: () => void
 }
 
-function AlertTitle({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="alert-title"
-      className={cn(
-        "font-heading font-medium group-has-[>svg]/alert:col-start-2 [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground",
-        className
-      )}
-      {...props}
-    />
-  )
+interface AlertIconProps
+    extends
+        React.HTMLAttributes<HTMLDivElement>,
+        VariantProps<typeof alertVariants> {}
+
+function Alert({
+    className,
+    variant,
+    size,
+    icon,
+    appearance,
+    close = false,
+    onClose,
+    children,
+    ...props
+}: AlertProps) {
+    return (
+        <div
+            data-slot="alert"
+            role="alert"
+            className={cn(
+                alertVariants({ variant, size, icon, appearance }),
+                className
+            )}
+            {...props}
+        >
+            {children}
+            {close && (
+                <Button
+                    size="sm"
+                    variant="inverse"
+                    mode="icon"
+                    onClick={onClose}
+                    aria-label="Dismiss"
+                    data-slot="alert-close"
+                    className={cn("group size-4 shrink-0")}
+                >
+                    <X className="size-4 opacity-60 group-hover:opacity-100" />
+                </Button>
+            )}
+        </div>
+    )
+}
+
+function AlertTitle({
+    className,
+    ...props
+}: React.HTMLAttributes<HTMLHeadingElement>) {
+    return (
+        <div
+            data-slot="alert-title"
+            className={cn("grow tracking-tight", className)}
+            {...props}
+        />
+    )
+}
+
+function AlertIcon({ children, className, ...props }: AlertIconProps) {
+    return (
+        <div
+            data-slot="alert-icon"
+            className={cn("shrink-0", className)}
+            {...props}
+        >
+            {children}
+        </div>
+    )
+}
+
+function AlertToolbar({ children, className, ...props }: AlertIconProps) {
+    return (
+        <div data-slot="alert-toolbar" className={cn(className)} {...props}>
+            {children}
+        </div>
+    )
 }
 
 function AlertDescription({
-  className,
-  ...props
-}: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="alert-description"
-      className={cn(
-        "text-sm text-balance text-muted-foreground md:text-pretty [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4",
-        className
-      )}
-      {...props}
-    />
-  )
+    className,
+    ...props
+}: React.HTMLAttributes<HTMLParagraphElement>) {
+    return (
+        <div
+            data-slot="alert-description"
+            className={cn(
+                "text-sm [&_p]:mb-2 [&_p]:leading-relaxed",
+                className
+            )}
+            {...props}
+        />
+    )
 }
 
-function AlertAction({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="alert-action"
-      className={cn("absolute top-2 right-2", className)}
-      {...props}
-    />
-  )
+function AlertContent({
+    className,
+    ...props
+}: React.HTMLAttributes<HTMLParagraphElement>) {
+    return (
+        <div
+            data-slot="alert-content"
+            className={cn(
+                "space-y-2 **:data-[slot=alert-title]:font-semibold",
+                className
+            )}
+            {...props}
+        />
+    )
 }
 
-export { Alert, AlertTitle, AlertDescription, AlertAction }
+export {
+    Alert,
+    AlertContent,
+    AlertDescription,
+    AlertIcon,
+    AlertTitle,
+    AlertToolbar,
+}

@@ -25,5 +25,5 @@ export interface FindAllPairsParams {
 }
 
 export interface PairResponse extends ApiSuccessResponse<PairResponseData[]> {
-    meta: PaginationMeta
+    meta?: PaginationMeta
 }

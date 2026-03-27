@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/incompatible-library */
 import {
     PaginationState,
     RowSelectionState,
@@ -13,7 +12,12 @@ import { useFindAllPairsQuery } from "../application/queries"
 import { PairResponseData } from "../interfaces/pair.interface"
 import { Columns } from "../components/columns"
 
-export function usePairTable() {
+interface UsePairTableOptions {
+    onEdit: (pair: PairResponseData) => void
+    onDelete: (pair: PairResponseData) => void
+}
+
+export function usePairTable({ onEdit, onDelete }: UsePairTableOptions) {
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
         pageSize: 10,
@@ -23,8 +27,11 @@ export function usePairTable() {
     ])
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
     const [searchQuery, setSearchQuery] = useState("")
+
+    const columns = Columns({ onEdit, onDelete })
+
     const [columnOrder, setColumnOrder] = useState<string[]>(
-        Columns.map((col) => col.id as string)
+        columns.map((col) => col.id as string)
     )
 
     const { data, isLoading } = useFindAllPairsQuery({
@@ -39,7 +46,7 @@ export function usePairTable() {
     const totalItems = data?.meta?.totalItems ?? 0
 
     const table = useReactTable<PairResponseData>({
-        columns: Columns,
+        columns,
         data: tableData,
         pageCount: Math.ceil(totalItems / pagination.pageSize),
         getRowId: (row) => row.id,

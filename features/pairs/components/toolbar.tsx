@@ -11,6 +11,7 @@ interface ToolbarProps {
     isLoading: boolean
     onSearch: (value: string) => void
     onClear: () => void
+    onAddPair: () => void
 }
 
 export function Toolbar({
@@ -18,7 +19,9 @@ export function Toolbar({
     isLoading,
     onSearch,
     onClear,
+    onAddPair,
 }: ToolbarProps) {
+    // Local state so typing doesn't trigger API calls on every keystroke
     const [inputValue, setInputValue] = useState(searchQuery)
 
     const handleSearch = () => onSearch(inputValue)
@@ -54,7 +57,7 @@ export function Toolbar({
                 </div>
             </div>
             <CardToolbar>
-                <Button disabled={isLoading}>
+                <Button disabled={isLoading} onClick={onAddPair}>
                     <Plus />
                     Add Pair
                 </Button>
