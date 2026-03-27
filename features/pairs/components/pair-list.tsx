@@ -7,12 +7,14 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { DataGridTable } from "@/components/ui/data-grid-table"
 import { DataGridPagination } from "@/components/ui/data-grid-pagination"
 import { usePairTable } from "../hooks/use-pair-table"
-import { PairDialog } from "./pair-dialog"
-import { PairResponseData } from "../interfaces/pair.interface"
 import { Toolbar } from "./toolbar"
+import { PairDialog } from "./pair-dialog"
+import { PairDeleteDialog } from "./pair-delete-dialog"
+import { PairResponseData } from "../interfaces/pair.interface"
 
 export default function PairList() {
     const [dialogOpen, setDialogOpen] = useState(false)
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
     const [selectedPair, setSelectedPair] = useState<PairResponseData | null>(
         null
     )
@@ -27,8 +29,18 @@ export default function PairList() {
         setDialogOpen(true)
     }
 
+    const handleOpenDelete = (pair: PairResponseData) => {
+        setSelectedPair(pair)
+        setDeleteDialogOpen(true)
+    }
+
     const handleCloseDialog = () => {
         setDialogOpen(false)
+        setSelectedPair(null)
+    }
+
+    const handleCloseDeleteDialog = () => {
+        setDeleteDialogOpen(false)
         setSelectedPair(null)
     }
 
@@ -41,7 +53,7 @@ export default function PairList() {
         handleClearSearch,
     } = usePairTable({
         onEdit: handleOpenEdit,
-        onDelete: (pair) => console.log("delete", pair),
+        onDelete: handleOpenDelete,
     })
 
     return (
@@ -83,6 +95,12 @@ export default function PairList() {
             <PairDialog
                 open={dialogOpen}
                 onClose={handleCloseDialog}
+                pair={selectedPair}
+            />
+
+            <PairDeleteDialog
+                open={deleteDialogOpen}
+                onClose={handleCloseDeleteDialog}
                 pair={selectedPair}
             />
         </>

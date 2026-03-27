@@ -57,3 +57,16 @@ export async function update(
         throw new Error("Failed to update pair. Please try again later.")
     }
 }
+
+export async function remove(id: string): Promise<PairResponse> {
+    try {
+        return await httpClient.delete<PairResponse>(`/api/pairs/${id}`, {
+            withCredentials: true,
+        })
+    } catch (err: unknown) {
+        if (isHttpError(err) && err.response?.data?.message) {
+            throw new Error(err.response.data.message)
+        }
+        throw new Error("Failed to delete pair. Please try again later.")
+    }
+}
