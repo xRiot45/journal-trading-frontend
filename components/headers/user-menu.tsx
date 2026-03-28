@@ -13,12 +13,12 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useGetCurrentUserQuery } from "@/features/auth/application/queries"
-import { useLogoutMutation } from "@/features/auth/application/mutations"
+import { useCurrentUser } from "@/features/auth/hooks/use-current-user"
+import { useLogout } from "@/features/auth/hooks/use-logout"
 
 export function UserMenu() {
-    const { data, isLoading, isError } = useGetCurrentUserQuery()
-    const { mutate: logout, isPending } = useLogoutMutation()
+    const { data, isLoading, isError } = useCurrentUser()
+    const { logout, isPending } = useLogout()
 
     // Loading state
     if (isLoading) {

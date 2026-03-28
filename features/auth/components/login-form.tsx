@@ -4,19 +4,29 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Eye, EyeOff, Mail, Lock, Loader2, ArrowRight } from "lucide-react"
 import { useState } from "react"
-import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import { loginSchema, type LoginFormValues } from "../schemas/login.schema"
-import { useLoginMutation } from "../application/mutations"
-import { toast } from "sonner"
+import { useLogin } from "../hooks/use-login"
+
+interface FieldErrorProps {
+    message: string
+}
+
+function FieldError({ message }: FieldErrorProps) {
+    return (
+        <p className="flex items-center gap-1.5 text-xs text-black/65 dark:text-white/65">
+            <span className="size-1 rounded-full bg-black/65 dark:bg-white/65" />
+            {message}
+        </p>
+    )
+}
 
 export function LoginForm() {
     const [showPassword, setShowPassword] = useState(false)
-    const router = useRouter()
-    const { mutate: doLogin, isPending } = useLoginMutation()
+    const { login, isPending } = useLogin()
 
     const {
         register,
@@ -26,17 +36,7 @@ export function LoginForm() {
         resolver: zodResolver(loginSchema),
     })
 
-    const onSubmit = (values: LoginFormValues) => {
-        doLogin(values, {
-            onSuccess: () => {
-                toast.success("Login successful")
-                router.push("/dashboard")
-            },
-            onError: (err) => {
-                toast.error(err.message)
-            },
-        })
-    }
+    const onSubmit = (values: LoginFormValues) => login(values)
 
     return (
         <form
@@ -68,12 +68,7 @@ export function LoginForm() {
                         {...register("email")}
                     />
                 </div>
-                {errors.email && (
-                    <p className="flex items-center gap-1.5 text-xs text-black/65 dark:text-white/65">
-                        <span className="size-1 rounded-full bg-black/65 dark:bg-white/65" />
-                        {errors.email.message}
-                    </p>
-                )}
+                {errors.email && <FieldError message={errors.email.message!} />}
             </div>
 
             {/* Password */}
@@ -123,10 +118,7 @@ export function LoginForm() {
                     </button>
                 </div>
                 {errors.password && (
-                    <p className="flex items-center gap-1.5 text-xs text-black/65 dark:text-white/65">
-                        <span className="size-1 rounded-full bg-black/65 dark:bg-white/65" />
-                        {errors.password.message}
-                    </p>
+                    <FieldError message={errors.password.message!} />
                 )}
             </div>
 

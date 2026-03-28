@@ -4,10 +4,10 @@ import { createPair, deletePair, updatePair } from "../api/pair.api"
 import { PairItemResponse, PairRequest } from "../types/pair.types"
 import { PAIRS_QUERY_KEY } from "./use-pair-queries"
 import { ApiSuccessResponse } from "@/configs/http"
-import useInvalidatePairs from "@/hooks/use-invalidate-query"
+import useInvalidateQuery from "@/hooks/use-invalidate-query"
 
 export function useCreatePairMutation(onSuccess?: () => void) {
-    const invalidate = useInvalidatePairs(PAIRS_QUERY_KEY)
+    const invalidate = useInvalidateQuery(PAIRS_QUERY_KEY)
 
     return useMutation<PairItemResponse, Error, PairRequest>({
         mutationFn: createPair,
@@ -21,7 +21,7 @@ export function useCreatePairMutation(onSuccess?: () => void) {
 }
 
 export function useUpdatePairMutation(onSuccess?: () => void) {
-    const invalidate = useInvalidatePairs(PAIRS_QUERY_KEY)
+    const invalidate = useInvalidateQuery(PAIRS_QUERY_KEY)
 
     return useMutation<
         PairItemResponse,
@@ -39,7 +39,7 @@ export function useUpdatePairMutation(onSuccess?: () => void) {
 }
 
 export function useDeletePairMutation(onSuccess?: () => void) {
-    const invalidate = useInvalidatePairs(PAIRS_QUERY_KEY)
+    const invalidate = useInvalidateQuery(PAIRS_QUERY_KEY)
 
     return useMutation<ApiSuccessResponse, Error, string>({
         mutationFn: deletePair,

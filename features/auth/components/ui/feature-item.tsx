@@ -1,12 +1,16 @@
+import type { ElementType } from "react"
+
+interface FeatureItemProps {
+    icon: ElementType
+    title: string
+    description: string
+}
+
 export default function FeatureItem({
     icon: Icon,
     title,
     description,
-}: {
-    icon: React.ElementType
-    title: string
-    description: string
-}) {
+}: FeatureItemProps) {
     return (
         <div className="flex items-start gap-3.5">
             <div className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg border border-black/20 bg-black/10 dark:border-white/20 dark:bg-white/10">

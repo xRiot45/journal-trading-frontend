@@ -1,14 +1,12 @@
 import { cn } from "@/lib/utils"
 
-export default function StatBadge({
-    value,
-    label,
-    accent,
-}: {
+interface StatBadgeProps {
     value: string
     label: string
     accent?: string
-}) {
+}
+
+export default function StatBadge({ value, label, accent }: StatBadgeProps) {
     return (
         <div className="flex flex-col rounded-xl border border-black/8 bg-black/5 px-4 py-3 backdrop-blur-sm dark:border-white/8 dark:bg-white/5">
             <span
