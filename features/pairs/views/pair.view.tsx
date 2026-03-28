@@ -1,6 +1,6 @@
 import { PageBreadcrumb } from "@/components/page-breadcrumb"
-import PairList from "../components/pair-list"
 import { Container } from "@/components/ui/container"
+import PairList from "../components/pair-list"
 
 export default function PairView() {
     return (

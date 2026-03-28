@@ -1,20 +1,20 @@
+import { useState } from "react"
 import {
-    PaginationState,
-    RowSelectionState,
-    SortingState,
     getCoreRowModel,
     getFilteredRowModel,
     getPaginationRowModel,
     useReactTable,
+    type PaginationState,
+    type RowSelectionState,
+    type SortingState,
 } from "@tanstack/react-table"
-import { useState } from "react"
-import { useFindAllPairsQuery } from "../application/queries"
-import { PairResponseData } from "../interfaces/pair.interface"
-import { Columns } from "../components/columns"
+import { useFindAllPairsQuery } from "./use-pair-queries"
+import { Pair } from "../types/pair.types"
+import { buildPairColumns } from "../components/columns"
 
 interface UsePairTableOptions {
-    onEdit: (pair: PairResponseData) => void
-    onDelete: (pair: PairResponseData) => void
+    onEdit: (pair: Pair) => void
+    onDelete: (pair: Pair) => void
 }
 
 export function usePairTable({ onEdit, onDelete }: UsePairTableOptions) {
@@ -28,24 +28,27 @@ export function usePairTable({ onEdit, onDelete }: UsePairTableOptions) {
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
     const [searchQuery, setSearchQuery] = useState("")
 
-    const columns = Columns({ onEdit, onDelete })
+    const columns = buildPairColumns({ onEdit, onDelete })
 
     const [columnOrder, setColumnOrder] = useState<string[]>(
         columns.map((col) => col.id as string)
     )
 
+    const currentSort = sorting[0]
+
     const { data, isLoading } = useFindAllPairsQuery({
         page: pagination.pageIndex + 1,
         limit: pagination.pageSize,
         search: searchQuery || undefined,
-        sortBy: sorting[0]?.id,
-        order: sorting[0] ? (sorting[0].desc ? "DESC" : "ASC") : undefined,
+        sortBy: currentSort?.id,
+        order: currentSort ? (currentSort.desc ? "DESC" : "ASC") : undefined,
     })
 
     const tableData = data?.data ?? []
     const totalItems = data?.meta?.totalItems ?? 0
 
-    const table = useReactTable<PairResponseData>({
+    // eslint-disable-next-line react-hooks/incompatible-library
+    const table = useReactTable<Pair>({
         columns,
         data: tableData,
         pageCount: Math.ceil(totalItems / pagination.pageSize),

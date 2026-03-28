@@ -21,7 +21,6 @@ export function Toolbar({
     onClear,
     onAddPair,
 }: ToolbarProps) {
-    // Local state so typing doesn't trigger API calls on every keystroke
     const [inputValue, setInputValue] = useState(searchQuery)
 
     const handleSearch = () => onSearch(inputValue)

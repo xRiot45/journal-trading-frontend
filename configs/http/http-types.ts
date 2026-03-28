@@ -1,11 +1,11 @@
 import type { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios"
 
-export interface ApiSuccessResponse<TData> {
+export interface ApiSuccessResponse<TData = undefined> {
     success: boolean
     statusCode: number
     message: string
     timestamp: string
-    data: TData
+    data?: TData
 }
 
 export interface ApiErrorResponse {
