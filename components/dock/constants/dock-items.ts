@@ -4,58 +4,52 @@ export const PINNED_DOCK_ITEMS: DockItem[] = [
     {
         id: "dashboard",
         label: "Dashboard",
-        icon: "solar:widget-5-bold-duotone",
+        icon: "ic:round-dashboard",
         href: "/dashboard",
     },
+
+    // Dashboard
+    // Planning
+    // Journal
+    // Calendar
+    // Master Data
+    // Strategy
+
     {
-        id: "projects",
-        label: "Projects",
-        icon: "solar:folder-with-files-bold-duotone",
-        href: "/projects",
+        id: "pairs",
+        label: "Pairs",
+        icon: "fluent:pair-20-filled",
+        href: "/pairs",
     },
     {
-        id: "code",
-        label: "Code",
-        icon: "solar:code-square-bold-duotone",
-        href: "/code",
+        id: "sessions",
+        label: "Sessions",
+        icon: "pajamas:session-ai",
+        href: "/sessions",
     },
     {
-        id: "terminal",
-        label: "Terminal",
-        icon: "boxicons:terminal-filled",
-        href: "/terminal",
+        id: "strategies",
+        label: "Strategy",
+        icon: "material-symbols:strategy-outline",
+        href: "/strategies",
     },
     {
-        id: "database",
-        label: "Database",
-        icon: "solar:database-bold-duotone",
-        href: "/database",
+        id: "plannings",
+        label: "Planning",
+        icon: "pajamas:planning",
+        href: "/plannings",
     },
     {
-        id: "analytics",
-        label: "Analytics",
-        icon: "solar:chart-2-bold-duotone",
-        href: "/analytics",
+        id: "journals",
+        label: "Journals",
+        icon: "mdi:journal",
+        href: "/journals",
     },
     {
-        id: "messages",
-        label: "Messages",
-        icon: "solar:chat-round-dots-bold-duotone",
-        href: "/messages",
-        badge: 3,
-    },
-    {
-        id: "notifications",
-        label: "Notifications",
-        icon: "solar:bell-bing-bold-duotone",
-        href: "/notifications",
-        badge: 7,
-    },
-    {
-        id: "settings",
-        label: "Settings",
-        icon: "solar:settings-bold-duotone",
-        href: "/settings",
+        id: "calendars",
+        label: "Calendar",
+        icon: "solar:calendar-bold-duotone",
+        href: "/calendar",
     },
 ]
 
