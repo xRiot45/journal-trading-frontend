@@ -19,10 +19,3 @@ export interface PairListResponse extends ApiSuccessResponse<Pair[]> {
 
 export type PairItemResponse = ApiSuccessResponse<Pair>
 
-export interface FindAllPairsParams {
-    page?: number
-    limit?: number
-    search?: string
-    sortBy?: string
-    order?: "ASC" | "DESC"
-}

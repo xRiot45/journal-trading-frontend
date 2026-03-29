@@ -37,3 +37,11 @@ export interface ApiPaginatedData<TItem> {
     data: TItem[]
     meta: PaginationMeta
 }
+
+export interface FindAllParams {
+    page?: number
+    limit?: number
+    search?: string
+    sortBy?: string
+    order?: "ASC" | "DESC"
+}

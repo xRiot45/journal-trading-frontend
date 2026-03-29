@@ -1,6 +1,5 @@
-import { ApiSuccessResponse, httpClient } from "@/configs/http"
+import { ApiSuccessResponse, FindAllParams, httpClient } from "@/configs/http"
 import {
-    FindAllPairsParams,
     PairItemResponse,
     PairListResponse,
     PairRequest,
@@ -10,7 +9,7 @@ import throwApiError from "@/helpers/throw-api-error"
 const PAIRS_ENDPOINT = "/api/pairs"
 
 export async function findAllPairs(
-    params?: FindAllPairsParams
+    params?: FindAllParams
 ): Promise<PairListResponse> {
     try {
         return await httpClient.get<PairListResponse>(PAIRS_ENDPOINT, {
