@@ -5,6 +5,7 @@ export interface Session {
     name: string
     startTime: string
     endTime: string
+    description: string
     createdAt: string
     updatedAt: string
 }
@@ -13,6 +14,7 @@ export interface SessionRequest {
     name: string
     startTime: string
     endTime: string
+    description: string
 }
 
 export interface SessionListResponse extends ApiSuccessResponse<Session[]> {

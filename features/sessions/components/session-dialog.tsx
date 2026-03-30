@@ -32,6 +32,7 @@ export function SessionDialog() {
             name: "",
             startTime: "",
             endTime: "",
+            description: "",
         },
         mode: "onSubmit",
     })
@@ -42,6 +43,7 @@ export function SessionDialog() {
                 name: selectedSession?.name ?? "",
                 startTime: selectedSession?.startTime ?? "",
                 endTime: selectedSession?.endTime ?? "",
+                description: selectedSession?.description ?? "",
             })
         }
     }, [isDialogOpen, selectedSession, form])

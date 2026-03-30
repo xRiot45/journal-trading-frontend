@@ -83,37 +83,21 @@ export function buildSessionColumns({
                 skeleton: <Skeleton className="h-8 w-20" />,
             },
         },
+        {
+            id: "description",
+            accessorKey: "description",
+            header: ({ column }) => (
+                <DataGridColumnHeader title="Description" column={column} />
+            ),
+            cell: (info) => (info.getValue() as string) || "-",
+            enableSorting: false,
+            enableHiding: false,
+            meta: {
+                headerTitle: "Description",
+                skeleton: <Skeleton className="h-8 w-32" />,
+            },
+        },
 
-        {
-            id: "createdAt",
-            accessorKey: "createdAt",
-            header: ({ column }) => (
-                <DataGridColumnHeader title="Created At" column={column} />
-            ),
-            cell: (info) =>
-                new Date(info.getValue() as string).toLocaleString(),
-            enableSorting: true,
-            enableHiding: false,
-            meta: {
-                headerTitle: "Created At",
-                skeleton: <Skeleton className="h-8 w-20" />,
-            },
-        },
-        {
-            id: "updatedAt",
-            accessorKey: "updatedAt",
-            header: ({ column }) => (
-                <DataGridColumnHeader title="Updated At" column={column} />
-            ),
-            cell: (info) =>
-                new Date(info.getValue() as string).toLocaleString(),
-            enableSorting: true,
-            enableHiding: false,
-            meta: {
-                headerTitle: "Updated At",
-                skeleton: <Skeleton className="h-8 w-20" />,
-            },
-        },
         {
             id: "actions",
             header: "Actions",
