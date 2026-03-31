@@ -3,6 +3,8 @@
 import React, { useState } from "react"
 import { RichTextEditor } from "@/components/rich-text-editor"
 import { Icon } from "@iconify/react"
+import { PairSelect } from "@/components/pair-select/pair-select"
+import { useForm } from "react-hook-form"
 
 const INITIAL_CONTENT = `<h1>Welcome to Rich Text Editor ✨</h1>
 <p>This is a <strong>powerful</strong>, <em>beautiful</em>, and <u>fully-featured</u> rich text editor built with <strong>TipTap</strong>, <strong>Next.js</strong>, <strong>Tailwind CSS v4</strong>, and <strong>shadcn/ui</strong>.</p>
