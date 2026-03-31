@@ -82,7 +82,7 @@ export function LinkDialog({ editor, open, onOpenChange }: LinkDialogProps) {
                     <div className="grid gap-2">
                         <Label
                             htmlFor="url"
-                            className="text-xs font-medium text-[var(--color-muted-foreground)]"
+                            className="text-xs font-medium text-(--color-muted-foreground)"
                         >
                             URL
                         </Label>
@@ -101,7 +101,7 @@ export function LinkDialog({ editor, open, onOpenChange }: LinkDialogProps) {
                         <div className="grid gap-2">
                             <Label
                                 htmlFor="text"
-                                className="text-xs font-medium text-[var(--color-muted-foreground)]"
+                                className="text-xs font-medium text-(--color-muted-foreground)"
                             >
                                 Display Text
                             </Label>
@@ -123,7 +123,7 @@ export function LinkDialog({ editor, open, onOpenChange }: LinkDialogProps) {
                             variant="outline"
                             size="sm"
                             onClick={handleRemove}
-                            className="border-[var(--color-destructive)] text-[var(--color-destructive)] hover:bg-[var(--color-destructive)] hover:text-white"
+                            className="border-(--color-destructive) text-(--color-destructive) hover:bg-(--color-destructive) hover:text-white"
                         >
                             Remove Link
                         </Button>

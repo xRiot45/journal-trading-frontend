@@ -132,7 +132,7 @@ export function RichTextEditor({
     useEffect(() => {
         if (!editor) return
         if (value !== editor.getHTML()) {
-            editor.commands.setContent(value, false)
+            editor.commands.setContent(value)
             // eslint-disable-next-line react-hooks/set-state-in-effect
             setHtmlSource(value)
         }
@@ -149,7 +149,7 @@ export function RichTextEditor({
 
     const handleHtmlModeToggle = useCallback(() => {
         if (isHtmlMode && editor) {
-            editor.commands.setContent(htmlSource, false)
+            editor.commands.setContent(htmlSource)
             onChange?.(htmlSource)
         }
         setIsHtmlMode((v) => !v)

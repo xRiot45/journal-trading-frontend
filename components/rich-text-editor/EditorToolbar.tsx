@@ -92,7 +92,7 @@ function HeadingDropdown({ editor }: { editor: Editor }) {
             className="fixed inset-0 z-40"
             onMouseDown={() => setOpen(false)}
           />
-          <div className="absolute left-0 top-full z-50 mt-1 min-w-40 rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] p-1 shadow-lg">
+          <div className="absolute left-0 top-full z-50 mt-1 min-w-40 rounded-lg border border-(--color-border) bg-(--color-background) p-1 shadow-lg">
             {headings.map((h) => (
               <button
                 key={h.level}
@@ -104,8 +104,8 @@ function HeadingDropdown({ editor }: { editor: Editor }) {
                 className={cn(
                   "flex w-full items-center gap-2 rounded-md px-2.5 py-1.5 text-left text-sm transition-colors",
                   h.level === currentHeading.level
-                    ? "bg-[var(--color-foreground)] text-[var(--color-background)]"
-                    : "hover:bg-[var(--color-muted)] text-[var(--color-foreground)]"
+                    ? "bg-(--color-foreground) text-(--color-background)"
+                    : "hover:bg-(--color-muted) text-(--color-foreground)"
                 )}
               >
                 <Icon icon={h.icon} width={16} height={16} />
@@ -162,8 +162,8 @@ function ColorPicker({ editor }: { editor: Editor }) {
           }}
           className={cn(
             "flex h-8 w-8 items-center justify-center rounded-md transition-all duration-150",
-            "hover:bg-[var(--color-muted)] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--color-ring)]",
-            open && "bg-[var(--color-muted)]"
+            "hover:bg-(--color-muted) focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-(--color-ring)",
+            open && "bg-(--color-muted)"
           )}
         >
           <div className="relative flex flex-col items-center">
@@ -171,7 +171,7 @@ function ColorPicker({ editor }: { editor: Editor }) {
               icon="mdi:format-color-text"
               width={16}
               height={16}
-              className="text-[var(--color-muted-foreground)]"
+              className="text-(--color-muted-foreground)"
             />
             <div
               className="absolute -bottom-0.5 h-1 w-4 rounded-full"
@@ -189,8 +189,8 @@ function ColorPicker({ editor }: { editor: Editor }) {
             className="fixed inset-0 z-40"
             onMouseDown={() => setOpen(false)}
           />
-          <div className="absolute left-0 top-full z-50 mt-1 rounded-lg border border-[var(--color-border)] bg-[var(--color-background)] p-2.5 shadow-lg w-44">
-            <p className="text-[10px] font-medium text-[var(--color-muted-foreground)] uppercase tracking-wider mb-2">
+          <div className="absolute left-0 top-full z-50 mt-1 rounded-lg border border-(--color-border) bg-(--color-background) p-2.5 shadow-lg w-44">
+            <p className="text-[10px] font-medium text-(--color-muted-foreground) uppercase tracking-wider mb-2">
               Text Color
             </p>
             <div className="grid grid-cols-6 gap-1.5">

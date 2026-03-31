@@ -74,7 +74,7 @@ export function ImageDialog({ editor, open, onOpenChange }: ImageDialogProps) {
                 </DialogHeader>
 
                 {/* Tab switcher */}
-                <div className="flex gap-0.5 rounded-md border border-[var(--color-border)] p-0.5">
+                <div className="flex gap-0.5 rounded-md border border-(--color-border) p-0.5">
                     {(["url", "upload"] as const).map((tab) => (
                         <button
                             key={tab}
@@ -82,8 +82,8 @@ export function ImageDialog({ editor, open, onOpenChange }: ImageDialogProps) {
                             onClick={() => setActiveTab(tab)}
                             className={`flex-1 rounded py-1.5 text-xs font-medium transition-colors ${
                                 activeTab === tab
-                                    ? "bg-[var(--color-foreground)] text-[var(--color-background)]"
-                                    : "text-[var(--color-muted-foreground)] hover:text-[var(--color-foreground)]"
+                                    ? "bg-(--color-foreground) text-(--color-background)"
+                                    : "text-(--color-muted-foreground) hover:text-(--color-foreground)"
                             }`}
                         >
                             {tab === "url" ? "From URL" : "Upload File"}
@@ -96,7 +96,7 @@ export function ImageDialog({ editor, open, onOpenChange }: ImageDialogProps) {
                         <div className="grid gap-2">
                             <Label
                                 htmlFor="img-url"
-                                className="text-xs font-medium text-[var(--color-muted-foreground)]"
+                                className="text-xs font-medium text-(--color-muted-foreground)"
                             >
                                 Image URL
                             </Label>
@@ -114,19 +114,19 @@ export function ImageDialog({ editor, open, onOpenChange }: ImageDialogProps) {
                         <div className="grid gap-2">
                             <Label
                                 htmlFor="img-file"
-                                className="text-xs font-medium text-[var(--color-muted-foreground)]"
+                                className="text-xs font-medium text-(--color-muted-foreground)"
                             >
                                 Choose File
                             </Label>
-                            <div className="flex cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-[var(--color-border)] p-6 transition-colors hover:border-[var(--color-foreground)]">
+                            <div className="flex cursor-pointer items-center justify-center rounded-lg border-2 border-dashed border-(--color-border) p-6 transition-colors hover:border-(--color-foreground)">
                                 <label
                                     htmlFor="img-file"
                                     className="cursor-pointer text-center"
                                 >
-                                    <p className="text-sm text-[var(--color-muted-foreground)]">
+                                    <p className="text-sm text-(--color-muted-foreground)">
                                         Click to upload or drag & drop
                                     </p>
-                                    <p className="mt-1 text-xs text-[var(--color-muted-foreground)]">
+                                    <p className="mt-1 text-xs text-(--color-muted-foreground)">
                                         PNG, JPG, GIF, WebP
                                     </p>
                                     <input
@@ -144,7 +144,7 @@ export function ImageDialog({ editor, open, onOpenChange }: ImageDialogProps) {
                     <div className="grid gap-2">
                         <Label
                             htmlFor="img-alt"
-                            className="text-xs font-medium text-[var(--color-muted-foreground)]"
+                            className="text-xs font-medium text-(--color-muted-foreground)"
                         >
                             Alt Text{" "}
                             <span className="opacity-50">(optional)</span>

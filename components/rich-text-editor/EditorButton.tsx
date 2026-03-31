@@ -1,6 +1,5 @@
 "use client"
 
-import React from "react"
 import { Icon } from "@iconify/react"
 import { cn } from "@/lib/utils"
 import { EditorTooltip } from "./EditorTooltip"
