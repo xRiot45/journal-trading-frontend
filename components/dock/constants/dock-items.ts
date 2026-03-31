@@ -34,10 +34,10 @@ export const PINNED_DOCK_ITEMS: DockItem[] = [
         href: "/strategies",
     },
     {
-        id: "plannings",
-        label: "Planning",
+        id: "trading-plans",
+        label: "Trading Plans",
         icon: "pajamas:planning",
-        href: "/plannings",
+        href: "/trading-plans",
     },
     {
         id: "journals",
