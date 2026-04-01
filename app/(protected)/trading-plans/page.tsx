@@ -1,10 +1,9 @@
 "use client"
 
-import React, { useState } from "react"
+import { useState } from "react"
 import { RichTextEditor } from "@/components/rich-text-editor"
-import { Icon } from "@iconify/react"
-import { PairSelect } from "@/components/pair-select/pair-select"
-import { useForm } from "react-hook-form"
+import { FileUpload } from "@/components/file-upload"
+import Section from "@/components/ui/section"
 
 const INITIAL_CONTENT = `<h1>Welcome to Rich Text Editor ✨</h1>
 <p>This is a <strong>powerful</strong>, <em>beautiful</em>, and <u>fully-featured</u> rich text editor built with <strong>TipTap</strong>, <strong>Next.js</strong>, <strong>Tailwind CSS v4</strong>, and <strong>shadcn/ui</strong>.</p>
@@ -70,7 +69,7 @@ export default function TradingPlansPage() {
     >("full")
 
     return (
-        <main className="min-h-screen bg-[var(--color-background)]">
+        <main className="min-h-screen bg-(--color-background)">
             <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
                 {/* Editor */}
                 {activeDemo === "full" && (
@@ -85,6 +84,26 @@ export default function TradingPlansPage() {
                         minHeight="520px"
                     />
                 )}
+            </div>
+
+            <div className="mx-auto max-w-2xl space-y-16 px-4">
+                {/* Header */}
+                <div className="space-y-2 text-center">
+                    <h1 className="text-3xl font-bold tracking-tight text-zinc-900">
+                        File Upload System
+                    </h1>
+                    <p className="text-sm text-zinc-500">
+                        Enterprise-grade · drag & drop · accessible · extensible
+                    </p>
+                </div>
+
+                {/* ── 1. Basic single file ── */}
+                <Section title="Single File (Uncontrolled)" label="1">
+                    <FileUpload
+                        label="Drop a file or click to browse"
+                        description="Any file type · no size limit"
+                    />
+                </Section>
             </div>
         </main>
     )
