@@ -4,6 +4,8 @@ import { useState } from "react"
 import { RichTextEditor } from "@/components/rich-text-editor"
 import { FileUpload } from "@/components/file-upload"
 import Section from "@/components/ui/section"
+import { useForm } from "react-hook-form"
+import { PairSelect } from "@/features/pairs/components/pair-select/PairSelect"
 
 const INITIAL_CONTENT = `<h1>Welcome to Rich Text Editor ✨</h1>
 <p>This is a <strong>powerful</strong>, <em>beautiful</em>, and <u>fully-featured</u> rich text editor built with <strong>TipTap</strong>, <strong>Next.js</strong>, <strong>Tailwind CSS v4</strong>, and <strong>shadcn/ui</strong>.</p>
@@ -68,6 +70,22 @@ export default function TradingPlansPage() {
         "full" | "minimal" | "readonly"
     >("full")
 
+    const {
+        control,
+        handleSubmit,
+        formState: { isSubmitting },
+    } = useForm({
+        defaultValues: {
+            pairId: "", // empty — user must choose
+            quantity: 1,
+        },
+    })
+
+    const onSubmit = async (values: any) => {
+        console.log("Create payload:", values)
+        // await createOrder(values)
+    }
+
     return (
         <main className="min-h-screen bg-(--color-background)">
             <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
@@ -105,6 +123,20 @@ export default function TradingPlansPage() {
                     />
                 </Section>
             </div>
+
+            <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="flex flex-col gap-6"
+            >
+                <PairSelect
+                    control={control}
+                    name="pairId"
+                    label="Select Pair"
+                    placeholder="Choose a trading pair…"
+                    rules={{ required: "Please select a pair" }}
+                    disabled={isSubmitting}
+                />
+            </form>
         </main>
     )
 }
