@@ -19,6 +19,7 @@ export interface FileUploadProps {
     maxSize?: number // bytes
     maxFiles?: number
     disabled?: boolean
+    value?: File | null
 
     // Appearance
     variant?: FileUploadVariant

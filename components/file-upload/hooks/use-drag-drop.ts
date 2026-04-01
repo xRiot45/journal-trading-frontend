@@ -1,3 +1,5 @@
+"use client"
+
 import { useState, useCallback, useRef, DragEvent } from "react"
 import { DragDropState } from "../types/types"
 

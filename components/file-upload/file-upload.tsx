@@ -1,8 +1,8 @@
 "use client"
 
-import { useCallback, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 import { cn } from "@/lib/utils"
-import { FileUploadProps } from "./types/types"
+import { FileStatus, FileUploadProps, UploadedFile } from "./types/types"
 import { useFileUpload } from "./hooks/use-file-upload"
 import { Dropzone } from "./dropzone"
 import { FileList } from "./file-list"
@@ -21,13 +21,28 @@ export function FileUpload({
     label,
     description,
     className,
+    value,
 }: FileUploadProps) {
+    const resolvedFiles = useMemo(() => {
+        if (value) {
+            return [
+                {
+                    id: value.name,
+                    file: value,
+                    preview: URL.createObjectURL(value),
+                    status: "idle" as FileStatus,
+                },
+            ] satisfies UploadedFile[]
+        }
+        return controlledFiles
+    }, [value, controlledFiles])
+
     const { files, processFiles, removeFile, canAddMore } = useFileUpload({
         multiple,
         accept,
         maxSize,
         maxFiles,
-        files: controlledFiles,
+        files: resolvedFiles,
         onFilesChange,
         onUpload,
     })

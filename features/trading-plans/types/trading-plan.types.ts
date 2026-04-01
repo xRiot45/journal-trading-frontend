@@ -17,7 +17,7 @@ export interface TradingPlanRequest {
     date: string
     pairId: string
     description: string
-    thumbnail: File | null
+    thumbnail: File
 }
 
 export type TradingPlanListResponse = ApiSuccessResponse<TradingPlan[]>
