@@ -22,6 +22,7 @@ export function FileUpload({
     description,
     className,
     value,
+    existingPreviewUrl,
 }: FileUploadProps) {
     const resolvedFiles = useMemo(() => {
         if (value) {
@@ -34,8 +35,20 @@ export function FileUpload({
                 },
             ] satisfies UploadedFile[]
         }
+
+        if (existingPreviewUrl) {
+            return [
+                {
+                    id: existingPreviewUrl,
+                    file: new File([], "existing-thumbnail"),
+                    preview: existingPreviewUrl,
+                    status: "idle" as FileStatus,
+                },
+            ] satisfies UploadedFile[]
+        }
+
         return controlledFiles
-    }, [value, controlledFiles])
+    }, [value, existingPreviewUrl, controlledFiles])
 
     const { files, processFiles, removeFile, canAddMore } = useFileUpload({
         multiple,

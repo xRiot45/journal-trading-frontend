@@ -20,6 +20,7 @@ export interface FileUploadProps {
     maxFiles?: number
     disabled?: boolean
     value?: File | null
+    existingPreviewUrl?: string
 
     // Appearance
     variant?: FileUploadVariant

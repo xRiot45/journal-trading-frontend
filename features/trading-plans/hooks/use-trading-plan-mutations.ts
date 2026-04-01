@@ -5,7 +5,7 @@ import {
     TradingPlanRequest,
 } from "../types/trading-plan.types"
 import { useMutation } from "@tanstack/react-query"
-import { createTradingPlan } from "../api/trading-plan.api"
+import { createTradingPlan, updateTradingPlan } from "../api/trading-plan.api"
 import { toast } from "sonner"
 
 export function useCreateTradingPlanMutation(onSuccess?: () => void) {
@@ -15,6 +15,25 @@ export function useCreateTradingPlanMutation(onSuccess?: () => void) {
         mutationFn: createTradingPlan,
         onSuccess: () => {
             toast.success("Trading plan created")
+            invalidate()
+            onSuccess?.()
+        },
+        onError: (error) => toast.error(error.message),
+    })
+}
+
+export function useUpdateTradingPlanMutation(onSuccess?: () => void) {
+    const invalidate = useInvalidateQuery(TRADING_PLANS_QUERY_KEY)
+
+    return useMutation<
+        TradingPlanItemResponse,
+        Error,
+        { tradingPlanId: string; payload: TradingPlanRequest }
+    >({
+        mutationFn: ({ tradingPlanId, payload }) =>
+            updateTradingPlan(tradingPlanId, payload),
+        onSuccess: () => {
+            toast.success("Trading plan updated")
             invalidate()
             onSuccess?.()
         },

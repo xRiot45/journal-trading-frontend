@@ -13,15 +13,22 @@ import { Input } from "@/components/ui/input"
 import { PairSelect } from "@/features/pairs/components/pair-select"
 import { RichTextEditor } from "@/components/rich-text-editor"
 import { FileUpload } from "@/components/file-upload"
+import { Pair } from "@/features/pairs/types/pair.types"
 
 interface TradingPlanFormFieldsProps {
     form: UseFormReturn<TradingPlanFormValues>
+    existingThumbnailUrl?: string
+    existingPair?: Pair
 }
 
-export function TradingPlanFormFields({ form }: TradingPlanFormFieldsProps) {
+export function TradingPlanFormFields({
+    form,
+    existingThumbnailUrl,
+    existingPair,
+}: TradingPlanFormFieldsProps) {
+    console.log(existingPair)
     return (
         <>
-            {/* ✅ FIX: FileUpload sekarang terhubung ke form via FormField */}
             <FormField
                 control={form.control}
                 name="thumbnail"
@@ -35,6 +42,7 @@ export function TradingPlanFormFields({ form }: TradingPlanFormFieldsProps) {
                                 onFilesChange={(files) =>
                                     field.onChange(files[0]?.file ?? null)
                                 }
+                                existingPreviewUrl={existingThumbnailUrl}
                             />
                         </FormControl>
                         <FormMessage />
@@ -85,7 +93,6 @@ export function TradingPlanFormFields({ form }: TradingPlanFormFieldsProps) {
                 placeholder="Select pair"
             />
 
-            {/* ✅ FIX: Tambah shouldValidate & shouldDirty agar error description muncul */}
             <FormField
                 control={form.control}
                 name="description"
