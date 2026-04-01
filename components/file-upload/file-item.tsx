@@ -28,7 +28,7 @@ function FileItemComponent({ file, layout, onRemove }: FileItemProps) {
             className={cn(
                 "group relative flex gap-3 rounded-xl border border-zinc-200 bg-white p-3",
                 "transition-all duration-200 hover:border-zinc-300 hover:shadow-sm",
-                "animate-in duration-200 fade-in slide-in-from-bottom-1",
+                "dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-zinc-700",
                 file.status === "error" && "border-red-200 bg-red-50",
                 isGrid && "flex-col"
             )}
@@ -37,7 +37,7 @@ function FileItemComponent({ file, layout, onRemove }: FileItemProps) {
                 <FilePreview file={file.file} preview={file.preview} />
 
                 <div className="flex min-w-0 flex-1 flex-col justify-center">
-                    <p className="truncate text-sm leading-tight font-medium text-zinc-800">
+                    <p className="truncate text-sm leading-tight font-medium text-zinc-800 dark:text-zinc-100">
                         {file.file.name}
                     </p>
 
@@ -45,8 +45,8 @@ function FileItemComponent({ file, layout, onRemove }: FileItemProps) {
                         className={cn(
                             "mt-0.5 truncate text-xs",
                             file.status === "error"
-                                ? "text-red-500"
-                                : "text-zinc-400"
+                                ? "text-red-500 dark:text-red-400"
+                                : "text-zinc-400 dark:text-zinc-500"
                         )}
                     >
                         {file.status === "error"
@@ -79,9 +79,9 @@ function FileItemComponent({ file, layout, onRemove }: FileItemProps) {
                     "absolute top-2 right-2",
                     "flex h-6 w-6 items-center justify-center rounded-lg",
                     "bg-zinc-100 text-zinc-500",
-                    "opacity-0 transition-opacity duration-150 group-hover:opacity-100",
                     "hover:bg-zinc-200 hover:text-zinc-700",
-                    "focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none",
+                    "dark:bg-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-700 dark:hover:text-zinc-200",
+                    "focus-visible:ring-2 focus-visible:ring-zinc-500 focus-visible:outline-none dark:focus-visible:ring-zinc-400",
                     file.status === "uploading" &&
                         "pointer-events-none opacity-30"
                 )}
@@ -99,7 +99,7 @@ function FileItemComponent({ file, layout, onRemove }: FileItemProps) {
 
             {/* Success badge */}
             {file.status === "success" && (
-                <span className="absolute top-2 right-2 flex h-5 w-5 items-center justify-center rounded-full bg-zinc-900 text-white transition-opacity duration-150 group-hover:opacity-0">
+                <span className="absolute top-2 right-2 flex h-5 w-5 items-center justify-center rounded-full bg-zinc-900 text-white transition-opacity duration-150 group-hover:opacity-0 dark:bg-zinc-100 dark:text-zinc-900">
                     <svg
                         viewBox="0 0 16 16"
                         fill="currentColor"

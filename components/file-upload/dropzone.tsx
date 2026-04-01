@@ -75,24 +75,26 @@ export function Dropzone({
                 "relative flex flex-col items-center justify-center",
                 "min-h-40 w-full cursor-pointer rounded-2xl",
                 "transition-all duration-200 ease-out",
-                "focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2 focus-visible:outline-none",
+                "focus-visible:ring-2 focus-visible:ring-zinc-900 focus-visible:ring-offset-2 focus-visible:outline-none dark:focus-visible:ring-zinc-100",
 
                 // Variants
                 variant === "default" && [
                     "border-2 border-dashed",
                     isDragOver
-                        ? "scale-[1.01] border-zinc-900 bg-zinc-50"
-                        : "border-zinc-300 bg-white hover:border-zinc-500 hover:bg-zinc-50",
+                        ? "scale-[1.01] border-zinc-900 bg-zinc-50 dark:border-zinc-100 dark:bg-zinc-900"
+                        : "border-zinc-300 bg-white hover:border-zinc-500 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-950 dark:hover:border-zinc-400 dark:hover:bg-zinc-900",
                 ],
                 variant === "outline" && [
                     "border border-solid",
                     isDragOver
-                        ? "scale-[1.01] border-zinc-900 bg-zinc-50"
-                        : "border-zinc-200 bg-white hover:border-zinc-400 hover:bg-zinc-50",
+                        ? "scale-[1.01] border-zinc-900 bg-zinc-50 dark:border-zinc-100 dark:bg-zinc-900"
+                        : "border-zinc-200 bg-white hover:border-zinc-400 hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-zinc-600 dark:hover:bg-zinc-900",
                 ],
                 variant === "minimal" && [
-                    "border-0 bg-zinc-50",
-                    isDragOver ? "bg-zinc-100" : "hover:bg-zinc-100",
+                    "border-0 bg-zinc-50 dark:bg-zinc-900",
+                    isDragOver
+                        ? "bg-zinc-100 dark:bg-zinc-800"
+                        : "hover:bg-zinc-100 dark:hover:bg-zinc-800",
                 ],
 
                 disabled && "pointer-events-none cursor-not-allowed opacity-50",

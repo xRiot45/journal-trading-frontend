@@ -41,8 +41,9 @@ export function EmptyState({
                 className={cn(
                     "relative flex h-14 w-14 items-center justify-center rounded-2xl border-2 transition-all duration-300",
                     isDragOver
-                        ? "scale-110 border-zinc-900 bg-zinc-900"
-                        : "border-zinc-300 bg-zinc-50",
+                        ? "scale-110 border-zinc-900 bg-zinc-900 dark:border-zinc-100 dark:bg-zinc-100"
+                        : "border-zinc-300 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900",
+
                     disabled && "opacity-40"
                 )}
             >
@@ -55,8 +56,8 @@ export function EmptyState({
                     className={cn(
                         "h-6 w-6 transition-all duration-300",
                         isDragOver
-                            ? "-translate-y-0.5 text-white"
-                            : "text-zinc-500"
+                            ? "-translate-y-0.5 text-white dark:text-zinc-900"
+                            : "text-zinc-500 dark:text-zinc-400"
                     )}
                 >
                     <path
@@ -72,8 +73,10 @@ export function EmptyState({
                 <p
                     className={cn(
                         "text-sm font-semibold transition-colors duration-200",
-                        isDragOver ? "text-zinc-900" : "text-zinc-700",
-                        disabled && "text-zinc-400"
+                        isDragOver
+                            ? "text-zinc-900 dark:text-zinc-100"
+                            : "text-zinc-700 dark:text-zinc-300",
+                        disabled && "text-zinc-400 dark:text-zinc-600"
                     )}
                 >
                     {isDragOver
@@ -84,7 +87,7 @@ export function EmptyState({
                 {!isDragOver && (
                     <p
                         className={cn(
-                            "text-xs text-zinc-400",
+                            "text-xs text-zinc-400 dark:text-zinc-500",
                             disabled && "opacity-60"
                         )}
                     >

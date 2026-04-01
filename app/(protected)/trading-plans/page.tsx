@@ -120,6 +120,7 @@ export default function TradingPlansPage() {
                     <FileUpload
                         label="Drop a file or click to browse"
                         description="Any file type · no size limit"
+                        variant="default"
                     />
                 </Section>
             </div>

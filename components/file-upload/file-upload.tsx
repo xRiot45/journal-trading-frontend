@@ -66,7 +66,7 @@ export function FileUpload({
 
             {/* Stats bar — only in multi-file + upload mode */}
             {multiple && maxFiles !== undefined && (
-                <p className="text-right text-xs text-zinc-400 tabular-nums">
+                <p className="text-right text-xs text-zinc-400 tabular-nums dark:text-zinc-500">
                     {files.length} / {maxFiles} file{maxFiles !== 1 ? "s" : ""}
                 </p>
             )}

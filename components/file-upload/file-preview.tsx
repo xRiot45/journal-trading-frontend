@@ -170,7 +170,7 @@ export function FilePreview({ file, preview, className }: FilePreviewProps) {
         return (
             <div
                 className={cn(
-                    "relative h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-zinc-100",
+                    "relative h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-zinc-100 dark:bg-zinc-800",
                     className
                 )}
             >
@@ -188,7 +188,7 @@ export function FilePreview({ file, preview, className }: FilePreviewProps) {
     return (
         <div
             className={cn(
-                "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-zinc-100",
+                "flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800",
                 className
             )}
         >
