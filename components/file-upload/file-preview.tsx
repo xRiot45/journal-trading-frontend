@@ -168,20 +168,14 @@ export function FilePreview({ file, preview, className }: FilePreviewProps) {
 
     if (preview && category === "image") {
         return (
-            <div
-                className={cn(
-                    "relative h-10 w-10 shrink-0 overflow-hidden rounded-lg bg-zinc-100 dark:bg-zinc-800",
-                    className
-                )}
-            >
-                <Image
-                    src={preview}
-                    alt={file.name}
-                    fill
-                    className="object-cover"
-                    sizes="40px"
-                />
-            </div>
+            <Image
+                src={preview}
+                alt={file.name}
+                width={80}
+                height={90}
+                className="rounded-md object-cover"
+                unoptimized
+            />
         )
     }
 

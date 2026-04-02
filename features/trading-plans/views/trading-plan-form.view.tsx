@@ -7,8 +7,11 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { LoaderCircleIcon } from "lucide-react"
 import { TradingPlanFormFields } from "../components/trading-plan-form-fields"
 import {
+    CreateTradingPlanFormValues,
+    createTradingPlanSchema,
+    EditTradingPlanFormValues,
+    editTradingPlanSchema,
     TradingPlanFormValues,
-    tradingPlanSchema,
 } from "../schemas/trading-plan.schema"
 import {
     useCreateTradingPlanMutation,
@@ -36,8 +39,12 @@ export default function TradingPlanFormView({
     const { data: existingData, isLoading: isLoadingData } =
         useFindTradingPlanByIdQuery(tradingPlanId!)
 
-    const form = useForm<TradingPlanFormValues>({
-        resolver: zodResolver(tradingPlanSchema),
+    const form = useForm<
+        CreateTradingPlanFormValues | EditTradingPlanFormValues
+    >({
+        resolver: zodResolver(
+            isEditing ? editTradingPlanSchema : createTradingPlanSchema
+        ),
         defaultValues: {
             title: "",
             date: "",
@@ -81,13 +88,20 @@ export default function TradingPlanFormView({
 
     const buildFormData = (values: TradingPlanFormValues): FormData => {
         const formData = new FormData()
-        formData.append("title", values.title)
-        formData.append("date", values.date)
-        formData.append("pairId", values.pairId)
-        formData.append("description", values.description)
-        if (values.thumbnail) {
-            formData.append("thumbnail", values.thumbnail)
-        }
+
+        const {
+            title: titleValue,
+            date: dateValue,
+            pairId: pairIdValue,
+            description: descriptionValue,
+            thumbnail: thumbnailValue,
+        } = values
+
+        if (titleValue) formData.append("title", titleValue)
+        if (dateValue) formData.append("date", dateValue)
+        if (pairIdValue) formData.append("pairId", pairIdValue)
+        if (descriptionValue) formData.append("description", descriptionValue)
+        if (thumbnailValue) formData.append("thumbnail", thumbnailValue)
 
         return formData
     }

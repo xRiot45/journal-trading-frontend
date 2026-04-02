@@ -25,7 +25,7 @@ export function FileUpload({
     existingPreviewUrl,
 }: FileUploadProps) {
     const resolvedFiles = useMemo(() => {
-        if (value) {
+        if (value instanceof File && value.size > 0) {
             return [
                 {
                     id: value.name,
@@ -37,10 +37,23 @@ export function FileUpload({
         }
 
         if (existingPreviewUrl) {
+            const urlPath = existingPreviewUrl.split("?")[0]
+            const ext = urlPath.split(".").pop()?.toLowerCase() ?? "jpg"
+            const mimeMap: Record<string, string> = {
+                jpg: "image/jpeg",
+                jpeg: "image/jpeg",
+                png: "image/png",
+                gif: "image/gif",
+                webp: "image/webp",
+            }
+            const mimeType = mimeMap[ext] ?? "image/jpeg"
+
             return [
                 {
                     id: existingPreviewUrl,
-                    file: new File([], "existing-thumbnail"),
+                    file: new File([], `existing-thumbnail.${ext}`, {
+                        type: mimeType,
+                    }),
                     preview: existingPreviewUrl,
                     status: "idle" as FileStatus,
                 },
@@ -49,6 +62,8 @@ export function FileUpload({
 
         return controlledFiles
     }, [value, existingPreviewUrl, controlledFiles])
+
+    console.log("Resolved files:", resolvedFiles)
 
     const { files, processFiles, removeFile, canAddMore } = useFileUpload({
         multiple,
@@ -71,7 +86,6 @@ export function FileUpload({
 
     return (
         <div className={cn("flex w-full flex-col gap-3", className)}>
-            {/* Show dropzone only when user can still add files */}
             {canAddMore && (
                 <Dropzone
                     accept={accept}
