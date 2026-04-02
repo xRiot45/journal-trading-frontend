@@ -5,8 +5,13 @@ import {
     TradingPlanRequest,
 } from "../types/trading-plan.types"
 import { useMutation } from "@tanstack/react-query"
-import { createTradingPlan, updateTradingPlan } from "../api/trading-plan.api"
+import {
+    createTradingPlan,
+    deleteTradingPlan,
+    updateTradingPlan,
+} from "../api/trading-plan.api"
 import { toast } from "sonner"
+import { ApiSuccessResponse } from "@/configs/http"
 
 export function useCreateTradingPlanMutation(onSuccess?: () => void) {
     const invalidate = useInvalidateQuery(TRADING_PLANS_QUERY_KEY)
@@ -34,6 +39,20 @@ export function useUpdateTradingPlanMutation(onSuccess?: () => void) {
             updateTradingPlan(tradingPlanId, payload),
         onSuccess: () => {
             toast.success("Trading plan updated")
+            invalidate()
+            onSuccess?.()
+        },
+        onError: (error) => toast.error(error.message),
+    })
+}
+
+export function useDeleteTradingPlanMutation(onSuccess?: () => void) {
+    const invalidate = useInvalidateQuery(TRADING_PLANS_QUERY_KEY)
+
+    return useMutation<ApiSuccessResponse, Error, string>({
+        mutationFn: deleteTradingPlan,
+        onSuccess: () => {
+            toast.success("Trading plan deleted")
             invalidate()
             onSuccess?.()
         },

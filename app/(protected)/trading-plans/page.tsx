@@ -1,3 +1,4 @@
+import TradingPlanView from "@/features/trading-plans/views/trading-plan.view"
 import { Metadata } from "next"
 
 export const metadata: Metadata = {
@@ -6,9 +7,5 @@ export const metadata: Metadata = {
 }
 
 export default function TradingPlansPage() {
-    return (
-        <>
-            <h1>Trading Plan</h1>
-        </>
-    )
+    return <TradingPlanView />
 }
