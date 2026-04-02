@@ -1,165 +1,91 @@
 "use client"
 
+import { useMemo } from "react"
 import { Container } from "@/components/ui/container"
 import { PageBreadcrumb } from "@/components/page-breadcrumb"
 import { Button } from "@/components/ui/button"
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
 import { Icon } from "@iconify/react"
-import { Badge } from "@/components/ui/badge"
 import { useFindAllTradingPlansQuery } from "../hooks/use-trading-plan-queries"
-import { format } from "date-fns"
-import Image from "next/image"
+import { useDeleteTradingPlanMutation } from "../hooks/use-trading-plan-mutations"
 import { TradingPlan } from "../types/trading-plan.types"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { useTradingPlanStore } from "../store/trading-plan.store"
+import { TradingPlanFilters } from "../components/trading-plan-filters"
+import { TradingPlanCardSkeleton } from "../components/trading-plan-card-skeleton"
+import { TradingPlanEmptyState } from "../components/trading-plan-empty-state"
+import { TradingPlanCard } from "../components/trading-plan-card"
+import { TradingPlanDeleteDialog } from "../components/trading-plan-delete-dialog"
 
-const months = [
-    { label: "January", value: "1" },
-    { label: "February", value: "2" },
-    { label: "March", value: "3" },
-    { label: "April", value: "4" },
-    { label: "May", value: "5" },
-    { label: "June", value: "6" },
-    { label: "July", value: "7" },
-    { label: "August", value: "8" },
-    { label: "September", value: "9" },
-    { label: "October", value: "10" },
-    { label: "November", value: "11" },
-    { label: "December", value: "12" },
-]
-
-const currentYear = new Date().getFullYear()
-const years = Array.from({ length: 10 }, (_, i) => currentYear - i)
-
-interface TradingPlanCardProps {
-    plan: TradingPlan
-    onShowDetail: (id: string) => void
-    onUpdate: (id: string) => void
-    onDelete: (id: string) => void
-}
-
-function TradingPlanCard({
-    plan,
-    onShowDetail,
-    onUpdate,
-    onDelete,
-}: TradingPlanCardProps) {
-    const formattedDate = format(new Date(plan.date), "dd MMM yyyy")
-
+function TradingPlanErrorState() {
     return (
-        <div className="group relative flex flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md">
-            {/* Thumbnail */}
-            <div className="relative aspect-video overflow-hidden">
-                <div className="absolute inset-0 z-10 bg-linear-to-t from-black/60 via-black/10 to-transparent" />
-                <Image
-                    src={`${process.env.NEXT_PUBLIC_API_URL}${plan.thumbnailUrl}`}
-                    alt={plan.title}
-                    className="h-full w-full object-cover brightness-90 transition-transform duration-500 group-hover:scale-105 dark:brightness-75"
-                    unoptimized
-                    width={0}
-                    height={0}
+        <div className="flex flex-col items-center justify-center rounded-2xl border border-destructive/20 bg-destructive/5 py-16 text-center">
+            <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
+                <Icon
+                    icon="lucide:alert-circle"
+                    className="size-6 text-destructive"
                 />
-                {/* Pair badge overlay */}
-                <div className="absolute bottom-2 left-2 z-20">
-                    <Badge
-                        variant="secondary"
-                        className="border-0 bg-black/60 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-white backdrop-blur-sm"
-                    >
-                        {plan.pair.name}
-                    </Badge>
-                </div>
             </div>
-
-            {/* Content */}
-            <div className="flex flex-1 flex-col gap-3 p-3">
-                {/* Title */}
-                <h3 className="line-clamp-2 text-sm leading-snug font-semibold text-card-foreground">
-                    {plan.title}
-                </h3>
-
-                {/* Date */}
-                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                    <Icon
-                        icon="lucide:calendar"
-                        className="size-3.5 shrink-0"
-                    />
-                    <span>{formattedDate}</span>
-                </div>
-
-                {/* Actions */}
-                <div className="mt-auto flex items-center gap-1.5 pt-1">
-                    <Button
-                        size="md"
-                        className="h-10 flex-1 gap-1 text-xs"
-                        onClick={() => onShowDetail(plan.id)}
-                    >
-                        <Icon icon="lucide:eye" className="size-3" />
-                        View Detail
-                    </Button>
-                    <Button
-                        size="md"
-                        variant="outline"
-                        className="h-10 w-10 p-0"
-                        onClick={() => onUpdate(plan.id)}
-                        title="Update"
-                    >
-                        <Icon icon="lucide:pencil" className="size-3" />
-                    </Button>
-                    <Button
-                        size="md"
-                        variant="destructive"
-                        className="h-10 w-10 p-0 text-white"
-                        onClick={() => onDelete(plan.id)}
-                        title="Delete"
-                    >
-                        <Icon icon="lucide:trash-2" className="size-3" />
-                    </Button>
-                </div>
-            </div>
-        </div>
-    )
-}
-
-function TradingPlanCardSkeleton() {
-    return (
-        <div className="flex animate-pulse flex-col overflow-hidden rounded-xl border border-border bg-card shadow-sm">
-            <div className="aspect-video bg-muted" />
-            <div className="flex flex-col gap-3 p-3">
-                <div className="h-4 w-3/4 rounded bg-muted" />
-                <div className="h-3 w-1/2 rounded bg-muted" />
-                <div className="flex gap-1.5 pt-1">
-                    <div className="h-7 flex-1 rounded bg-muted" />
-                    <div className="h-7 w-7 rounded bg-muted" />
-                    <div className="h-7 w-7 rounded bg-muted" />
-                </div>
-            </div>
+            <p className="text-sm font-semibold text-destructive">
+                Failed to load trading plans
+            </p>
+            <p className="mt-1 text-xs text-muted-foreground">
+                Please try refreshing the page
+            </p>
         </div>
     )
 }
 
 export default function TradingPlanView() {
     const router = useRouter()
+
     const { data, isLoading, error } = useFindAllTradingPlansQuery()
-    const plans: TradingPlan[] = data?.data ?? []
+    const { mutate: deleteMutation } = useDeleteTradingPlanMutation()
+
+    const {
+        filter,
+        deleteConfirmation,
+        setFilter,
+        resetFilter,
+        openDeleteConfirmation,
+        closeDeleteConfirmation,
+    } = useTradingPlanStore()
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const allPlans: TradingPlan[] = data?.data ?? []
+
+    // Filter plans by selected month/year (client-side)
+    const filteredPlans = useMemo(() => {
+        return allPlans.filter((plan) => {
+            const date = new Date(plan.date)
+            const matchesMonth =
+                !filter.month || String(date.getMonth() + 1) === filter.month
+            const matchesYear =
+                !filter.year || String(date.getFullYear()) === filter.year
+            return matchesMonth && matchesYear
+        })
+    }, [allPlans, filter.month, filter.year])
+
+    const hasActiveFilter = !!filter.month || !!filter.year
 
     const handleShowDetail = (id: string) => {
         router.push(`/trading-plans/${id}`)
     }
 
     const handleUpdate = (id: string) => {
-        console.log("Update:", id)
         router.push(`/trading-plans/${id}/edit`)
     }
 
-    const handleDelete = (id: string) => {
-        console.log("Delete:", id)
-        // Open confirmation dialog then call delete mutation
+    const handleDeleteRequest = (id: string) => {
+        const plan = allPlans.find((p) => p.id === id)
+        openDeleteConfirmation(id, plan?.title)
+    }
+
+    const handleDeleteConfirm = () => {
+        if (deleteConfirmation.targetId) {
+            deleteMutation(deleteConfirmation.targetId)
+        }
+        closeDeleteConfirmation()
     }
 
     return (
@@ -177,96 +103,77 @@ export default function TradingPlanView() {
                     />
 
                     <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
-                        <div className="flex items-center gap-3">
-                            <Select>
-                                <SelectTrigger className="w-35 py-5">
-                                    <SelectValue placeholder="Month" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {months.map((month) => (
-                                        <SelectItem
-                                            key={month.value}
-                                            value={month.value}
-                                        >
-                                            {month.label}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-
-                            <Select>
-                                <SelectTrigger className="w-35 py-5">
-                                    <SelectValue placeholder="Year" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {years.map((year) => (
-                                        <SelectItem
-                                            key={year}
-                                            value={year.toString()}
-                                        >
-                                            {year}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
+                        <TradingPlanFilters
+                            month={filter.month}
+                            year={filter.year}
+                            onMonthChange={(value) =>
+                                setFilter({ month: value })
+                            }
+                            onYearChange={(value) => setFilter({ year: value })}
+                            onReset={resetFilter}
+                        />
 
                         <Link href="/trading-plans/create">
-                            <Button className="py-5">
+                            <Button className="gap-1.5 py-5">
                                 <Icon icon="lucide:plus" className="size-4" />
-                                Add New Trading Plan
+                                Add New Plan
                             </Button>
                         </Link>
                     </div>
                 </div>
 
+                {/* Result count when filtered */}
+                {hasActiveFilter && !isLoading && !error && (
+                    <p className="text-sm text-muted-foreground">
+                        Showing{" "}
+                        <span className="font-medium text-foreground">
+                            {filteredPlans.length}
+                        </span>{" "}
+                        {filteredPlans.length === 1 ? "plan" : "plans"}
+                        {filter.month || filter.year
+                            ? " for the selected period"
+                            : ""}
+                    </p>
+                )}
+
                 {/* Cards Grid */}
                 {error ? (
-                    <div className="flex flex-col items-center justify-center rounded-xl border border-destructive/30 bg-destructive/5 py-16 text-center">
-                        <Icon
-                            icon="lucide:alert-circle"
-                            className="mb-3 size-10 text-destructive"
-                        />
-                        <p className="text-sm font-medium text-destructive">
-                            Failed to load trading plans
-                        </p>
-                        <p className="mt-1 text-xs text-muted-foreground">
-                            Please try again later
-                        </p>
-                    </div>
+                    <TradingPlanErrorState />
                 ) : isLoading ? (
-                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
+                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
                         {Array.from({ length: 8 }).map((_, i) => (
                             <TradingPlanCardSkeleton key={i} />
                         ))}
                     </div>
-                ) : plans.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-20 text-center">
-                        <Icon
-                            icon="lucide:file-plus"
-                            className="mb-3 size-12 text-muted-foreground/50"
-                        />
-                        <p className="text-sm font-medium text-muted-foreground">
-                            No trading plans yet
-                        </p>
-                        <p className="mt-1 text-xs text-muted-foreground/70">
-                            Create your first trading plan to get started
-                        </p>
-                    </div>
+                ) : filteredPlans.length === 0 ? (
+                    <TradingPlanEmptyState
+                        hasFilters={hasActiveFilter}
+                        onResetFilters={resetFilter}
+                    />
                 ) : (
-                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4">
-                        {plans.map((plan) => (
+                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                        {filteredPlans.map((plan) => (
                             <TradingPlanCard
                                 key={plan.id}
                                 plan={plan}
                                 onShowDetail={handleShowDetail}
                                 onUpdate={handleUpdate}
-                                onDelete={handleDelete}
+                                onDelete={handleDeleteRequest}
                             />
                         ))}
                     </div>
                 )}
             </div>
+
+            {/* Delete Confirmation Dialog */}
+            <TradingPlanDeleteDialog
+                open={deleteConfirmation.isOpen}
+                onOpenChange={(open) => {
+                    if (!open) closeDeleteConfirmation()
+                }}
+                onConfirm={handleDeleteConfirm}
+                planTitle={deleteConfirmation.targetTitle ?? undefined}
+            />
         </Container>
     )
 }
