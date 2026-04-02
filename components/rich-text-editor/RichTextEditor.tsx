@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import Underline from "@tiptap/extension-underline"
@@ -47,6 +47,7 @@ export function RichTextEditor({
     const [isHtmlMode, setIsHtmlMode] = useState(false)
     const [htmlSource, setHtmlSource] = useState(value)
     const [isFocused, setIsFocused] = useState(false)
+    const skipSyncRef = useRef(false)
 
     const editor = useEditor({
         immediatelyRender: false,
@@ -131,6 +132,10 @@ export function RichTextEditor({
     // Sync external value changes
     useEffect(() => {
         if (!editor) return
+        if (skipSyncRef.current) {
+            skipSyncRef.current = false
+            return
+        }
         if (value !== editor.getHTML()) {
             editor.commands.setContent(value)
             // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -149,6 +154,7 @@ export function RichTextEditor({
 
     const handleHtmlModeToggle = useCallback(() => {
         if (isHtmlMode && editor) {
+            skipSyncRef.current = true
             editor.commands.setContent(htmlSource)
             onChange?.(htmlSource)
         }
