@@ -21,6 +21,20 @@ export async function findAllPairs(
     }
 }
 
+export async function findPairById(id: string): Promise<PairItemResponse> {
+    try {
+        return await httpClient.get<PairItemResponse>(
+            `${PAIRS_ENDPOINT}/${id}`,
+            { withCredentials: true }
+        )
+    } catch (err) {
+        throwApiError(
+            err,
+            "Failed to fetch pair details. Please try again later."
+        )
+    }
+}
+
 export async function createPair(
     payload: PairRequest
 ): Promise<PairItemResponse> {

@@ -10,6 +10,7 @@ interface PairSelectTriggerProps {
     disabled?: boolean
     className?: string
     selectedLabel?: string
+    selectedDescription?: string
 }
 
 export function PairSelectTrigger({
@@ -17,20 +18,17 @@ export function PairSelectTrigger({
     isLoading,
     disabled,
     className,
+    selectedLabel,
+    selectedDescription,
 }: PairSelectTriggerProps) {
     return (
         <SelectTrigger
             className={cn(
-                // Base
                 "relative h-11 w-full rounded-md border bg-white px-4 py-6",
                 "text-sm font-medium text-black transition-all duration-150",
-                // Focus ring — sharp black outline
                 "focus:ring-2 focus:ring-black focus:ring-offset-0 focus:outline-none",
-                // Hover
                 "cursor-pointer hover:bg-gray-100 hover:text-white",
-                // Disabled
                 "disabled:cursor-not-allowed disabled:opacity-40",
-                // Custom
                 className
             )}
             disabled={disabled || isLoading}
@@ -43,7 +41,34 @@ export function PairSelectTrigger({
                     </span>
                 </span>
             ) : (
-                <SelectValue placeholder={placeholder} />
+                <>
+                    {/* Sembunyikan total saat selectedLabel ada, tetap di DOM agar Radix berfungsi */}
+                    <span
+                        className={cn(
+                            selectedLabel
+                                ? "pointer-events-none w-0 overflow-hidden opacity-0 select-none"
+                                : ""
+                        )}
+                    >
+                        <SelectValue placeholder={placeholder} />
+                    </span>
+
+                    <div className="space-y-3">
+                        {/* Tampil saat cachedPair sudah ada, posisi absolute agar tidak bentrok */}
+                        {selectedLabel ? (
+                            <span className="absolute inset-0 flex items-center px-4 text-sm font-medium text-black">
+                                {selectedLabel}
+                            </span>
+                        ) : null}
+
+                        {/* Tampil saat ada deskripsi, posisi absolute agar tidak bentrok */}
+                        {selectedDescription ? (
+                            <span className="absolute inset-0 flex items-end px-4 pb-2 text-[10px] text-zinc-500">
+                                {selectedDescription}
+                            </span>
+                        ) : null}
+                    </div>
+                </>
             )}
         </SelectTrigger>
     )

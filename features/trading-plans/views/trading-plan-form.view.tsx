@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form"
 import { useRouter } from "next/navigation"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { LoaderCircleIcon } from "lucide-react"
-
 import { TradingPlanFormFields } from "../components/trading-plan-form-fields"
 import {
     TradingPlanFormValues,
@@ -20,6 +19,7 @@ import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
 import { Container } from "@/components/ui/container"
 import { TradingPlanRequest } from "../types/trading-plan.types"
+import { useTradingPlanStore } from "../store/trading-plan.store"
 
 interface TradingPlanFormViewProps {
     tradingPlanId?: string
@@ -30,6 +30,8 @@ export default function TradingPlanFormView({
 }: TradingPlanFormViewProps) {
     const router = useRouter()
     const isEditing = !!tradingPlanId
+
+    const { setTradingPlan, setIsLoading, reset } = useTradingPlanStore()
 
     const { data: existingData, isLoading: isLoadingData } =
         useFindTradingPlanByIdQuery(tradingPlanId!)
@@ -47,16 +49,28 @@ export default function TradingPlanFormView({
     })
 
     useEffect(() => {
-        if (existingData) {
+        setIsLoading(isLoadingData)
+    }, [isLoadingData, setIsLoading])
+
+    useEffect(() => {
+        if (existingData?.data) {
+            setTradingPlan(existingData.data)
+
             form.reset({
-                title: existingData?.data?.title,
-                date: existingData?.data?.date,
-                pairId: existingData?.data?.pair?.id,
-                description: existingData?.data?.description,
+                title: existingData.data.title,
+                date: existingData.data.date,
+                pairId: existingData.data.pair?.id,
+                description: existingData.data.description,
                 thumbnail: undefined,
             })
         }
-    }, [existingData, form])
+    }, [existingData, form, setTradingPlan])
+
+    useEffect(() => {
+        return () => {
+            reset()
+        }
+    }, [reset])
 
     const createMutation = useCreateTradingPlanMutation()
     const updateMutation = useUpdateTradingPlanMutation()
@@ -129,29 +143,7 @@ export default function TradingPlanFormView({
                         onSubmit={form.handleSubmit(handleSubmit)}
                         className="space-y-6"
                     >
-                        <TradingPlanFormFields
-                            form={form}
-                            existingThumbnailUrl={
-                                isEditing
-                                    ? existingData?.data?.thumbnailUrl
-                                    : undefined
-                            }
-                            existingPair={
-                                isEditing && existingData?.data?.pair
-                                    ? {
-                                          id: existingData.data.pair.id,
-                                          name: existingData.data.pair.name,
-                                          description:
-                                              existingData.data.pair
-                                                  .description,
-                                          createdAt:
-                                              existingData.data.pair.createdAt,
-                                          updatedAt:
-                                              existingData.data.pair.updatedAt,
-                                      }
-                                    : undefined
-                            }
-                        />
+                        <TradingPlanFormFields form={form} />
                         <div className="flex gap-2">
                             <Button
                                 type="button"
