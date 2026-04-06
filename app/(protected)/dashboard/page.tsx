@@ -1,4 +1,5 @@
 import { PageBreadcrumb } from "@/components/page-breadcrumb"
+import { StrategySelect } from "@/features/strategies/components/StrategySelect"
 
 export default function DashboardPage() {
     return (
@@ -20,6 +21,9 @@ export default function DashboardPage() {
                     <p className="mt-2 text-sm text-black/60 dark:text-white/60">
                         Isi halaman dashboard kamu taruh di sini.
                     </p>
+
+                    <br />
+                    <StrategySelect />
                 </section>
             </div>
         </>
