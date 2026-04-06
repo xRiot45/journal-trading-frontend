@@ -10,21 +10,26 @@ import {
 } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { useFindAllStrategiesQuery } from "../hooks/use-strategies-queries"
-import { useStrategyStore } from "../store/strategies.store"
 import { useMemo, useState } from "react"
 
-export function StrategySelect() {
+interface StrategySelectProps {
+    value?: string
+    onChange?: (value: string) => void
+    disabled?: boolean
+}
+
+export function StrategySelect({
+    value,
+    onChange,
+    disabled,
+}: StrategySelectProps) {
     const { data, isLoading } = useFindAllStrategiesQuery()
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const strategies = data?.data ?? []
 
-    const selectedStrategyId = useStrategyStore((s) => s.selectedStrategyId)
-    const setSelectedStrategy = useStrategyStore((s) => s.setSelectedStrategy)
-
     const [search, setSearch] = useState("")
 
-    // 🔍 filter berdasarkan title
     const filteredStrategies = useMemo(() => {
         return strategies.filter((item) =>
             item.title.toLowerCase().includes(search.toLowerCase())
@@ -33,9 +38,9 @@ export function StrategySelect() {
 
     return (
         <Select
-            value={selectedStrategyId}
-            onValueChange={(val) => setSelectedStrategy(val)}
-            disabled={isLoading}
+            value={value}
+            onValueChange={onChange}
+            disabled={isLoading || disabled}
         >
             <SelectTrigger className="w-full cursor-pointer py-6">
                 <SelectValue placeholder="--- Select Strategy ---" />

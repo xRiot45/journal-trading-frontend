@@ -10,21 +10,22 @@ import {
 } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { useFindAllPairsQuery } from "../hooks/use-pair-queries"
-import { usePairStore } from "../store/pair.store"
 import { useMemo, useState } from "react"
 
-export function PairSelect() {
+interface PairSelectProps {
+    value?: string
+    onChange?: (value: string) => void
+    disabled?: boolean
+}
+
+export function PairSelect({ value, onChange, disabled }: PairSelectProps) {
     const { data, isLoading } = useFindAllPairsQuery()
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const pairs = data?.data ?? []
 
-    const selectedPairId = usePairStore((s) => s.selectedPairId)
-    const setSelectedPairId = usePairStore((s) => s.setSelectedPairId)
-
     const [search, setSearch] = useState("")
 
-    // 🔍 filter berdasarkan name
     const filteredPairs = useMemo(() => {
         return pairs.filter((item) =>
             item.name.toLowerCase().includes(search.toLowerCase())
@@ -33,16 +34,16 @@ export function PairSelect() {
 
     return (
         <Select
-            value={selectedPairId}
-            onValueChange={(val) => setSelectedPairId(val)}
-            disabled={isLoading}
+            value={value}
+            onValueChange={onChange}
+            disabled={isLoading || disabled}
         >
             <SelectTrigger className="w-full cursor-pointer py-6">
                 <SelectValue placeholder="--- Select Pairs ---" />
             </SelectTrigger>
 
             <SelectContent>
-                {/* 🔍 Search */}
+                {/* Search */}
                 <div className="p-2">
                     <Input
                         placeholder="Search pair..."
