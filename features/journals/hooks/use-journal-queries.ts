@@ -8,5 +8,6 @@ export function useFindJournalByIdQuery(journalId: string) {
     return useQuery<JournalItemResponse, Error>({
         queryKey: [JOURNALS_KEY, journalId],
         queryFn: () => findJournalById(journalId),
+        enabled: !!journalId,
     })
 }

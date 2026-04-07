@@ -15,21 +15,18 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import {
-    CreateJournalFormValues,
-    UpdateJournalFormValues,
-} from "../schemas/journal.schema"
+import { JournalFormValues } from "../schemas/journal.schema"
 import { TradeDirectionEnum, TradeStatusEnum } from "../types/journal.type"
 import { PairSelect } from "@/features/pairs/components/PairSelect"
 import { StrategySelect } from "@/features/strategies/components/StrategySelect"
 
 interface JournalFormFieldsProps {
-    form: UseFormReturn<CreateJournalFormValues | UpdateJournalFormValues>
+    form: UseFormReturn<JournalFormValues>
 }
 
 export function JournalFormFields({ form }: JournalFormFieldsProps) {
     return (
-        <div className="grid grid-cols-1 gap-4 space-y-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 space-y-4 md:grid-cols-5">
             {/* Date */}
             <FormField
                 control={form.control}
@@ -55,6 +52,7 @@ export function JournalFormFields({ form }: JournalFormFieldsProps) {
                         <Select
                             onValueChange={field.onChange}
                             defaultValue={field.value}
+                            value={field.value}
                         >
                             <FormControl>
                                 <SelectTrigger className="w-full py-6">
@@ -93,6 +91,7 @@ export function JournalFormFields({ form }: JournalFormFieldsProps) {
                         <Select
                             onValueChange={field.onChange}
                             defaultValue={field.value}
+                            value={field.value}
                         >
                             <FormControl>
                                 <SelectTrigger className="w-full py-6">
@@ -411,7 +410,7 @@ export function JournalFormFields({ form }: JournalFormFieldsProps) {
                         <FormLabel>Based On Plan</FormLabel>
                         <Select
                             onValueChange={(val) => field.onChange(Number(val))}
-                            defaultValue={
+                            value={
                                 field.value !== undefined
                                     ? String(field.value)
                                     : undefined

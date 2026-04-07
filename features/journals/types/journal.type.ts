@@ -30,9 +30,9 @@ export interface Journal {
     closingTime: string
     takeProfit: number
     stopLoss: number
-    profitAndLost: number
+    profitAndLoss: number
     riskRatio: number
-    rewardRation: number
+    rewardRatio: number
     basedOnPlan: BasedOnPlanEnum
     note?: string
     pair: Pair
@@ -40,23 +40,23 @@ export interface Journal {
 }
 
 export interface JournalRequest {
-    date: string
-    direction: TradeDirectionEnum
-    status: TradeStatusEnum
-    lotSize: number
-    entryPrice: number
-    entryTime: string
-    closingPrice: number
-    closingTime: string
-    takeProfit: number
-    stopLoss: number
-    profitAndLoss: number
-    riskRatio: number
-    rewardRatio: number
-    basedOnPlan: BasedOnPlanEnum
+    date?: string
+    direction?: TradeDirectionEnum
+    status?: TradeStatusEnum
+    lotSize?: number
+    entryPrice?: number
+    entryTime?: string
+    closingPrice?: number
+    closingTime?: string
+    takeProfit?: number
+    stopLoss?: number
+    profitAndLoss?: number
+    riskRatio?: number
+    rewardRatio?: number
+    basedOnPlan?: BasedOnPlanEnum
     note?: string
-    pairId: string
-    strategyId: string
+    pairId?: string
+    strategyId?: string
 }
 
 export interface JournalListResponse extends ApiSuccessResponse<Journal[]> {

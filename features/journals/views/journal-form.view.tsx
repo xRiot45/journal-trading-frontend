@@ -3,8 +3,10 @@
 import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import {
+    CreateJournalFormValues,
     createJournalSchema,
-    JouralFormValues,
+    JournalFormValues,
+    UpdateJournalFormValues,
     updateJournalSchema,
 } from "../schemas/journal.schema"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -15,7 +17,11 @@ import { Button } from "@/components/ui/button"
 import { Container } from "@/components/ui/container"
 import { useEffect } from "react"
 import { useJournalStore } from "../store/journal.store"
-import { useCreateJournalMutation } from "../hooks/use-journal-mutations"
+import {
+    useCreateJournalMutation,
+    useUpdateJournalMutation,
+} from "../hooks/use-journal-mutations"
+import { LoaderCircleIcon } from "lucide-react"
 
 interface JournalFormViewProps {
     journalId?: string
@@ -25,54 +31,35 @@ export default function JournalFormView({ journalId }: JournalFormViewProps) {
     const router = useRouter()
     const isEditing = !!journalId
 
-    const { setJournal, setIsLoading } = useJournalStore()
+    const { setIsLoading } = useJournalStore()
 
     const { data: existingData, isLoading: isLoadingData } =
         useFindJournalByIdQuery(journalId!)
 
-    const form = useForm<JouralFormValues>({
+    const form = useForm<CreateJournalFormValues | UpdateJournalFormValues>({
         resolver: zodResolver(
             isEditing ? updateJournalSchema : createJournalSchema
         ),
-        defaultValues: isEditing
-            ? {
-                  date: existingData?.data?.date ?? "",
-                  direction: existingData?.data?.direction,
-                  status: existingData?.data?.status,
-                  lotSize: existingData?.data?.lotSize ?? undefined,
-                  entryPrice: existingData?.data?.entryPrice ?? undefined,
-                  entryTime: existingData?.data?.entryTime,
-                  closingPrice: existingData?.data?.closingPrice ?? undefined,
-                  closingTime: existingData?.data?.closingTime,
-                  takeProfit: existingData?.data?.takeProfit ?? undefined,
-                  stopLoss: existingData?.data?.stopLoss ?? undefined,
-                  profitAndLoss: existingData?.data?.profitAndLost ?? undefined,
-                  riskRatio: existingData?.data?.riskRatio ?? undefined,
-                  rewardRatio: existingData?.data?.rewardRation ?? undefined,
-                  basedOnPlan: existingData?.data?.basedOnPlan,
-                  note: existingData?.data?.note ?? "",
-                  pairId: existingData?.data?.pair?.id,
-                  strategyId: existingData?.data?.strategy?.id,
-              }
-            : {
-                  date: "",
-                  direction: undefined,
-                  status: undefined,
-                  lotSize: undefined,
-                  entryPrice: undefined,
-                  entryTime: "",
-                  closingPrice: undefined,
-                  closingTime: "",
-                  takeProfit: undefined,
-                  stopLoss: undefined,
-                  profitAndLoss: undefined,
-                  riskRatio: undefined,
-                  rewardRatio: undefined,
-                  basedOnPlan: undefined,
-                  note: "",
-                  pairId: "",
-                  strategyId: "",
-              },
+        defaultValues: {
+            date: "",
+            direction: undefined,
+            status: undefined,
+            lotSize: undefined,
+            entryPrice: undefined,
+            entryTime: "",
+            closingPrice: undefined,
+            closingTime: "",
+            takeProfit: undefined,
+            stopLoss: undefined,
+            profitAndLoss: undefined,
+            riskRatio: undefined,
+            rewardRatio: undefined,
+            basedOnPlan: undefined,
+            note: "",
+            pairId: "",
+            strategyId: "",
+        },
+        mode: "onSubmit",
     })
 
     useEffect(() => {
@@ -80,19 +67,40 @@ export default function JournalFormView({ journalId }: JournalFormViewProps) {
     }, [isLoadingData, setIsLoading])
 
     useEffect(() => {
-        if (existingData?.data) {
-            setJournal(existingData.data)
-        }
-    }, [existingData, setJournal])
+        if (!existingData?.data) return
+
+        const d = existingData.data
+        form.reset({
+            date: d.date ? d.date.split("T")[0] : "",
+            direction: d.direction,
+            status: d.status,
+            lotSize: d.lotSize ?? undefined,
+            entryPrice: d.entryPrice ?? undefined,
+            entryTime: d.entryTime,
+            closingPrice: d.closingPrice ?? undefined,
+            closingTime: d.closingTime,
+            takeProfit: d.takeProfit ?? undefined,
+            stopLoss: d.stopLoss ?? undefined,
+            profitAndLoss: d.profitAndLoss ?? undefined,
+            riskRatio: d.riskRatio ?? undefined,
+            rewardRatio: d.rewardRatio ?? undefined,
+            basedOnPlan: d.basedOnPlan,
+            note: d.note ?? "",
+            pairId: d.pair?.id ?? "",
+            strategyId: d.strategy?.id ?? "",
+        })
+    }, [existingData, form])
 
     const createMutation = useCreateJournalMutation()
+    const updateMutation = useUpdateJournalMutation()
 
-    const isProcessing = createMutation.status === "pending"
+    const isProcessing =
+        createMutation.status === "pending" ||
+        updateMutation.status === "pending"
 
-    const handleSubmit = (values: JouralFormValues) => {
-        if (isEditing) {
-            console.log(values)
-            return
+    const handleSubmit = (values: JournalFormValues) => {
+        if (isEditing && journalId) {
+            updateMutation.mutate({ journalId, payload: values })
         } else {
             createMutation.mutate(values)
         }
@@ -116,18 +124,22 @@ export default function JournalFormView({ journalId }: JournalFormViewProps) {
                     <Form {...form}>
                         <form
                             onSubmit={form.handleSubmit(handleSubmit)}
-                            className="mt-12 space-y-8"
+                            className="space-y-6"
                         >
                             <JournalFormFields form={form} />
                             <div className="flex gap-2">
                                 <Button
                                     type="button"
                                     variant="outline"
-                                    onClick={() => router.push("/journals")}
+                                    disabled={isProcessing}
+                                    onClick={() => router.push("/journals")} // ✅ fix route
                                 >
                                     Cancel
                                 </Button>
-                                <Button type="submit">
+                                <Button type="submit" disabled={isProcessing}>
+                                    {isProcessing && (
+                                        <LoaderCircleIcon className="animate-spin" />
+                                    )}
                                     {isEditing
                                         ? "Update Journal"
                                         : "Create Journal"}
