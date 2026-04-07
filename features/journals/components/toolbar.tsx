@@ -49,6 +49,8 @@ export function Toolbar({ isLoading }: ToolbarProps) {
         router.push("/journals/create")
     }
 
+    const isFilterActive = selectedMonth || selectedYear
+
     return (
         <CardHeader className="flex items-center justify-end gap-4 py-5">
             {/* Filter Month & Year */}
@@ -97,13 +99,16 @@ export function Toolbar({ isLoading }: ToolbarProps) {
                     </SelectContent>
                 </Select>
 
-                <Button
-                    disabled={isLoading}
-                    onClick={resetFilter}
-                    variant="secondary"
-                >
-                    Reset Filter
-                </Button>
+                {/* ✅ Conditional Reset Button */}
+                {isFilterActive && (
+                    <Button
+                        disabled={isLoading}
+                        onClick={resetFilter}
+                        variant="secondary"
+                    >
+                        Reset Filter
+                    </Button>
+                )}
             </div>
 
             {/* Action Button */}
