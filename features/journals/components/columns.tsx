@@ -63,7 +63,14 @@ export function buildJournalColumns({
                 <DataGridColumnHeader title="Pair" column={column} />
             ),
             cell: (info) => (
-                <span className="font-medium">{info.getValue() as string}</span>
+                <div className="flex flex-col">
+                    <span className="font-medium">
+                        {info.getValue() as string}
+                    </span>
+                    <span className="text-[11px] font-medium text-black/50 dark:text-white/50">
+                        {info.row.original.pair.description}
+                    </span>
+                </div>
             ),
             size: 110,
             enableSorting: true,
@@ -282,12 +289,16 @@ export function buildJournalColumns({
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent side="bottom" align="start">
-                        <DropdownMenuItem onClick={() => onEdit(row.original)}>
+                        <DropdownMenuItem
+                            onClick={() => onEdit(row.original)}
+                            className="cursor-pointer p-2"
+                        >
                             Edit journal
                         </DropdownMenuItem>
                         <DropdownMenuItem
                             variant="destructive"
                             onClick={() => onDelete(row.original)}
+                            className="cursor-pointer p-2"
                         >
                             Delete journal
                         </DropdownMenuItem>

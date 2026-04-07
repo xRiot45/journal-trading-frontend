@@ -67,9 +67,16 @@ export function PairSelect({ value, onChange, disabled }: PairSelectProps) {
                             <SelectItem
                                 key={item.id}
                                 value={item.id}
-                                className="p-4"
+                                className="p-3"
                             >
-                                {item.name}
+                                <div className="flex flex-col">
+                                    <span className="font-medium">
+                                        {item.name}
+                                    </span>
+                                    <span className="text-[10px] text-muted-foreground">
+                                        {item.description}
+                                    </span>
+                                </div>
                             </SelectItem>
                         ))
                     )}
