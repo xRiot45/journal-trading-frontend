@@ -1,5 +1,6 @@
 import { PageBreadcrumb } from "@/components/page-breadcrumb"
 import { Container } from "@/components/ui/container"
+import JournalList from "../components/journal-list"
 
 export default function JournalView() {
     return (
@@ -13,6 +14,8 @@ export default function JournalView() {
                         { label: "Journals", href: "/journals" },
                     ]}
                 />
+
+                <JournalList />
             </div>
         </Container>
     )

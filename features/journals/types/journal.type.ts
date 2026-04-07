@@ -37,6 +37,8 @@ export interface Journal {
     note?: string
     pair: Pair
     strategy: Strategies
+    createdAt: string
+    updatedAt: string
 }
 
 export interface JournalRequest {

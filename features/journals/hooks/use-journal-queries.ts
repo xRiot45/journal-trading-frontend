@@ -1,8 +1,16 @@
 import { useQuery } from "@tanstack/react-query"
-import { JournalItemResponse } from "../types/journal.type"
-import { findJournalById } from "../api/journal.api"
+import { JournalItemResponse, JournalListResponse } from "../types/journal.type"
+import { findAllJournals, findJournalById } from "../api/journal.api"
+import { FindAllParams } from "@/configs/http"
 
 export const JOURNALS_KEY = "journals"
+
+export function useFindAllJournalsQuery(params?: FindAllParams) {
+    return useQuery<JournalListResponse, Error>({
+        queryKey: [JOURNALS_KEY, params],
+        queryFn: () => findAllJournals(params),
+    })
+}
 
 export function useFindJournalByIdQuery(journalId: string) {
     return useQuery<JournalItemResponse, Error>({
