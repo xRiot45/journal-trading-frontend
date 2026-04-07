@@ -37,6 +37,7 @@ interface JournalState {
     reset: () => void
     setSelectedMonth: (month: number | null) => void
     setSelectedYear: (year: number | null) => void
+    resetFilter: () => void
 }
 
 const initialState = {
@@ -95,4 +96,6 @@ export const useJournalStore = create<JournalState>((set) => ({
 
     setSelectedMonth: (month) => set({ selectedMonth: month }),
     setSelectedYear: (year) => set({ selectedYear: year }),
+
+    resetFilter: () => set({ selectedMonth: null, selectedYear: null }),
 }))

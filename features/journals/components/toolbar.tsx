@@ -37,15 +37,20 @@ const YEARS = Array.from({ length: 5 }, (_, i) => currentYear - i)
 
 export function Toolbar({ isLoading }: ToolbarProps) {
     const router = useRouter()
-    const { selectedMonth, selectedYear, setSelectedMonth, setSelectedYear } =
-        useJournalStore()
+    const {
+        selectedMonth,
+        selectedYear,
+        setSelectedMonth,
+        setSelectedYear,
+        resetFilter,
+    } = useJournalStore()
 
     const handleAddNewEntry = () => {
         router.push("/journals/create")
     }
 
     return (
-        <CardHeader className="flex items-center justify-between gap-4 py-5">
+        <CardHeader className="flex items-center justify-end gap-4 py-5">
             {/* Filter Month & Year */}
             <div className="flex items-center gap-2">
                 <Select
@@ -54,12 +59,16 @@ export function Toolbar({ isLoading }: ToolbarProps) {
                         setSelectedMonth(val ? Number(val) : null)
                     }
                 >
-                    <SelectTrigger className="w-35">
+                    <SelectTrigger className="w-42 py-5">
                         <SelectValue placeholder="Select Month" />
                     </SelectTrigger>
                     <SelectContent>
                         {MONTHS.map((month) => (
-                            <SelectItem key={month.value} value={month.value}>
+                            <SelectItem
+                                key={month.value}
+                                value={month.value}
+                                className="cursor-pointer p-2"
+                            >
                                 {month.label}
                             </SelectItem>
                         ))}
@@ -72,17 +81,29 @@ export function Toolbar({ isLoading }: ToolbarProps) {
                         setSelectedYear(val ? Number(val) : null)
                     }
                 >
-                    <SelectTrigger className="w-27.5">
+                    <SelectTrigger className="w-42 py-5">
                         <SelectValue placeholder="Select Year" />
                     </SelectTrigger>
                     <SelectContent>
                         {YEARS.map((year) => (
-                            <SelectItem key={year} value={year.toString()}>
+                            <SelectItem
+                                key={year}
+                                value={year.toString()}
+                                className="cursor-pointer p-2"
+                            >
                                 {year}
                             </SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
+
+                <Button
+                    disabled={isLoading}
+                    onClick={resetFilter}
+                    variant="secondary"
+                >
+                    Reset Filter
+                </Button>
             </div>
 
             {/* Action Button */}
