@@ -19,6 +19,8 @@ interface JournalState {
     selectedJournals: Journal[]
     isDeleteDialogOpen: boolean
     selectedJournal: Journal | null
+    selectedMonth: number | null
+    selectedYear: number | null
 
     // Actions
     setJournal: (data: Journal | null) => void
@@ -33,6 +35,8 @@ interface JournalState {
     openDeleteDialog: (journal: Journal) => void
     closeDeleteDialog: () => void
     reset: () => void
+    setSelectedMonth: (month: number | null) => void
+    setSelectedYear: (year: number | null) => void
 }
 
 const initialState = {
@@ -44,6 +48,8 @@ const initialState = {
     selectedJournals: [],
     isDeleteDialogOpen: false,
     selectedJournal: null,
+    selectedMonth: null,
+    selectedYear: null,
 }
 
 export const useJournalStore = create<JournalState>((set) => ({
@@ -86,4 +92,7 @@ export const useJournalStore = create<JournalState>((set) => ({
         set({ isDeleteDialogOpen: false, selectedJournal: null }),
 
     reset: () => set(initialState),
+
+    setSelectedMonth: (month) => set({ selectedMonth: month }),
+    setSelectedYear: (year) => set({ selectedYear: year }),
 }))

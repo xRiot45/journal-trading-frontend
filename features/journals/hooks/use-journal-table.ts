@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import {
     getCoreRowModel,
     getFilteredRowModel,
@@ -7,10 +7,12 @@ import {
     type PaginationState,
     type SortingState,
     type RowSelectionState,
+    ColumnFiltersState,
 } from "@tanstack/react-table"
 import { Journal } from "../types/journal.type"
 import { buildJournalColumns } from "../components/columns"
 import { useFindAllJournalsQuery } from "./use-journal-queries"
+import { useJournalStore } from "../store/journal.store"
 
 interface UseJournalTableOptions {
     onEdit: (journal: Journal) => void
@@ -18,6 +20,8 @@ interface UseJournalTableOptions {
 }
 
 export function useJournalTable({ onEdit, onDelete }: UseJournalTableOptions) {
+    const { selectedMonth, selectedYear } = useJournalStore()
+
     const [pagination, setPagination] = useState<PaginationState>({
         pageIndex: 0,
         pageSize: 10,
@@ -35,6 +39,25 @@ export function useJournalTable({ onEdit, onDelete }: UseJournalTableOptions) {
     )
 
     const currentSort = sorting[0]
+
+    const columnFilters: ColumnFiltersState = useMemo(() => {
+        const hasFilter = selectedMonth || selectedYear
+        if (!hasFilter) return []
+
+        return [
+            {
+                id: "date",
+                value: {
+                    month: selectedMonth ?? undefined,
+                    year: selectedYear ?? undefined,
+                },
+            },
+        ]
+    }, [selectedMonth, selectedYear])
+
+    useEffect(() => {
+        setPagination((prev) => ({ ...prev, pageIndex: 0 }))
+    }, [selectedMonth, selectedYear])
 
     const { data, isLoading } = useFindAllJournalsQuery({
         page: pagination.pageIndex + 1,
@@ -57,6 +80,7 @@ export function useJournalTable({ onEdit, onDelete }: UseJournalTableOptions) {
             sorting,
             columnOrder,
             rowSelection,
+            columnFilters,
         },
         enableRowSelection: true,
         onRowSelectionChange: setRowSelection,
@@ -71,7 +95,7 @@ export function useJournalTable({ onEdit, onDelete }: UseJournalTableOptions) {
         getPaginationRowModel: getPaginationRowModel(),
         manualPagination: true,
         manualSorting: true,
-        manualFiltering: true,
+        manualFiltering: false,
     })
 
     return {

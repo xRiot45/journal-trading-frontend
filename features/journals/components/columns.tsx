@@ -38,6 +38,19 @@ export function buildJournalColumns({
             size: 120,
             enableSorting: true,
             enableHiding: false,
+            filterFn: (
+                row,
+                columnId,
+                filterValue: { month?: number; year?: number }
+            ) => {
+                const date = new Date(row.getValue(columnId) as string)
+                const { month, year } = filterValue
+
+                const monthMatch = month ? date.getMonth() + 1 === month : true
+                const yearMatch = year ? date.getFullYear() === year : true
+
+                return monthMatch && yearMatch
+            },
             meta: {
                 headerTitle: "Date",
                 skeleton: <Skeleton className="h-8 w-24" />,
