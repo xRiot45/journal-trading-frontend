@@ -16,7 +16,7 @@ export default function JournalList() {
     const { openDeleteDialog } = useJournalStore()
 
     const { table, isLoading, totalItems } = useJournalTable({
-        onEdit: (journal) => router.push(`/journals/${journal.id}/update`),
+        onEdit: (journal) => router.push(`/journals/${journal.id}/edit`),
         onDelete: (journal) => openDeleteDialog(journal),
     })
 

@@ -21,6 +21,22 @@ export async function findAllJournals(
     }
 }
 
+export async function findJournalById(
+    journalId: string
+): Promise<JournalItemResponse> {
+    try {
+        return await httpClient.get<JournalItemResponse>(
+            `${JOURNALS_ENDPOINT}/${journalId}`,
+            { withCredentials: true }
+        )
+    } catch (err) {
+        throwApiError(
+            err,
+            "Failed to fetch journal details. Please try again later."
+        )
+    }
+}
+
 export async function createJournal(
     payload: JournalRequest
 ): Promise<JournalItemResponse> {
@@ -47,22 +63,6 @@ export async function updateJournal(
         )
     } catch (err) {
         throwApiError(err, "Failed to update journal. Please try again later.")
-    }
-}
-
-export async function findJournalById(
-    journalId: string
-): Promise<JournalItemResponse> {
-    try {
-        return await httpClient.get<JournalItemResponse>(
-            `${JOURNALS_ENDPOINT}/${journalId}`,
-            { withCredentials: true }
-        )
-    } catch (err) {
-        throwApiError(
-            err,
-            "Failed to fetch journal details. Please try again later."
-        )
     }
 }
 
