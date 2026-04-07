@@ -10,11 +10,11 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { PairSelect } from "@/features/pairs/components/pair-select"
 import { RichTextEditor } from "@/components/rich-text-editor"
 import { FileUpload } from "@/components/file-upload"
 import { useTradingPlanStore } from "../store/trading-plan.store"
 import { useState } from "react"
+import { PairSelect } from "@/features/pairs/components/PairSelect"
 
 interface TradingPlanFormFieldsProps {
     form: UseFormReturn<TradingPlanFormValues>
@@ -92,11 +92,22 @@ export function TradingPlanFormFields({ form }: TradingPlanFormFieldsProps) {
                 )}
             />
 
-            <PairSelect
+            {/* Pair Select */}
+            <FormField
                 control={form.control}
                 name="pairId"
-                label="Pair"
-                placeholder="Select pair"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Pair</FormLabel>
+                        <FormControl>
+                            <PairSelect
+                                value={field.value}
+                                onChange={field.onChange}
+                            />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
             />
 
             <FormField

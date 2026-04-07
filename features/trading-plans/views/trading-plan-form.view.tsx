@@ -34,7 +34,7 @@ export default function TradingPlanFormView({
     const router = useRouter()
     const isEditing = !!tradingPlanId
 
-    const { setTradingPlan, setIsLoading, reset } = useTradingPlanStore()
+    const { setTradingPlan, setIsLoading } = useTradingPlanStore()
 
     const { data: existingData, isLoading: isLoadingData } =
         useFindTradingPlanByIdQuery(tradingPlanId!)
@@ -64,20 +64,14 @@ export default function TradingPlanFormView({
             setTradingPlan(existingData.data)
 
             form.reset({
-                title: existingData.data.title,
-                date: existingData.data.date,
-                pairId: existingData.data.pair?.id,
-                description: existingData.data.description,
+                title: existingData.data.title ?? "",
+                date: existingData.data.date ?? "",
+                pairId: existingData.data.pair?.id ?? "",
+                description: existingData.data.description ?? "",
                 thumbnail: undefined,
             })
         }
     }, [existingData, form, setTradingPlan])
-
-    useEffect(() => {
-        return () => {
-            reset()
-        }
-    }, [reset])
 
     const createMutation = useCreateTradingPlanMutation()
     const updateMutation = useUpdateTradingPlanMutation()
@@ -109,10 +103,10 @@ export default function TradingPlanFormView({
     const handleSubmit = (values: TradingPlanFormValues) => {
         const formData = buildFormData(values)
 
-        if (isEditing) {
+        if (isEditing && tradingPlanId) {
             updateMutation.mutate(
                 {
-                    tradingPlanId: tradingPlanId! as string,
+                    tradingPlanId: tradingPlanId,
                     payload: formData as unknown as TradingPlanRequest,
                 },
                 {

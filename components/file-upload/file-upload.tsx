@@ -63,7 +63,6 @@ export function FileUpload({
         return controlledFiles
     }, [value, existingPreviewUrl, controlledFiles])
 
-    console.log("Resolved files:", resolvedFiles)
 
     const { files, processFiles, removeFile, canAddMore } = useFileUpload({
         multiple,
