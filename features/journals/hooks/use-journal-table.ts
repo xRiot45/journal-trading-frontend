@@ -15,8 +15,6 @@ import { useFindAllJournalsQuery } from "./use-journal-queries"
 interface UseJournalTableOptions {
     onEdit: (journal: Journal) => void
     onDelete: (journal: Journal) => void
-    month?: string
-    year?: string
 }
 
 export function useJournalTable({ onEdit, onDelete }: UseJournalTableOptions) {
