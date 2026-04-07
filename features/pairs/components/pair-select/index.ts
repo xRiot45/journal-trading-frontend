@@ -1,6 +1,0 @@
-export { PairSelect } from "./PairSelect"
-export type { PairSelectProps } from "./PairSelect"
-export { PairSelectContent } from "./PairSelectContent"
-export { PairSelectItem } from "./PairSelectItem"
-export { PairSelectSearch } from "./PairSelectSearch"
-export { PairSelectTrigger } from "./PairSelectTrigger"
