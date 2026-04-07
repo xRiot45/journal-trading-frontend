@@ -14,6 +14,7 @@ export function useCreateJournalMutation(onSuccess?: () => void) {
             toast.success("Journal created")
             invalidate()
             onSuccess?.()
+            window.location.href = "/journals"
         },
         onError: (error) => toast.error(error.message),
     })
@@ -33,6 +34,7 @@ export function useUpdateJournalMutation(onSuccess?: () => void) {
             toast.success("Journal updated")
             invalidate()
             onSuccess?.()
+            window.location.href = "/journals"
         },
         onError: (error) => toast.error(error.message),
     })

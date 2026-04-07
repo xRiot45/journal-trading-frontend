@@ -26,7 +26,7 @@ interface JournalFormFieldsProps {
 
 export function JournalFormFields({ form }: JournalFormFieldsProps) {
     return (
-        <div className="grid grid-cols-1 gap-4 space-y-4 md:grid-cols-5">
+        <div className="mt-12 grid grid-cols-1 gap-4 space-y-4 md:grid-cols-5">
             {/* Date */}
             <FormField
                 control={form.control}
@@ -42,7 +42,25 @@ export function JournalFormFields({ form }: JournalFormFieldsProps) {
                 )}
             />
 
-            {/* Direction */}
+            {/* Pair Select */}
+            <FormField
+                control={form.control}
+                name="pairId"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Pair</FormLabel>
+                        <FormControl>
+                            <PairSelect
+                                value={field.value}
+                                onChange={field.onChange}
+                            />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+
+            {/* Direction Select */}
             <FormField
                 control={form.control}
                 name="direction"
@@ -81,7 +99,7 @@ export function JournalFormFields({ form }: JournalFormFieldsProps) {
                 )}
             />
 
-            {/* Status */}
+            {/* Status Select */}
             <FormField
                 control={form.control}
                 name="status"
@@ -111,42 +129,6 @@ export function JournalFormFields({ form }: JournalFormFieldsProps) {
                 )}
             />
 
-            {/* Pair Select */}
-            <FormField
-                control={form.control}
-                name="pairId"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Pair</FormLabel>
-                        <FormControl>
-                            <PairSelect
-                                value={field.value}
-                                onChange={field.onChange}
-                            />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}
-            />
-
-            {/* Strategy Select */}
-            <FormField
-                control={form.control}
-                name="strategyId"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Strategy</FormLabel>
-                        <FormControl>
-                            <StrategySelect
-                                value={field.value}
-                                onChange={field.onChange}
-                            />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}
-            />
-
             {/* Lot Size */}
             <FormField
                 control={form.control}
@@ -158,6 +140,7 @@ export function JournalFormFields({ form }: JournalFormFieldsProps) {
                             <Input
                                 type="number"
                                 step="any"
+                                placeholder="Lot Size"
                                 {...field}
                                 value={field.value ?? ""}
                                 onChange={(e) => {
@@ -185,6 +168,7 @@ export function JournalFormFields({ form }: JournalFormFieldsProps) {
                             <Input
                                 type="number"
                                 step="any"
+                                placeholder="Entry Price"
                                 {...field}
                                 value={field.value ?? ""}
                                 onChange={(e) => {
@@ -211,6 +195,7 @@ export function JournalFormFields({ form }: JournalFormFieldsProps) {
                         <FormControl>
                             <Input
                                 type="time"
+                                step={1}
                                 {...field}
                                 className="w-full py-6"
                             />
@@ -231,6 +216,7 @@ export function JournalFormFields({ form }: JournalFormFieldsProps) {
                             <Input
                                 type="number"
                                 step="any"
+                                placeholder="Closing Price"
                                 {...field}
                                 value={field.value ?? ""}
                                 onChange={(e) => {
@@ -257,6 +243,7 @@ export function JournalFormFields({ form }: JournalFormFieldsProps) {
                         <FormControl>
                             <Input
                                 type="time"
+                                step={1}
                                 {...field}
                                 className="w-full py-6"
                             />
@@ -277,6 +264,7 @@ export function JournalFormFields({ form }: JournalFormFieldsProps) {
                             <Input
                                 type="number"
                                 step="any"
+                                placeholder="Take Profit"
                                 {...field}
                                 value={field.value ?? ""}
                                 onChange={(e) => {
@@ -304,6 +292,7 @@ export function JournalFormFields({ form }: JournalFormFieldsProps) {
                             <Input
                                 type="number"
                                 step="any"
+                                placeholder="Stop Loss"
                                 {...field}
                                 value={field.value ?? ""}
                                 onChange={(e) => {
@@ -326,11 +315,12 @@ export function JournalFormFields({ form }: JournalFormFieldsProps) {
                 name="profitAndLoss"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Profit & Loss</FormLabel>
+                        <FormLabel>PnL</FormLabel>
                         <FormControl>
                             <Input
                                 type="number"
                                 step="any"
+                                placeholder="PnL"
                                 {...field}
                                 value={field.value ?? ""}
                                 onChange={(e) => {
@@ -347,59 +337,64 @@ export function JournalFormFields({ form }: JournalFormFieldsProps) {
                 )}
             />
 
-            {/* Risk Ratio */}
-            <FormField
-                control={form.control}
-                name="riskRatio"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Risk Ratio</FormLabel>
-                        <FormControl>
-                            <Input
-                                type="number"
-                                step="any"
-                                {...field}
-                                value={field.value ?? ""}
-                                onChange={(e) => {
-                                    const val = e.target.value
-                                    field.onChange(
-                                        val === "" ? undefined : Number(val)
-                                    )
-                                }}
-                                className="w-full py-6"
-                            />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}
-            />
+            {/* Risk & Reward Ratio */}
+            <FormItem>
+                <FormLabel>Risk Reward Ratio</FormLabel>
 
-            {/* Reward Ratio */}
-            <FormField
-                control={form.control}
-                name="rewardRatio"
-                render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Reward Ratio</FormLabel>
-                        <FormControl>
-                            <Input
-                                type="number"
-                                step="any"
-                                {...field}
-                                value={field.value ?? ""}
-                                onChange={(e) => {
-                                    const val = e.target.value
-                                    field.onChange(
-                                        val === "" ? undefined : Number(val)
-                                    )
-                                }}
-                                className="w-full py-6"
-                            />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                )}
-            />
+                <div className="flex items-center gap-2">
+                    {/* Risk */}
+                    <FormField
+                        control={form.control}
+                        name="riskRatio"
+                        render={({ field }) => (
+                            <FormControl>
+                                <Input
+                                    type="number"
+                                    step="any"
+                                    placeholder="Risk"
+                                    {...field}
+                                    value={field.value ?? ""}
+                                    onChange={(e) => {
+                                        const val = e.target.value
+                                        field.onChange(
+                                            val === "" ? undefined : Number(val)
+                                        )
+                                    }}
+                                    className="py-6"
+                                />
+                            </FormControl>
+                        )}
+                    />
+
+                    <span className="text-lg font-semibold">:</span>
+
+                    {/* Reward */}
+                    <FormField
+                        control={form.control}
+                        name="rewardRatio"
+                        render={({ field }) => (
+                            <FormControl>
+                                <Input
+                                    type="number"
+                                    step="any"
+                                    placeholder="Reward"
+                                    {...field}
+                                    value={field.value ?? ""}
+                                    onChange={(e) => {
+                                        const val = e.target.value
+                                        field.onChange(
+                                            val === "" ? undefined : Number(val)
+                                        )
+                                    }}
+                                    className="py-6"
+                                />
+                            </FormControl>
+                        )}
+                    />
+                </div>
+
+                <FormMessage />
+            </FormItem>
 
             {/* Based On Plan */}
             <FormField
@@ -433,12 +428,30 @@ export function JournalFormFields({ form }: JournalFormFieldsProps) {
                 )}
             />
 
+            {/* Strategy Select */}
+            <FormField
+                control={form.control}
+                name="strategyId"
+                render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Strategy</FormLabel>
+                        <FormControl>
+                            <StrategySelect
+                                value={field.value}
+                                onChange={field.onChange}
+                            />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                )}
+            />
+
             {/* Note */}
             <FormField
                 control={form.control}
                 name="note"
                 render={({ field }) => (
-                    <FormItem className="md:col-span-2">
+                    <FormItem className="md:col-span-5">
                         <FormLabel>Note</FormLabel>
                         <FormControl>
                             <Textarea
