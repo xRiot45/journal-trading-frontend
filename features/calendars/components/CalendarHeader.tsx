@@ -19,11 +19,11 @@ export function CalendarHeader({
     return (
         <div className="mb-6 flex items-center justify-between">
             <div>
-                <h2 className="font-display text-xl font-bold tracking-tight text-white sm:text-2xl">
+                <h2 className="font-display text-xl font-bold tracking-tight text-black sm:text-2xl dark:text-white">
                     {getMonthName(month)}{" "}
-                    <span className="text-white/40">{year}</span>
+                    <span className="text-black dark:text-white">{year}</span>
                 </h2>
-                <p className="mt-0.5 text-xs tracking-widest text-white/30 uppercase">
+                <p className="mt-0.5 text-xs tracking-widest text-black uppercase dark:text-white">
                     Monthly PnL Calendar
                 </p>
             </div>
@@ -31,14 +31,14 @@ export function CalendarHeader({
             <div className="flex items-center gap-1.5">
                 <button
                     onClick={onPrevMonth}
-                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/4 text-white/50 transition-all duration-150 hover:border-white/20 hover:bg-white/9 hover:text-white/80"
+                    className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-gray-100 bg-gray-100 text-black transition-all duration-150 hover:border-gray-100 hover:bg-gray-300 hover:text-black"
                     aria-label="Previous month"
                 >
                     <ChevronLeft size={15} />
                 </button>
                 <button
                     onClick={onNextMonth}
-                    className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/4 text-white/50 transition-all duration-150 hover:border-white/20 hover:bg-white/9 hover:text-white/80"
+                    className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border border-gray-100 bg-gray-100 text-black transition-all duration-150 hover:border-gray-100 hover:bg-gray-300 hover:text-black"
                     aria-label="Next month"
                 >
                     <ChevronRight size={15} />

@@ -28,7 +28,7 @@ export function CalendarGrid({
                 {WEEKDAYS.map((d) => (
                     <div
                         key={d}
-                        className="py-1.5 text-center text-[10px] font-semibold tracking-widest text-white/20"
+                        className="py-1.5 text-center text-[10px] font-semibold tracking-widest text-black/30 dark:text-white/20"
                     >
                         {d}
                     </div>
@@ -39,7 +39,10 @@ export function CalendarGrid({
             <div className="grid grid-cols-7 gap-1.5">
                 {/* Empty prefix cells */}
                 {Array.from({ length: firstDayOffset }).map((_, i) => (
-                    <div key={`empty-${i}`} className="aspect-square" />
+                    <div
+                        key={`empty-${i}`}
+                        className="aspect-square rounded-lg bg-black/1.5 dark:bg-white/2"
+                    />
                 ))}
 
                 {/* Day cards */}

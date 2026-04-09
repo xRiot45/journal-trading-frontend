@@ -8,6 +8,7 @@ import { CalendarGrid } from "./CalendarGrid"
 import { CalendarSkeleton } from "./CalendarSkeleton"
 import { useGetMonthlyPnLCalendarQuery } from "../hooks/use-calendar-queries"
 import type { CalendarDay } from "../types/calendar.type"
+import { CalendarDayModalDetail } from "./CalendarDayModalDetail"
 
 export function CalendarContainer() {
     const now = new Date()
@@ -35,19 +36,19 @@ export function CalendarContainer() {
     }
 
     return (
-        <div className="flex min-h-screen items-start justify-center bg-[#090909] px-4 py-8 sm:py-12">
+        <div className="flex min-h-screen items-start justify-center text-black dark:text-white">
             {/* Subtle noise / grain background */}
             <div
-                className="pointer-events-none fixed inset-0 opacity-[0.025]"
+                className="pointer-events-none fixed inset-0 opacity-[0.03] dark:opacity-[0.025]"
                 style={{
                     backgroundImage:
                         "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E\")",
                 }}
             />
 
-            <div className="relative w-full max-w-2xl">
+            <div className="relative w-full">
                 {/* Card */}
-                <div className="rounded-2xl border border-white/[0.07] bg-white/2 p-5 shadow-2xl shadow-black/60 backdrop-blur-sm sm:p-7">
+                <div className="rounded-2xl">
                     {/* Header */}
                     <CalendarHeader
                         month={month}
@@ -62,7 +63,7 @@ export function CalendarContainer() {
                     {/* Error */}
                     {isError && !isLoading && (
                         <div className="flex flex-col items-center justify-center gap-3 py-20">
-                            <span className="text-sm text-red-400/60">
+                            <span className="text-sm text-black/50 dark:text-white/50">
                                 Failed to load calendar data.
                             </span>
                         </div>
@@ -71,7 +72,7 @@ export function CalendarContainer() {
                     {/* Empty */}
                     {!isLoading && !isError && !data?.data?.days?.length && (
                         <div className="flex flex-col items-center justify-center gap-3 py-20">
-                            <span className="text-sm text-white/20">
+                            <span className="text-sm text-black dark:text-white">
                                 No trading data for this month.
                             </span>
                         </div>
@@ -91,11 +92,14 @@ export function CalendarContainer() {
                     )}
 
                     {/* Legend */}
-                    <div className="mt-5 flex items-center gap-4 border-t border-white/5 pt-4">
+                    <div className="mt-5 flex items-center gap-4 border-t border-black/10 pt-4 dark:border-white/10">
                         {[
                             { color: "bg-emerald-400", label: "Profit" },
                             { color: "bg-red-400", label: "Loss" },
-                            { color: "bg-white/20", label: "Neutral" },
+                            {
+                                color: "bg-black/30 dark:bg-white/20",
+                                label: "Neutral",
+                            },
                         ].map(({ color, label }) => (
                             <div
                                 key={label}
@@ -104,7 +108,7 @@ export function CalendarContainer() {
                                 <span
                                     className={`h-2 w-2 rounded-full ${color}`}
                                 />
-                                <span className="text-[10px] tracking-wide text-white/30">
+                                <span className="text-[10px] tracking-wide text-black/40 dark:text-white/30">
                                     {label}
                                 </span>
                             </div>
@@ -112,63 +116,10 @@ export function CalendarContainer() {
                     </div>
                 </div>
 
-                {/* Day detail drawer */}
-                {selectedDay && (
-                    <div
-                        className="fixed inset-0 z-50 flex items-end justify-center p-4 sm:items-center"
-                        onClick={() => setSelectedDay(null)}
-                    >
-                        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
-                        <div
-                            className="relative z-10 w-full max-w-sm rounded-2xl border border-white/10 bg-[#111] p-6 shadow-2xl"
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <div className="mb-4 flex items-center justify-between">
-                                <h3 className="text-base font-semibold text-white">
-                                    {new Date(
-                                        selectedDay.date
-                                    ).toLocaleDateString("en-US", {
-                                        weekday: "long",
-                                        month: "long",
-                                        day: "numeric",
-                                    })}
-                                </h3>
-                                <button
-                                    onClick={() => setSelectedDay(null)}
-                                    className="text-xs text-white/30 hover:text-white/60"
-                                >
-                                    ✕
-                                </button>
-                            </div>
-                            <div className="space-y-2">
-                                <div className="flex justify-between text-sm">
-                                    <span className="text-white/40">PnL</span>
-                                    <span
-                                        className={
-                                            selectedDay.status === "profit"
-                                                ? "font-semibold text-emerald-400"
-                                                : selectedDay.status === "loss"
-                                                  ? "font-semibold text-red-400"
-                                                  : "text-white/40"
-                                        }
-                                    >
-                                        {selectedDay.totalPnL === 0
-                                            ? "—"
-                                            : `${selectedDay.totalPnL > 0 ? "+" : ""}$${Math.abs(selectedDay.totalPnL)}`}
-                                    </span>
-                                </div>
-                                <div className="flex justify-between text-sm">
-                                    <span className="text-white/40">
-                                        Trades
-                                    </span>
-                                    <span className="text-white/70">
-                                        {selectedDay.tradeCount}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )}
+                <CalendarDayModalDetail
+                    selectedDay={selectedDay}
+                    onClose={() => setSelectedDay(null)}
+                />
             </div>
         </div>
     )

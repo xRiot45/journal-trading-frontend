@@ -64,7 +64,7 @@ export function CalendarSummary({ summary }: CalendarSummaryProps) {
 
                         <div className="relative flex flex-col gap-2">
                             <div className="flex items-center justify-between">
-                                <span className="text-[10px] font-medium tracking-widest text-white/40 uppercase sm:text-xs">
+                                <span className="text-[10px] font-medium tracking-widest text-black uppercase sm:text-xs dark:text-white">
                                     {label}
                                 </span>
                                 <Icon
