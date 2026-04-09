@@ -35,6 +35,14 @@ export function CalendarContainer() {
         } else setMonth((m) => m + 1)
     }
 
+    function handleChangeMonth(value: number) {
+        setMonth(value)
+    }
+
+    function handleChangeYear(value: number) {
+        setYear(value)
+    }
+
     return (
         <div className="flex min-h-screen items-start justify-center text-black dark:text-white">
             {/* Subtle noise / grain background */}
@@ -55,6 +63,8 @@ export function CalendarContainer() {
                         year={year}
                         onPrevMonth={handlePrevMonth}
                         onNextMonth={handleNextMonth}
+                        onChangeMonth={handleChangeMonth}
+                        onChangeYear={handleChangeYear}
                     />
 
                     {/* Loading */}
