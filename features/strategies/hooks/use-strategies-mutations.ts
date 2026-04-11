@@ -1,6 +1,10 @@
 import useInvalidateQuery from "@/hooks/use-invalidate-query"
 import { STRATEGIES_QUERY_KEY } from "./use-strategies-queries"
-import { createStrategy, updateStrategy } from "../api/strategies.api"
+import {
+    createStrategy,
+    deleteStrategy,
+    updateStrategy,
+} from "../api/strategies.api"
 import { toast } from "sonner"
 import {
     StrategiesItemResponse,
@@ -33,6 +37,20 @@ export function useUpdateStrategyMutation(onSuccess: () => void) {
         mutationFn: ({ id, payload }) => updateStrategy(id, payload),
         onSuccess: () => {
             toast.success("Strategy updated")
+            invalidate()
+            onSuccess?.()
+        },
+        onError: (error) => toast.error(error.message),
+    })
+}
+
+export function useDeleteStrategyMutation(onSuccess: () => void) {
+    const invalidate = useInvalidateQuery(STRATEGIES_QUERY_KEY)
+
+    return useMutation<void, Error, string>({
+        mutationFn: (id) => deleteStrategy(id),
+        onSuccess: () => {
+            toast.success("Strategy deleted")
             invalidate()
             onSuccess?.()
         },

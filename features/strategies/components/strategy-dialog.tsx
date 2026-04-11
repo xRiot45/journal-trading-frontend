@@ -35,10 +35,10 @@ export function StrategyDialog() {
     })
 
     useEffect(() => {
-        if (isDialogOpen) {
+        if (isDialogOpen && selectedStrategy) {
             form.reset({
-                title: selectedStrategy?.title ?? "",
-                description: selectedStrategy?.description ?? "",
+                title: selectedStrategy.title ?? "",
+                description: selectedStrategy.description ?? "",
             })
         }
     }, [isDialogOpen, selectedStrategy, form])

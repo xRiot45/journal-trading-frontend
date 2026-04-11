@@ -42,13 +42,13 @@ export const useStrategyStore = create<StrategyStore>((set) => ({
     openEditDialog: (strategy: Strategies) =>
         set({
             isDialogOpen: true,
-            selectedStrategyId: strategy.id,
+            selectedStrategy: strategy,
         }),
 
     openDeleteDialog: (strategy: Strategies) =>
         set({
             isDeleteDialogOpen: true,
-            selectedStrategyId: strategy.id,
+            selectedStrategy: strategy,
         }),
 
     closeDialog: () =>

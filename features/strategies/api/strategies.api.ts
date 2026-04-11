@@ -62,3 +62,13 @@ export async function updateStrategy(
         )
     }
 }
+
+export async function deleteStrategy(id: string): Promise<void> {
+    try {
+        await httpClient.delete(`${STRATEGIES_ENDPOINT}/${id}`, {
+            withCredentials: true,
+        })
+    } catch (err) {
+        throwApiError(err, "Failed to delete strategy. Please try again later.")
+    }
+}
