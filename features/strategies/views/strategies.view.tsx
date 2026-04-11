@@ -6,7 +6,6 @@ import { Container } from "@/components/ui/container"
 import { useStrategyStore } from "../store/strategies.store"
 import { Plus } from "lucide-react"
 import { StrategyDialog } from "../components/strategy-dialog"
-import { useFindAllSessionsQuery } from "@/features/sessions/hooks/use-session-queries"
 import { StrategyCard } from "../components/strategy-card"
 import { useRouter } from "next/navigation"
 import { useFindAllStrategiesQuery } from "../hooks/use-strategies-queries"
@@ -14,15 +13,12 @@ import { StrategyDeleteDialog } from "../components/strategy-delete-dialog"
 
 export default function StrategiesView() {
     const router = useRouter()
-
     const { openCreateDialog, openEditDialog, openDeleteDialog } =
         useStrategyStore()
 
     const { data, isLoading } = useFindAllStrategiesQuery()
 
     const strategiesData = data?.data ?? []
-
-    console.log(strategiesData)
 
     return (
         <Container size="2xl">
