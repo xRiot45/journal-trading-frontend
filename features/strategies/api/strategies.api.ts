@@ -42,3 +42,23 @@ export async function createStrategy(
         )
     }
 }
+
+export async function updateStrategy(
+    id: string,
+    payload: StrategiesRequest
+): Promise<StrategiesItemResponse> {
+    try {
+        return await httpClient.put<StrategiesItemResponse>(
+            `${STRATEGIES_ENDPOINT}/${id}`,
+            payload,
+            {
+                withCredentials: true,
+            }
+        )
+    } catch (err) {
+        throwApiError(
+            err,
+            "Failed to update strategy. Please check your input and try again."
+        )
+    }
+}

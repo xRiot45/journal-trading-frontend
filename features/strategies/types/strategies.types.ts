@@ -44,7 +44,7 @@ export interface CanvasHistoryItem {
     createdAt: Date
 }
 
-export interface StrategyResponse {
+export interface Strategies {
     id: string
     title: string
     content: string | null
@@ -61,6 +61,6 @@ export interface RestoreSnapshotResult {
     elementCount: number
 }
 
-export type StrategiesListResponse = ApiSuccessResponse<StrategyResponse[]>
+export type StrategiesListResponse = ApiSuccessResponse<Strategies[]>
 
-export type StrategiesItemResponse = ApiSuccessResponse<StrategyResponse>
+export type StrategiesItemResponse = ApiSuccessResponse<Strategies>
