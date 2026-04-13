@@ -24,6 +24,24 @@ export async function findAllStrategies(): Promise<StrategiesListResponse> {
     }
 }
 
+export async function findStrategyById(
+    strategyId: string
+): Promise<StrategiesItemResponse> {
+    try {
+        return await httpClient.get<StrategiesItemResponse>(
+            `${STRATEGIES_ENDPOINT}/${strategyId}`,
+            {
+                withCredentials: true,
+            }
+        )
+    } catch (err) {
+        throwApiError(
+            err,
+            "Failed to fetch strategy details. Please try again later."
+        )
+    }
+}
+
 export async function createStrategy(
     payload: StrategiesRequest
 ): Promise<StrategiesItemResponse> {

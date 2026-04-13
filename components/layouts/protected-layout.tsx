@@ -1,6 +1,4 @@
 import type { ReactNode } from "react"
-
-import { Container } from "@/components/ui/container"
 import { AppHeader } from "../headers/app-header"
 import { DockBar } from "../dock"
 
@@ -13,9 +11,7 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
         <div className="min-h-screen bg-background text-foreground">
             <AppHeader />
 
-            <main className="pb-24">
-                <Container size="full">{children}</Container>
-            </main>
+            <main className="pb-24">{children}</main>
 
             <DockBar />
         </div>

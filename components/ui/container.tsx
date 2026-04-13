@@ -3,10 +3,12 @@ import { cn } from "@/lib/utils"
 
 type ContainerProps = React.ComponentProps<"div"> & {
     asChild?: false
-    size?: "sm" | "md" | "lg" | "xl" | "2xl" | "full"
+    // Menambahkan 'none' ke dalam tipe size
+    size?: "none" | "sm" | "md" | "lg" | "xl" | "2xl" | "full"
 }
 
 const sizeClasses: Record<NonNullable<ContainerProps["size"]>, string> = {
+    none: "",
     sm: "max-w-3xl",
     md: "max-w-5xl",
     lg: "max-w-6xl",
@@ -21,10 +23,13 @@ export function Container({
     size = "xl",
     ...props
 }: ContainerProps) {
+    // Cek apakah size adalah 'none'
+    const isNone = size === "none"
+
     return (
         <div
             className={cn(
-                "mx-auto w-full px-4 py-6 sm:px-6 lg:px-8",
+                !isNone && "mx-auto w-full px-4 py-6 sm:px-6 lg:px-8",
                 sizeClasses[size],
                 className
             )}
