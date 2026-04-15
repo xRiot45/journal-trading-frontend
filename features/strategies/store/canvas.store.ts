@@ -88,8 +88,8 @@ interface CanvasStore {
     deleteSelected: () => void
 }
 
-let nodeCounter = 1
-let edgeCounter = 1
+// let nodeCounter = 1
+// let edgeCounter = 1
 
 function genId(prefix: string) {
     return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
@@ -110,17 +110,6 @@ export const useCanvasStore = create<CanvasStore>((set, get) => ({
         },
         {
             id: "node-demo-2",
-            type: "decision",
-            x: 460,
-            y: 180,
-            width: 120,
-            height: 120,
-            label: "Trend Up?",
-            selected: false,
-            zIndex: 1,
-        },
-        {
-            id: "node-demo-3",
             type: "default",
             x: 680,
             y: 140,
@@ -131,24 +120,13 @@ export const useCanvasStore = create<CanvasStore>((set, get) => ({
             zIndex: 1,
         },
         {
-            id: "node-demo-4",
+            id: "node-demo-3",
             type: "default",
             x: 680,
             y: 300,
             width: 160,
             height: 60,
             label: "Wait / Skip",
-            selected: false,
-            zIndex: 1,
-        },
-        {
-            id: "node-demo-5",
-            type: "text",
-            x: 200,
-            y: 340,
-            width: 200,
-            height: 50,
-            label: "XAUUSD Strategy v1.0",
             selected: false,
             zIndex: 1,
         },

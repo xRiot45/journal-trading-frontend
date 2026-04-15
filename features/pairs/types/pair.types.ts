@@ -18,4 +18,3 @@ export interface PairListResponse extends ApiSuccessResponse<Pair[]> {
 }
 
 export type PairItemResponse = ApiSuccessResponse<Pair>
-
