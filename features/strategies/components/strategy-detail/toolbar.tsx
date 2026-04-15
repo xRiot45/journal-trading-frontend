@@ -43,17 +43,12 @@ export function Toolbar() {
                     key={tool.id}
                     onClick={() => setTool(tool.id)}
                     title={`${tool.label} (${tool.shortcut})`}
-                    className="group relative flex h-10 w-10 items-center justify-center rounded-xl text-base transition-all duration-150"
-                    style={{
-                        background:
-                            activeTool === tool.id
-                                ? "var(--canvas-accent)"
-                                : "bg-black text-white",
-                        color:
-                            activeTool === tool.id
-                                ? "var(--canvas-node)"
-                                : "var(--canvas-text)",
-                    }}
+                    // Menggunakan template literal untuk mengganti class dinamis
+                    className={`group relative flex h-10 w-10 items-center justify-center rounded-xl text-base transition-all duration-150 ${
+                        activeTool === tool.id
+                            ? "bg-slate-900 text-white shadow-md dark:bg-slate-100 dark:text-slate-900" // Style saat Aktif (Support Dark/Light)
+                            : "bg-transparent text-slate-600 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-800" // Style saat Default/Nonaktif
+                    }`}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     initial={{ opacity: 0, x: -20 }}
@@ -87,13 +82,11 @@ export function Toolbar() {
                 onClick={undo}
                 disabled={!canUndo}
                 title="Undo (Ctrl+Z)"
-                className="flex h-10 w-10 items-center justify-center rounded-xl text-base transition-all duration-150"
-                style={{
-                    color: canUndo
-                        ? "var(--canvas-text)"
-                        : "var(--canvas-muted)",
-                    opacity: canUndo ? 1 : 0.4,
-                }}
+                className={`flex h-10 w-10 items-center justify-center rounded-xl text-base transition-all duration-150 ${
+                    canUndo
+                        ? "cursor-pointer text-slate-700 hover:bg-slate-200 dark:text-slate-300 dark:hover:bg-slate-800"
+                        : "cursor-not-allowed text-slate-400 opacity-50 dark:text-slate-600"
+                }`}
                 whileHover={canUndo ? { scale: 1.05 } : {}}
                 whileTap={canUndo ? { scale: 0.95 } : {}}
             >
@@ -103,13 +96,11 @@ export function Toolbar() {
                 onClick={redo}
                 disabled={!canRedo}
                 title="Redo (Ctrl+Shift+Z)"
-                className="flex h-10 w-10 items-center justify-center rounded-xl text-base transition-all duration-150"
-                style={{
-                    color: canRedo
-                        ? "var(--canvas-text)"
-                        : "var(--canvas-muted)",
-                    opacity: canRedo ? 1 : 0.4,
-                }}
+                className={`flex h-10 w-10 items-center justify-center rounded-xl text-base transition-all duration-150 ${
+                    canRedo
+                        ? "cursor-pointer text-slate-700 hover:bg-slate-200 dark:text-slate-300 dark:hover:bg-slate-800"
+                        : "cursor-not-allowed text-slate-400 opacity-50 dark:text-slate-600"
+                }`}
                 whileHover={canRedo ? { scale: 1.05 } : {}}
                 whileTap={canRedo ? { scale: 0.95 } : {}}
             >
