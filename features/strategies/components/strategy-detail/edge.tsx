@@ -15,32 +15,30 @@ function getEdgePoints(source: CanvasNode, target: CanvasNode) {
     const dx = tc.x - sc.x
     const dy = tc.y - sc.y
 
-    // Find exit/entry points on node border
-    const srcHalfW = source.width / 2
-    const srcHalfH = source.height / 2
-    const tgtHalfW = target.width / 2
-    const tgtHalfH = target.height / 2
+    // Menghitung titik keluar/masuk tepat di tepi kotak node
+    let sx, sy, ex, ey
 
-    let sx = sc.x,
-        sy = sc.y,
-        ex = tc.x,
-        ey = tc.y
+    if (Math.abs(dx) / source.width > Math.abs(dy) / source.height) {
+        // Keluar dari sisi kiri atau kanan
+        sx = sc.x + (dx > 0 ? source.width / 2 : -source.width / 2)
+        sy = sc.y + dy * (source.width / 2 / Math.abs(dx))
 
-    if (Math.abs(dx) > Math.abs(dy)) {
-        sx = sc.x + (dx > 0 ? srcHalfW : -srcHalfW)
-        sy = sc.y
-        ex = tc.x + (dx > 0 ? -tgtHalfW : tgtHalfW)
-        ey = tc.y
+        ex = tc.x + (dx > 0 ? -target.width / 2 : target.width / 2)
+        ey = tc.y + -dy * (target.width / 2 / Math.abs(dx))
     } else {
-        sx = sc.x
-        sy = sc.y + (dy > 0 ? srcHalfH : -srcHalfH)
-        ex = tc.x
-        ey = tc.y + (dy > 0 ? -tgtHalfH : tgtHalfH)
+        // Keluar dari sisi atas atau bawah
+        sx = sc.x + dx * (source.height / 2 / Math.abs(dy))
+        sy = sc.y + (dy > 0 ? source.height / 2 : -source.height / 2)
+
+        ex = tc.x + -dx * (target.height / 2 / Math.abs(dy))
+        ey = tc.y + (dy > 0 ? -target.height / 2 : target.height / 2)
     }
 
-    const cpx1 = sx + (ex - sx) * 0.5
+    // Kalkulasi Control Points untuk kurva Bezier (S-shape horizontal)
+    const offset = Math.min(Math.abs(dx) / 2, 50)
+    const cpx1 = sx + (dx > 0 ? offset : -offset)
     const cpy1 = sy
-    const cpx2 = sx + (ex - sx) * 0.5
+    const cpx2 = ex + (dx > 0 ? -offset : offset)
     const cpy2 = ey
 
     return { sx, sy, ex, ey, cpx1, cpy1, cpx2, cpy2 }
@@ -63,61 +61,37 @@ const EdgePath = memo(function EdgePath({
         source,
         target
     )
+
+    // Path string menggunakan Cubic Bezier
     const d = `M${sx},${sy} C${cpx1},${cpy1} ${cpx2},${cpy2} ${ex},${ey}`
-    const midX = (sx + ex) / 2
-    const midY = (sy + ey) / 2
 
     return (
         <g>
-            {/* Invisible wider hit area */}
+            {/* Hit area lebih luas agar mudah diklik */}
             <path
                 d={d}
                 fill="none"
                 stroke="transparent"
-                strokeWidth={16}
-                style={{ cursor: "pointer" }}
-                onClick={() => onSelect(edge.id)}
+                strokeWidth={20}
+                style={{ cursor: "pointer", pointerEvents: "all" }}
+                onClick={(e) => {
+                    e.stopPropagation()
+                    onSelect(edge.id)
+                }}
             />
-            {/* Visible path */}
             <path
                 className="edge-path"
                 d={d}
+                fill="none"
                 style={{
                     stroke: edge.selected
-                        ? "var(--canvas-accent)"
-                        : "var(--canvas-edge)",
-                    strokeWidth: edge.selected ? 2.5 : 1.5,
-                    strokeDasharray: edge.selected ? "0" : "0",
+                        ? "var(--canvas-accent, #3b82f6)"
+                        : "var(--canvas-edge, #94a3b8)",
+                    strokeWidth: edge.selected ? 3 : 1.5,
+                    transition: "stroke 0.2s",
                 }}
                 markerEnd={`url(#arrow-${edge.selected ? "selected" : "default"})`}
-                onClick={() => onSelect(edge.id)}
             />
-            {/* Edge label */}
-            {edge.label && (
-                <foreignObject
-                    x={midX - 30}
-                    y={midY - 12}
-                    width={60}
-                    height={24}
-                    style={{ overflow: "visible", pointerEvents: "none" }}
-                >
-                    <div
-                        style={{
-                            background: "var(--canvas-node)",
-                            border: "1px solid var(--canvas-border)",
-                            borderRadius: 4,
-                            fontSize: 10,
-                            fontFamily: "var(--font-sans)",
-                            color: "var(--canvas-text)",
-                            textAlign: "center",
-                            padding: "2px 6px",
-                            whiteSpace: "nowrap",
-                        }}
-                    >
-                        {edge.label}
-                    </div>
-                </foreignObject>
-            )}
         </g>
     )
 })
@@ -125,49 +99,55 @@ const EdgePath = memo(function EdgePath({
 export function EdgeRenderer() {
     const { nodes, edges, selectEdge } = useCanvasStore()
 
-    // Compute bounding box for SVG
     const bounds = useMemo(() => {
-        if (!nodes.length)
-            return { x: -5000, y: -5000, width: 10000, height: 10000 }
-        const minX = Math.min(...nodes.map((n) => n.x)) - 200
-        const minY = Math.min(...nodes.map((n) => n.y)) - 200
-        const maxX = Math.max(...nodes.map((n) => n.x + n.width)) + 200
-        const maxY = Math.max(...nodes.map((n) => n.y + n.height)) + 200
-        return { x: minX, y: minY, width: maxX - minX, height: maxY - minY }
+        if (!nodes.length) return { x: 0, y: 0, width: 0, height: 0 }
+        const padding = 100
+        const minX = Math.min(...nodes.map((n) => n.x)) - padding
+        const minY = Math.min(...nodes.map((n) => n.y)) - padding
+        const maxX = Math.max(...nodes.map((n) => n.x + n.width)) + padding
+        const maxY = Math.max(...nodes.map((n) => n.y + n.height)) + padding
+
+        return {
+            x: minX,
+            y: minY,
+            width: maxX - minX,
+            height: maxY - minY,
+        }
     }, [nodes])
 
     return (
         <svg
+            viewBox={`${bounds.x} ${bounds.y} ${bounds.width} ${bounds.height}`}
             style={{
                 position: "absolute",
-                top: 0,
-                left: 0,
+                top: bounds.y,
+                left: bounds.x,
+                width: bounds.width,
+                height: bounds.height,
                 overflow: "visible",
                 pointerEvents: "none",
-                width: 0,
-                height: 0,
             }}
         >
             <defs>
                 <marker
                     id="arrow-default"
-                    markerWidth="8"
-                    markerHeight="8"
-                    refX="6"
-                    refY="3"
+                    markerWidth="10"
+                    markerHeight="10"
+                    refX="9"
+                    refY="5"
                     orient="auto"
                 >
-                    <path d="M0,0 L0,6 L8,3 z" fill="var(--canvas-edge)" />
+                    <path d="M0,0 L0,10 L10,5 z" fill="#94a3b8" />
                 </marker>
                 <marker
                     id="arrow-selected"
-                    markerWidth="8"
-                    markerHeight="8"
-                    refX="6"
-                    refY="3"
+                    markerWidth="10"
+                    markerHeight="10"
+                    refX="9"
+                    refY="5"
                     orient="auto"
                 >
-                    <path d="M0,0 L0,6 L8,3 z" fill="var(--canvas-accent)" />
+                    <path d="M0,0 L0,10 L10,5 z" fill="#3b82f6" />
                 </marker>
             </defs>
             <g style={{ pointerEvents: "all" }}>

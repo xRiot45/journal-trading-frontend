@@ -20,33 +20,36 @@ export function Controls() {
                 delay: 0.2,
             }}
         >
-            <ControlBtn onClick={() => zoomBy(-0.1)} title="Zoom Out (Ctrl+-)">
+            <ControlButton
+                onClick={() => zoomBy(-0.1)}
+                title="Zoom Out (Ctrl+-)"
+            >
                 −
-            </ControlBtn>
+            </ControlButton>
             <div
                 className="min-w-13 px-3 text-center font-mono text-xs font-medium"
                 style={{ color: "var(--canvas-text)" }}
             >
                 {zoom}%
             </div>
-            <ControlBtn onClick={() => zoomBy(0.1)} title="Zoom In (Ctrl++)">
+            <ControlButton onClick={() => zoomBy(0.1)} title="Zoom In (Ctrl++)">
                 +
-            </ControlBtn>
+            </ControlButton>
             <div
                 className="mx-1 h-5 w-px"
                 style={{ background: "var(--canvas-border)" }}
             />
-            <ControlBtn onClick={resetZoom} title="Reset Zoom">
+            <ControlButton onClick={resetZoom} title="Reset Zoom">
                 ⊙
-            </ControlBtn>
-            <ControlBtn onClick={fitScreen} title="Fit Screen">
+            </ControlButton>
+            <ControlButton onClick={fitScreen} title="Fit Screen">
                 ⊞
-            </ControlBtn>
+            </ControlButton>
         </motion.div>
     )
 }
 
-function ControlBtn({
+function ControlButton({
     onClick,
     title,
     children,
