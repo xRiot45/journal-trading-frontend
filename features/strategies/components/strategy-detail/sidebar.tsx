@@ -4,7 +4,7 @@
 import { motion, AnimatePresence } from "framer-motion"
 import { useCanvasStore } from "../../store/canvas.store"
 import { NodeType } from "../../types/canvas"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import {
     X,
     Settings2,
@@ -15,8 +15,8 @@ import {
     ChevronRight,
     Loader2,
     Plus,
+    CheckCircle2,
 } from "lucide-react"
-import { useParams } from "next/navigation"
 import { ElementType } from "../../types/element.types"
 import { useCreateElementMutation } from "../../hooks/use-elements-mutations"
 import { useStrategyStore } from "../../store/strategies.store"
@@ -58,10 +58,17 @@ export function Sidebar() {
         if (selectedEdge) setEdgeLabel(selectedEdge.label || "")
     }, [selectedEdge, selectedEdge?.id, selectedEdge?.label])
 
-    // 1. Inisialisasi Mutation
+    // 1. Tracking node yang sudah berhasil di-sync ke backend
+    const [syncedNodeIds, setSyncedNodeIds] = useState<Set<string>>(new Set())
+    const pendingNodeIdRef = useRef<string | null>(null)
+
     const createElementMutation = useCreateElementMutation(() => {
-        // Callback opsional setelah berhasil
-        console.log("Sync to cloud success")
+        if (pendingNodeIdRef.current) {
+            setSyncedNodeIds(
+                (prev) => new Set([...prev, pendingNodeIdRef.current!])
+            )
+            pendingNodeIdRef.current = null
+        }
     })
 
     // 2. Validasi form: tombol aktif jika node dipilih & identifier tidak kosong
@@ -71,11 +78,14 @@ export function Sidebar() {
         selectedNode.width > 0 &&
         selectedNode.height > 0
 
+    // Apakah node yang dipilih sudah pernah di-sync ke backend
+    const isNodeSynced = !!selectedNode && syncedNodeIds.has(selectedNode.id)
+
     // 3. Handler untuk Create — menggunakan data form yang sesungguhnya
     const handleCreateElement = () => {
         if (!strategyId || !selectedNode || !isFormValid) return
-        console.log(strategyId)
 
+        pendingNodeIdRef.current = selectedNode.id
         createElementMutation.mutate({
             strategyId,
             type: ElementType.NODE,
@@ -309,36 +319,45 @@ export function Sidebar() {
                                         Remove Object
                                     </button>
 
-                                    <SidebarField label="Actions">
-                                        <button
-                                            onClick={handleCreateElement}
-                                            disabled={
-                                                !isFormValid ||
-                                                createElementMutation.isPending
-                                            }
-                                            title={
-                                                !isFormValid
-                                                    ? "Pilih node dan isi Identifier terlebih dahulu"
-                                                    : "Simpan element ke cloud"
-                                            }
-                                            className="flex w-full items-center justify-center gap-2 rounded-md bg-black py-3 text-[10px] font-bold tracking-[0.2em] text-white uppercase transition-all hover:bg-black/80 disabled:cursor-not-allowed disabled:opacity-30 dark:bg-white dark:text-black"
-                                        >
-                                            {createElementMutation.isPending ? (
-                                                <Loader2 className="h-3 w-3 animate-spin" />
-                                            ) : (
-                                                <Plus className="h-3 w-3" />
-                                            )}
-                                            {createElementMutation.isPending
-                                                ? "Saving..."
-                                                : "Create Element"}
-                                        </button>
-                                        {selectedNode &&
-                                            label.trim() === "" && (
-                                                <p className="text-[9px] text-red-500 opacity-80">
-                                                    Identifier wajib diisi
-                                                </p>
-                                            )}
-                                    </SidebarField>
+                                    {isNodeSynced && (
+                                        <div className="flex items-center justify-center gap-1.5 rounded-md border border-black/10 py-2.5 text-[10px] font-bold tracking-[0.15em] uppercase opacity-40 dark:border-white/10">
+                                            <CheckCircle2 className="h-3 w-3" />
+                                            Element Saved
+                                        </div>
+                                    )}
+
+                                    {!isNodeSynced && (
+                                        <SidebarField label="Actions">
+                                            <button
+                                                onClick={handleCreateElement}
+                                                disabled={
+                                                    !isFormValid ||
+                                                    createElementMutation.isPending
+                                                }
+                                                title={
+                                                    !isFormValid
+                                                        ? "Isi Identifier terlebih dahulu"
+                                                        : "Simpan element ke cloud"
+                                                }
+                                                className="flex w-full items-center justify-center gap-2 rounded-md bg-black py-3 text-[10px] font-bold tracking-[0.2em] text-white uppercase transition-all hover:bg-black/80 disabled:cursor-not-allowed disabled:opacity-30 dark:bg-white dark:text-black"
+                                            >
+                                                {createElementMutation.isPending ? (
+                                                    <Loader2 className="h-3 w-3 animate-spin" />
+                                                ) : (
+                                                    <Plus className="h-3 w-3" />
+                                                )}
+                                                {createElementMutation.isPending
+                                                    ? "Saving..."
+                                                    : "Create Element"}
+                                            </button>
+                                            {selectedNode &&
+                                                label.trim() === "" && (
+                                                    <p className="text-[9px] text-red-500 opacity-80">
+                                                        Identifier wajib diisi
+                                                    </p>
+                                                )}
+                                        </SidebarField>
+                                    )}
                                 </motion.div>
                             )}
 
