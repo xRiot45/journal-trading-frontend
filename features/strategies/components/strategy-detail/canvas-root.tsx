@@ -74,12 +74,12 @@ export function CanvasRoot() {
                 .filter((el) => el.type === "node")
                 .map((el) => ({
                     id: el.id,
-                    type: "default", // Sesuaikan jika ada logika tipe lain
+                    type: "default",
                     x: el.x,
                     y: el.y,
                     width: el.width || 160,
                     height: el.height || 60,
-                    label: el.identifier, // Database menggunakan 'identifier' sebagai teks
+                    label: el.identifier,
                     selected: false,
                     zIndex: el.zIndex || 1,
                 }))
@@ -358,10 +358,11 @@ export function CanvasRoot() {
 
     return (
         <div
-            className="flex h-screen w-screen flex-col overflow-hidden"
+            className="fixed inset-0 flex h-dvh w-screen flex-col overflow-hidden overscroll-none"
             style={{
                 background: "var(--canvas-bg)",
                 color: "var(--canvas-text)",
+                touchAction: "none", // Tambahan: Mencegah scroll sentuh pada level container
             }}
         >
             <Topbar />

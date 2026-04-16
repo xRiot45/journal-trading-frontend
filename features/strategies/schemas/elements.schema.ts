@@ -15,4 +15,15 @@ export const elementSchema = z.object({
     isVisible: z.boolean().optional(),
 }) satisfies z.ZodType<ElementRequest>
 
+export const elementUpdateSchema = elementSchema
+    .omit({
+        strategyId: true,
+        type: true,
+    })
+    .partial()
+    .extend({
+        id: z.string().min(1, "ID element wajib ada"),
+    })
+
 export type ElementFormValues = z.infer<typeof elementSchema>
+export type ElementUpdateFormValues = z.infer<typeof elementUpdateSchema>

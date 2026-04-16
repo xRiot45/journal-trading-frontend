@@ -19,6 +19,12 @@ export interface ElementRequest {
     isVisible?: boolean
 }
 
+export type ElementUpdateRequest = Partial<
+    Omit<ElementRequest, "strategyId" | "type">
+> & {
+    id: string
+}
+
 export interface ElementResponse {
     id: string
     strategyId: string

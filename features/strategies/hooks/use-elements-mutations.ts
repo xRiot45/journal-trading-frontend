@@ -1,9 +1,13 @@
 import useInvalidateQuery from "@/hooks/use-invalidate-query"
 import { ELEMENTS_KEY } from "./use-elements-queries"
 import { useMutation } from "@tanstack/react-query"
-import { ElementItemResponse, ElementRequest } from "../types/element.types"
+import {
+    ElementItemResponse,
+    ElementRequest,
+    ElementUpdateRequest,
+} from "../types/element.types"
 import { toast } from "sonner"
-import { createElement } from "../api/elements.api"
+import { createElement, updateElement } from "../api/elements.api"
 
 export function useCreateElementMutation(onSuccess: () => void) {
     const invalidate = useInvalidateQuery(ELEMENTS_KEY)
@@ -12,6 +16,30 @@ export function useCreateElementMutation(onSuccess: () => void) {
         mutationFn: createElement,
         onSuccess: () => {
             toast.success("Element created")
+            invalidate()
+            onSuccess?.()
+        },
+        onError: (error) => toast.error(error.message),
+    })
+}
+
+export function useUpdateElementMutation(onSuccess?: () => void) {
+    const invalidate = useInvalidateQuery(ELEMENTS_KEY)
+
+    return useMutation<
+        ElementItemResponse,
+        Error,
+        {
+            elementId: string
+            strategyId: string
+            payload: ElementUpdateRequest
+        }
+    >({
+        mutationFn: ({ elementId, strategyId, payload }) =>
+            updateElement(elementId, strategyId, payload),
+
+        onSuccess: () => {
+            toast.success("Element updated")
             invalidate()
             onSuccess?.()
         },
