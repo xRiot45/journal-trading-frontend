@@ -29,7 +29,7 @@ export default function RootLayout({
                 inter.variable
             )}
         >
-            <body>
+            <body suppressHydrationWarning>
                 <ThemeProvider>
                     <QueryProvider>
                         {children}

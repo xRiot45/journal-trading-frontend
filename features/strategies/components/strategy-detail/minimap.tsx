@@ -5,14 +5,56 @@ import { motion } from "framer-motion"
 import { useCanvasStore } from "../../store/canvas.store"
 
 export function Minimap() {
+    // --- 1. HOOKS (Harus di paling atas) ---
     const { nodes, viewport, setViewport } = useCanvasStore()
     const mapRef = useRef<HTMLDivElement>(null)
 
+    // Pindahkan useCallback ke sini agar selalu terpanggil
+    // Kita pindahkan variabel pendukung (scale, minX, minY) ke dalam scope yang tepat nanti
+    const onMinimapClick = useCallback(
+        (e: React.MouseEvent) => {
+            if (!nodes.length) return // Guard inside callback
+
+            const rect = mapRef.current?.getBoundingClientRect()
+            if (!rect) return
+
+            // Hitung ulang scale & bounds di dalam callback atau gunakan nilai terbaru
+            const PADDING = 40
+            const minX = Math.min(...nodes.map((n) => n.x)) - PADDING
+            const minY = Math.min(...nodes.map((n) => n.y)) - PADDING
+            const maxX = Math.max(...nodes.map((n) => n.x + n.width)) + PADDING
+            const maxY = Math.max(...nodes.map((n) => n.y + n.height)) + PADDING
+
+            const worldW = maxX - minX || 1
+            const worldH = maxY - minY || 1
+            const scale = Math.min(160 / worldW, 100 / worldH)
+
+            const mx = e.clientX - rect.left
+            const my = e.clientY - rect.top
+            const wx = mx / scale + minX
+            const wy = my / scale + minY
+
+            const screenW =
+                typeof window !== "undefined" ? window.innerWidth - 320 : 800
+            const screenH =
+                typeof window !== "undefined" ? window.innerHeight - 60 : 600
+
+            setViewport({
+                x: screenW / 2 - wx * viewport.zoom,
+                y: screenH / 2 - wy * viewport.zoom,
+            })
+        },
+        [nodes, viewport.zoom, setViewport]
+    )
+
+    // --- 2. LOGIKA KONDISIONAL ---
+    // Sekarang aman untuk return null jika data kosong
+    if (!nodes.length) return null
+
+    // --- 3. PERHITUNGAN RENDER ---
     const MAP_W = 160
     const MAP_H = 100
     const PADDING = 40
-
-    if (!nodes.length) return null
 
     const minX = Math.min(...nodes.map((n) => n.x)) - PADDING
     const minY = Math.min(...nodes.map((n) => n.y)) - PADDING
@@ -26,7 +68,6 @@ export function Minimap() {
     const scaleY = MAP_H / worldH
     const scale = Math.min(scaleX, scaleY)
 
-    // Viewport rect in minimap space
     const vw =
         (typeof window !== "undefined" ? window.innerWidth - 320 : 800) /
         viewport.zoom
@@ -48,29 +89,7 @@ export function Minimap() {
         h: vh * scale,
     }
 
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const onMinimapClick = useCallback(
-        (e: React.MouseEvent) => {
-            const rect = mapRef.current?.getBoundingClientRect()
-            if (!rect) return
-            const mx = e.clientX - rect.left
-            const my = e.clientY - rect.top
-            const wx = mx / scale + minX
-            const wy = my / scale + minY
-            const screenW =
-                typeof window !== "undefined" ? window.innerWidth - 320 : 800
-            const screenH =
-                typeof window !== "undefined" ? window.innerHeight - 60 : 600
-            setViewport({
-                x: screenW / 2 - wx * viewport.zoom,
-                y: screenH / 2 - wy * viewport.zoom,
-            })
-        },
-        [scale, minX, minY, viewport.zoom, setViewport]
-    )
-
     const actualH = worldH * scale
-    // const actualW = worldW * scale
 
     return (
         <motion.div

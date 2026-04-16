@@ -11,8 +11,12 @@ import { Controls } from "./controls"
 import { Minimap } from "./minimap"
 import { Topbar } from "./topbar"
 import { clamp, snapToGrid } from "@/lib/utils"
+import { useGetElementsByStrategyId } from "../../hooks/use-elements-queries"
+import { useStrategyStore } from "../../store/strategies.store"
+import { CanvasEdge, CanvasNode } from "../../types/canvas"
 
 export function CanvasRoot() {
+    const strategyId = useStrategyStore((state) => state.selectedStrategyId)
     const containerRef = useRef<HTMLDivElement>(null)
     const isDraggingCanvas = useRef(false)
     const lastPointer = useRef({ x: 0, y: 0 })
@@ -32,6 +36,11 @@ export function CanvasRoot() {
     } | null>(null)
     const isPinching = useRef(false)
     const lastPinchDist = useRef(0)
+    const [mounted, setMounted] = useState(false)
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
 
     const {
         viewport,
@@ -50,7 +59,51 @@ export function CanvasRoot() {
         copySelected,
         paste,
         selectAll,
+        setElements,
+        fitScreen,
     } = useCanvasStore()
+
+    const { data: response, isSuccess } = useGetElementsByStrategyId(
+        strategyId as string
+    )
+
+    useEffect(() => {
+        if (isSuccess && response?.data) {
+            const rawData = response.data
+            const mappedNodes: CanvasNode[] = rawData
+                .filter((el) => el.type === "node")
+                .map((el) => ({
+                    id: el.id,
+                    type: "default", // Sesuaikan jika ada logika tipe lain
+                    x: el.x,
+                    y: el.y,
+                    width: el.width || 160,
+                    height: el.height || 60,
+                    label: el.identifier, // Database menggunakan 'identifier' sebagai teks
+                    selected: false,
+                    zIndex: el.zIndex || 1,
+                }))
+
+            // 2. Map Edges (Jika nanti API mengembalikan tipe 'edge')
+            const mappedEdges: CanvasEdge[] = rawData
+                .filter((el: any) => el.type === "edge")
+                .map((el: any) => ({
+                    id: el.id,
+                    source: el.sourceId, // Pastikan field ini sesuai dengan response nantinya
+                    target: el.targetId,
+                    label: el.identifier || "",
+                    selected: false,
+                }))
+
+            // 3. Simpan ke Store
+            setElements(mappedNodes, mappedEdges)
+
+            // Beri sedikit delay agar DOM selesai render sebelum kalkulasi fitScreen
+            requestAnimationFrame(() => {
+                fitScreen()
+            })
+        }
+    }, [isSuccess, response, setElements, fitScreen])
 
     // Keyboard shortcuts
     useEffect(() => {
@@ -298,6 +351,10 @@ export function CanvasRoot() {
           : activeTool === "connect"
             ? "crosshair"
             : "default"
+
+    if (!mounted) {
+        return <div className="h-screen w-screen bg-background" />
+    }
 
     return (
         <div
