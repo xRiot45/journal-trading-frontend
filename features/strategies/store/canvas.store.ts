@@ -98,63 +98,6 @@ function genId(prefix: string) {
 }
 
 export const useCanvasStore = create<CanvasStore>((set, get) => ({
-    // nodes: [
-    //     {
-    //         id: "node-demo-1",
-    //         type: "default",
-    //         x: 200,
-    //         y: 200,
-    //         width: 160,
-    //         height: 60,
-    //         label: "Entry Signal",
-    //         selected: false,
-    //         zIndex: 1,
-    //     },
-    //     {
-    //         id: "node-demo-2",
-    //         type: "default",
-    //         x: 680,
-    //         y: 140,
-    //         width: 160,
-    //         height: 60,
-    //         label: "Buy Order",
-    //         selected: false,
-    //         zIndex: 1,
-    //     },
-    //     {
-    //         id: "node-demo-3",
-    //         type: "default",
-    //         x: 680,
-    //         y: 300,
-    //         width: 160,
-    //         height: 60,
-    //         label: "Wait / Skip",
-    //         selected: false,
-    //         zIndex: 1,
-    //     },
-    // ],
-    // edges: [
-    //     {
-    //         id: "edge-1",
-    //         source: "node-demo-1",
-    //         target: "node-demo-2",
-    //         selected: false,
-    //     },
-    //     {
-    //         id: "edge-2",
-    //         source: "node-demo-2",
-    //         target: "node-demo-3",
-    //         label: "Yes",
-    //         selected: false,
-    //     },
-    //     {
-    //         id: "edge-3",
-    //         source: "node-demo-2",
-    //         target: "node-demo-4",
-    //         label: "No",
-    //         selected: false,
-    //     },
-    // ],
     nodes: [],
     edges: [],
     viewport: { x: 0, y: 0, zoom: 1 },

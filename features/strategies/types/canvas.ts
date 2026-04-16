@@ -10,6 +10,7 @@ export interface CanvasNode {
     label: string
     selected: boolean
     zIndex: number
+    backendElementId?: string
 }
 
 export interface CanvasEdge {

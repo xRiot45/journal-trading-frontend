@@ -9,7 +9,7 @@ import {
 import { toast } from "sonner"
 import { createElement, updateElement } from "../api/elements.api"
 
-export function useCreateElementMutation(onSuccess: () => void) {
+export function useCreateElementMutation(onSuccess?: () => void) {
     const invalidate = useInvalidateQuery(ELEMENTS_KEY)
 
     return useMutation<ElementItemResponse, Error, ElementRequest>({

@@ -4,7 +4,7 @@
 import { motion, AnimatePresence } from "framer-motion"
 import { useCanvasStore } from "../../store/canvas.store"
 import { NodeType } from "../../types/canvas"
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect } from "react"
 import {
     X,
     Settings2,
@@ -16,13 +16,18 @@ import {
     Loader2,
     Plus,
     CheckCircle2,
+    Pencil,
 } from "lucide-react"
 import { ElementType } from "../../types/element.types"
-import { useCreateElementMutation } from "../../hooks/use-elements-mutations"
+import {
+    useCreateElementMutation,
+    useUpdateElementMutation,
+} from "../../hooks/use-elements-mutations"
 import { useStrategyStore } from "../../store/strategies.store"
 
 export function Sidebar() {
     const strategyId = useStrategyStore((state) => state.selectedStrategyId)
+
     const {
         nodes,
         selectedNodeIds,
@@ -35,7 +40,6 @@ export function Sidebar() {
         deleteEdge,
     } = useCanvasStore()
 
-    // State untuk toggle manual (tombol close)
     const [isVisible, setIsVisible] = useState(true)
 
     const selectedNode =
@@ -58,48 +62,74 @@ export function Sidebar() {
         if (selectedEdge) setEdgeLabel(selectedEdge.label || "")
     }, [selectedEdge, selectedEdge?.id, selectedEdge?.label])
 
-    // 1. Tracking node yang sudah berhasil di-sync ke backend
-    const [syncedNodeIds, setSyncedNodeIds] = useState<Set<string>>(new Set())
-    const pendingNodeIdRef = useRef<string | null>(null)
+    const createElementMutation = useCreateElementMutation()
+    const updateElementMutation = useUpdateElementMutation()
 
-    const createElementMutation = useCreateElementMutation(() => {
-        if (pendingNodeIdRef.current) {
-            setSyncedNodeIds(
-                (prev) => new Set([...prev, pendingNodeIdRef.current!])
-            )
-            pendingNodeIdRef.current = null
-        }
-    })
-
-    // 2. Validasi form: tombol aktif jika node dipilih & identifier tidak kosong
+    // Form valid jika node dipilih & identifier tidak kosong & dimensi ada
     const isFormValid =
         !!selectedNode &&
         label.trim() !== "" &&
         selectedNode.width > 0 &&
         selectedNode.height > 0
 
-    // Apakah node yang dipilih sudah pernah di-sync ke backend
-    const isNodeSynced = !!selectedNode && syncedNodeIds.has(selectedNode.id)
+    // Cek apakah node sudah di-sync ke backend berdasarkan backendElementId di node itu sendiri
+    const isNodeSynced = !!selectedNode?.backendElementId
 
-    // 3. Handler untuk Create — menggunakan data form yang sesungguhnya
+    console.log(selectedNode?.backendElementId)
+
+    // ── Create ──────────────────────────────────────────────────────────────
     const handleCreateElement = () => {
         if (!strategyId || !selectedNode || !isFormValid) return
 
-        pendingNodeIdRef.current = selectedNode.id
-        createElementMutation.mutate({
+        const nodeId = selectedNode.id
+
+        createElementMutation.mutate(
+            {
+                strategyId,
+                type: ElementType.NODE,
+                identifier: label.trim(),
+                x: selectedNode.x,
+                y: selectedNode.y,
+                width: selectedNode.width,
+                height: selectedNode.height,
+                zIndex: selectedNode.zIndex ?? nodes.length + 1,
+                parentElementId: null,
+                isLocked: false,
+                isVisible: true,
+            },
+            {
+                onSuccess: (data) => {
+                    // Simpan backendElementId langsung ke node agar persisten
+                    updateNode(nodeId, { backendElementId: data.id ?? "" })
+                },
+            }
+        )
+    }
+
+    // ── Update ──────────────────────────────────────────────────────────────
+    const handleUpdateElement = () => {
+        if (!strategyId || !selectedNode || !isFormValid) return
+
+        const backendElementId = selectedNode.backendElementId
+        if (!backendElementId) return
+
+        updateElementMutation.mutate({
+            elementId: backendElementId,
             strategyId,
-            type: ElementType.NODE,
-            identifier: label.trim(),
-            x: selectedNode.x,
-            y: selectedNode.y,
-            width: selectedNode.width,
-            height: selectedNode.height,
-            zIndex: selectedNode.zIndex ?? nodes.length + 1,
-            parentElementId: null,
-            isLocked: false,
-            isVisible: true,
+            payload: {
+                id: backendElementId,
+                identifier: label.trim(),
+                x: selectedNode.x,
+                y: selectedNode.y,
+                width: selectedNode.width,
+                height: selectedNode.height,
+                zIndex: selectedNode.zIndex ?? nodes.length + 1,
+            },
         })
     }
+
+    const isMutating =
+        createElementMutation.isPending || updateElementMutation.isPending
 
     return (
         <>
@@ -127,7 +157,7 @@ export function Sidebar() {
                             damping: 30,
                         }}
                     >
-                        {/* Header Modern */}
+                        {/* Header */}
                         <div className="flex items-center justify-between border-b border-black/5 px-5 py-4 dark:border-white/5">
                             <div className="flex items-center gap-2">
                                 <Settings2 className="h-4 w-4" />
@@ -148,7 +178,7 @@ export function Sidebar() {
                         </div>
 
                         <div className="custom-scrollbar flex flex-1 flex-col gap-6 overflow-y-auto p-5">
-                            {/* NODE PANEL */}
+                            {/* ── NODE PANEL ── */}
                             {selectedNode && (
                                 <motion.div
                                     key={selectedNode.id}
@@ -196,7 +226,6 @@ export function Sidebar() {
                                                 [
                                                     "default",
                                                     "text",
-                                                    // "decision",
                                                 ] as NodeType[]
                                             ).map((t) => (
                                                 <button
@@ -319,49 +348,85 @@ export function Sidebar() {
                                         Remove Object
                                     </button>
 
-                                    {isNodeSynced && (
-                                        <div className="flex items-center justify-center gap-1.5 rounded-md border border-black/10 py-2.5 text-[10px] font-bold tracking-[0.15em] uppercase opacity-40 dark:border-white/10">
-                                            <CheckCircle2 className="h-3 w-3" />
-                                            Element Saved
-                                        </div>
-                                    )}
+                                    {/* ── Actions: Create / Update ── */}
+                                    <SidebarField label="Actions">
+                                        {isNodeSynced ? (
+                                            // ── UPDATE STATE ──
+                                            <div className="flex flex-col gap-2">
+                                                {/* Synced badge */}
+                                                <div className="flex items-center justify-center gap-1.5 rounded-md border border-black/10 py-2 text-[10px] font-bold tracking-[0.15em] uppercase opacity-40 dark:border-white/10">
+                                                    <CheckCircle2 className="h-3 w-3" />
+                                                    Element Saved
+                                                </div>
 
-                                    {!isNodeSynced && (
-                                        <SidebarField label="Actions">
-                                            <button
-                                                onClick={handleCreateElement}
-                                                disabled={
-                                                    !isFormValid ||
-                                                    createElementMutation.isPending
-                                                }
-                                                title={
-                                                    !isFormValid
-                                                        ? "Isi Identifier terlebih dahulu"
-                                                        : "Simpan element ke cloud"
-                                                }
-                                                className="flex w-full items-center justify-center gap-2 rounded-md bg-black py-3 text-[10px] font-bold tracking-[0.2em] text-white uppercase transition-all hover:bg-black/80 disabled:cursor-not-allowed disabled:opacity-30 dark:bg-white dark:text-black"
-                                            >
-                                                {createElementMutation.isPending ? (
-                                                    <Loader2 className="h-3 w-3 animate-spin" />
-                                                ) : (
-                                                    <Plus className="h-3 w-3" />
-                                                )}
-                                                {createElementMutation.isPending
-                                                    ? "Saving..."
-                                                    : "Create Element"}
-                                            </button>
-                                            {selectedNode &&
-                                                label.trim() === "" && (
-                                                    <p className="text-[9px] text-red-500 opacity-80">
-                                                        Identifier wajib diisi
-                                                    </p>
-                                                )}
-                                        </SidebarField>
-                                    )}
+                                                {/* Update button */}
+                                                <button
+                                                    onClick={
+                                                        handleUpdateElement
+                                                    }
+                                                    disabled={
+                                                        !isFormValid ||
+                                                        isMutating
+                                                    }
+                                                    title={
+                                                        !isFormValid
+                                                            ? "Isi Identifier terlebih dahulu"
+                                                            : "Perbarui element di cloud"
+                                                    }
+                                                    className="flex w-full items-center justify-center gap-2 rounded-md border border-black/20 bg-transparent py-3 text-[10px] font-bold tracking-[0.2em] uppercase transition-all hover:bg-black hover:text-white disabled:cursor-not-allowed disabled:opacity-30 dark:border-white/20 dark:hover:bg-white dark:hover:text-black"
+                                                >
+                                                    {updateElementMutation.isPending ? (
+                                                        <Loader2 className="h-3 w-3 animate-spin" />
+                                                    ) : (
+                                                        <Pencil className="h-3 w-3" />
+                                                    )}
+                                                    {updateElementMutation.isPending
+                                                        ? "Updating..."
+                                                        : "Update Element"}
+                                                </button>
+                                            </div>
+                                        ) : (
+                                            // ── CREATE STATE ──
+                                            <div className="flex flex-col gap-2">
+                                                <button
+                                                    onClick={
+                                                        handleCreateElement
+                                                    }
+                                                    disabled={
+                                                        !isFormValid ||
+                                                        isMutating
+                                                    }
+                                                    title={
+                                                        !isFormValid
+                                                            ? "Isi Identifier terlebih dahulu"
+                                                            : "Simpan element ke cloud"
+                                                    }
+                                                    className="flex w-full items-center justify-center gap-2 rounded-md bg-black py-3 text-[10px] font-bold tracking-[0.2em] text-white uppercase transition-all hover:bg-black/80 disabled:cursor-not-allowed disabled:opacity-30 dark:bg-white dark:text-black"
+                                                >
+                                                    {createElementMutation.isPending ? (
+                                                        <Loader2 className="h-3 w-3 animate-spin" />
+                                                    ) : (
+                                                        <Plus className="h-3 w-3" />
+                                                    )}
+                                                    {createElementMutation.isPending
+                                                        ? "Saving..."
+                                                        : "Create Element"}
+                                                </button>
+
+                                                {selectedNode &&
+                                                    label.trim() === "" && (
+                                                        <p className="text-[9px] text-red-500 opacity-80">
+                                                            Identifier wajib
+                                                            diisi
+                                                        </p>
+                                                    )}
+                                            </div>
+                                        )}
+                                    </SidebarField>
                                 </motion.div>
                             )}
 
-                            {/* EDGE PANEL */}
+                            {/* ── EDGE PANEL ── */}
                             {selectedEdge && (
                                 <motion.div
                                     key={selectedEdge.id}
@@ -397,7 +462,7 @@ export function Sidebar() {
                                     </SidebarField>
                                     <div className="space-y-2 rounded-md border border-black/5 bg-black/5 p-3 dark:border-white/5 dark:bg-white/5">
                                         <div className="flex justify-between text-[10px] uppercase opacity-60">
-                                            <span>Source</span>{" "}
+                                            <span>Source</span>
                                             <span className="text-black dark:text-white">
                                                 {selectedEdge.source.slice(
                                                     0,
@@ -406,7 +471,7 @@ export function Sidebar() {
                                             </span>
                                         </div>
                                         <div className="flex justify-between text-[10px] uppercase opacity-60">
-                                            <span>Target</span>{" "}
+                                            <span>Target</span>
                                             <span className="text-black dark:text-white">
                                                 {selectedEdge.target.slice(
                                                     0,
@@ -426,7 +491,7 @@ export function Sidebar() {
                                 </motion.div>
                             )}
 
-                            {/* CANVAS SETTINGS */}
+                            {/* ── CANVAS SETTINGS ── */}
                             {!selectedNode && !selectedEdge && (
                                 <motion.div
                                     key="canvas-settings"
