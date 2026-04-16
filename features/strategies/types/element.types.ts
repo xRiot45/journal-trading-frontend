@@ -6,7 +6,7 @@ export enum ElementType {
 }
 
 export interface ElementRequest {
-    strategyId: string // id dari strategy yang menjadi parent dari element ini
+    strategyId: string | string[] // id dari strategy yang menjadi parent dari element ini
     type: ElementType
     identifier: string //  title dari node
     x: number

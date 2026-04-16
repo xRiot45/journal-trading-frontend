@@ -6,6 +6,11 @@ export const metadata: Metadata = {
     description: "View and edit your trading strategy details.",
 }
 
-export default function StrategyDetailPage() {
-    return <StrategiesDetailView />
+export default async function StrategyDetailPage({
+    params,
+}: {
+    params: Promise<{ id: string }>
+}) {
+    const { id } = await params
+    return <StrategiesDetailView strategyId={id} />
 }

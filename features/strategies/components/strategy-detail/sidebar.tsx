@@ -13,9 +13,16 @@ import {
     Diamond,
     Trash2,
     ChevronRight,
+    Loader2,
+    Plus,
 } from "lucide-react"
+import { useParams } from "next/navigation"
+import { ElementType } from "../../types/element.types"
+import { useCreateElementMutation } from "../../hooks/use-elements-mutations"
+import { useStrategyStore } from "../../store/strategies.store"
 
 export function Sidebar() {
+    const strategyId = useStrategyStore((state) => state.selectedStrategyId)
     const {
         nodes,
         selectedNodeIds,
@@ -50,6 +57,39 @@ export function Sidebar() {
     useEffect(() => {
         if (selectedEdge) setEdgeLabel(selectedEdge.label || "")
     }, [selectedEdge, selectedEdge?.id, selectedEdge?.label])
+
+    // 1. Inisialisasi Mutation
+    const createElementMutation = useCreateElementMutation(() => {
+        // Callback opsional setelah berhasil
+        console.log("Sync to cloud success")
+    })
+
+    // 2. Validasi form: tombol aktif jika node dipilih & identifier tidak kosong
+    const isFormValid =
+        !!selectedNode &&
+        label.trim() !== "" &&
+        selectedNode.width > 0 &&
+        selectedNode.height > 0
+
+    // 3. Handler untuk Create — menggunakan data form yang sesungguhnya
+    const handleCreateElement = () => {
+        if (!strategyId || !selectedNode || !isFormValid) return
+        console.log(strategyId)
+
+        createElementMutation.mutate({
+            strategyId,
+            type: ElementType.NODE,
+            identifier: label.trim(),
+            x: selectedNode.x,
+            y: selectedNode.y,
+            width: selectedNode.width,
+            height: selectedNode.height,
+            zIndex: selectedNode.zIndex ?? nodes.length + 1,
+            parentElementId: null,
+            isLocked: false,
+            isVisible: true,
+        })
+    }
 
     return (
         <>
@@ -268,6 +308,37 @@ export function Sidebar() {
                                         <Trash2 className="group-hover:shake h-3.5 w-3.5" />
                                         Remove Object
                                     </button>
+
+                                    <SidebarField label="Actions">
+                                        <button
+                                            onClick={handleCreateElement}
+                                            disabled={
+                                                !isFormValid ||
+                                                createElementMutation.isPending
+                                            }
+                                            title={
+                                                !isFormValid
+                                                    ? "Pilih node dan isi Identifier terlebih dahulu"
+                                                    : "Simpan element ke cloud"
+                                            }
+                                            className="flex w-full items-center justify-center gap-2 rounded-md bg-black py-3 text-[10px] font-bold tracking-[0.2em] text-white uppercase transition-all hover:bg-black/80 disabled:cursor-not-allowed disabled:opacity-30 dark:bg-white dark:text-black"
+                                        >
+                                            {createElementMutation.isPending ? (
+                                                <Loader2 className="h-3 w-3 animate-spin" />
+                                            ) : (
+                                                <Plus className="h-3 w-3" />
+                                            )}
+                                            {createElementMutation.isPending
+                                                ? "Saving..."
+                                                : "Create Element"}
+                                        </button>
+                                        {selectedNode &&
+                                            label.trim() === "" && (
+                                                <p className="text-[9px] text-red-500 opacity-80">
+                                                    Identifier wajib diisi
+                                                </p>
+                                            )}
+                                    </SidebarField>
                                 </motion.div>
                             )}
 
