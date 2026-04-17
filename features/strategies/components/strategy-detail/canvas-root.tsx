@@ -73,7 +73,8 @@ export function CanvasRoot() {
             const mappedNodes: CanvasNode[] = rawData
                 .filter((el) => el.type === "node")
                 .map((el) => ({
-                    id: el.id,
+                    id: crypto.randomUUID(),
+                    backendElementId: el.id,
                     type: "default",
                     x: el.x,
                     y: el.y,
@@ -89,7 +90,7 @@ export function CanvasRoot() {
                 .filter((el: any) => el.type === "edge")
                 .map((el: any) => ({
                     id: el.id,
-                    source: el.sourceId, // Pastikan field ini sesuai dengan response nantinya
+                    source: el.sourceId,
                     target: el.targetId,
                     label: el.identifier || "",
                     selected: false,

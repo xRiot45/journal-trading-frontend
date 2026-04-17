@@ -14,15 +14,13 @@ import {
     Trash2,
     ChevronRight,
     Loader2,
-    Plus,
     CheckCircle2,
-    Pencil,
+    RefreshCw,
+    CloudUpload,
+    CloudOff,
 } from "lucide-react"
 import { ElementType } from "../../types/element.types"
-import {
-    useCreateElementMutation,
-    useUpdateElementMutation,
-} from "../../hooks/use-elements-mutations"
+import { useUpsertElementMutation } from "../../hooks/use-elements-mutations"
 import { useStrategyStore } from "../../store/strategies.store"
 
 export function Sidebar() {
@@ -42,10 +40,11 @@ export function Sidebar() {
 
     const [isVisible, setIsVisible] = useState(true)
 
-    const selectedNode =
-        selectedNodeIds.length === 1
-            ? nodes.find((n) => n.id === selectedNodeIds[0])
-            : null
+    const selectedNodeId = selectedNodeIds[0] || null
+
+    const selectedNode = selectedNodeId
+        ? nodes.find((n) => n.id === selectedNodeId)
+        : null
 
     const selectedEdge = selectedEdgeId
         ? edges.find((e) => e.id === selectedEdgeId)
@@ -56,35 +55,38 @@ export function Sidebar() {
 
     useEffect(() => {
         if (selectedNode) setLabel(selectedNode.label)
-    }, [selectedNode, selectedNode?.id, selectedNode?.label])
+    }, [selectedNode])
 
     useEffect(() => {
         if (selectedEdge) setEdgeLabel(selectedEdge.label || "")
-    }, [selectedEdge, selectedEdge?.id, selectedEdge?.label])
+    }, [selectedEdge])
 
-    const createElementMutation = useCreateElementMutation()
-    const updateElementMutation = useUpdateElementMutation()
+    const upsertElementMutation = useUpsertElementMutation()
 
-    // Form valid jika node dipilih & identifier tidak kosong & dimensi ada
+    const backendElementId =
+        nodes.find((n) => n.id === selectedNodeId)?.backendElementId ?? null
+
     const isFormValid =
         !!selectedNode &&
         label.trim() !== "" &&
         selectedNode.width > 0 &&
         selectedNode.height > 0
 
-    // Cek apakah node sudah di-sync ke backend berdasarkan backendElementId di node itu sendiri
-    const isNodeSynced = !!selectedNode?.backendElementId
+    const isNodeSynced = !!backendElementId
 
-    console.log(selectedNode?.backendElementId)
+    const isMutating = upsertElementMutation.isPending
 
-    // ── Create ──────────────────────────────────────────────────────────────
-    const handleCreateElement = () => {
+    // ── UPSERT ─────────────────────────────────────────
+    const handleUpsertElement = () => {
         if (!strategyId || !selectedNode || !isFormValid) return
 
-        const nodeId = selectedNode.id
+        // 🔥 ambil fresh dari store saat klik
+        const currentNode = nodes.find((n) => n.id === selectedNode.id)
+        const currentBackendId = currentNode?.backendElementId ?? null
 
-        createElementMutation.mutate(
+        upsertElementMutation.mutate(
             {
+                id: currentBackendId ?? undefined,
                 strategyId,
                 type: ElementType.NODE,
                 identifier: label.trim(),
@@ -99,41 +101,18 @@ export function Sidebar() {
             },
             {
                 onSuccess: (data) => {
-                    // Simpan backendElementId langsung ke node agar persisten
-                    updateNode(nodeId, { backendElementId: data.id ?? "" })
+                    if (!currentBackendId) {
+                        updateNode(selectedNode.id, {
+                            backendElementId: data.id,
+                        })
+                    }
                 },
             }
         )
     }
 
-    // ── Update ──────────────────────────────────────────────────────────────
-    const handleUpdateElement = () => {
-        if (!strategyId || !selectedNode || !isFormValid) return
-
-        const backendElementId = selectedNode.backendElementId
-        if (!backendElementId) return
-
-        updateElementMutation.mutate({
-            elementId: backendElementId,
-            strategyId,
-            payload: {
-                id: backendElementId,
-                identifier: label.trim(),
-                x: selectedNode.x,
-                y: selectedNode.y,
-                width: selectedNode.width,
-                height: selectedNode.height,
-                zIndex: selectedNode.zIndex ?? nodes.length + 1,
-            },
-        })
-    }
-
-    const isMutating =
-        createElementMutation.isPending || updateElementMutation.isPending
-
     return (
         <>
-            {/* Toggle Button when sidebar is closed */}
             {!isVisible && (
                 <button
                     onClick={() => setIsVisible(true)}
@@ -348,80 +327,65 @@ export function Sidebar() {
                                         Remove Object
                                     </button>
 
-                                    {/* ── Actions: Create / Update ── */}
+                                    {/* ── Actions: Upsert ── */}
                                     <SidebarField label="Actions">
-                                        {isNodeSynced ? (
-                                            // ── UPDATE STATE ──
-                                            <div className="flex flex-col gap-2">
-                                                {/* Synced badge */}
-                                                <div className="flex items-center justify-center gap-1.5 rounded-md border border-black/10 py-2 text-[10px] font-bold tracking-[0.15em] uppercase opacity-40 dark:border-white/10">
-                                                    <CheckCircle2 className="h-3 w-3" />
-                                                    Element Saved
-                                                </div>
+                                        <div className="flex flex-col gap-2">
+                                            <button
+                                                onClick={handleUpsertElement}
+                                                disabled={
+                                                    !isFormValid || isMutating
+                                                }
+                                                title={
+                                                    !isFormValid
+                                                        ? "Isi Identifier terlebih dahulu"
+                                                        : isNodeSynced
+                                                          ? "Perbarui element di cloud"
+                                                          : "Simpan element ke cloud"
+                                                }
+                                                className="flex w-full items-center justify-center gap-2 rounded-md bg-black py-3 text-[10px] font-bold tracking-[0.2em] text-white uppercase transition-all hover:bg-black/80 disabled:cursor-not-allowed disabled:opacity-30 dark:bg-white dark:text-black dark:hover:bg-white/80"
+                                            >
+                                                {isMutating ? (
+                                                    <Loader2 className="h-3 w-3 animate-spin" />
+                                                ) : isNodeSynced ? (
+                                                    <RefreshCw className="h-3 w-3" />
+                                                ) : (
+                                                    <CloudUpload className="h-3 w-3" />
+                                                )}
+                                                {isMutating
+                                                    ? "Syncing..."
+                                                    : isNodeSynced
+                                                      ? "Sync Changes"
+                                                      : "Save to Cloud"}
+                                            </button>
 
-                                                {/* Update button */}
-                                                <button
-                                                    onClick={
-                                                        handleUpdateElement
-                                                    }
-                                                    disabled={
-                                                        !isFormValid ||
-                                                        isMutating
-                                                    }
-                                                    title={
-                                                        !isFormValid
-                                                            ? "Isi Identifier terlebih dahulu"
-                                                            : "Perbarui element di cloud"
-                                                    }
-                                                    className="flex w-full items-center justify-center gap-2 rounded-md border border-black/20 bg-transparent py-3 text-[10px] font-bold tracking-[0.2em] uppercase transition-all hover:bg-black hover:text-white disabled:cursor-not-allowed disabled:opacity-30 dark:border-white/20 dark:hover:bg-white dark:hover:text-black"
-                                                >
-                                                    {updateElementMutation.isPending ? (
-                                                        <Loader2 className="h-3 w-3 animate-spin" />
-                                                    ) : (
-                                                        <Pencil className="h-3 w-3" />
-                                                    )}
-                                                    {updateElementMutation.isPending
-                                                        ? "Updating..."
-                                                        : "Update Element"}
-                                                </button>
+                                            {/* Status indicator */}
+                                            <div
+                                                className={`flex items-center justify-center gap-1.5 text-[9px] font-bold tracking-[0.15em] uppercase transition-opacity ${
+                                                    isNodeSynced
+                                                        ? "opacity-40"
+                                                        : "text-amber-500 opacity-60"
+                                                }`}
+                                            >
+                                                {isNodeSynced ? (
+                                                    <>
+                                                        <CheckCircle2 className="h-2.5 w-2.5" />
+                                                        Synced to cloud
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <CloudOff className="h-2.5 w-2.5" />
+                                                        Not saved yet
+                                                    </>
+                                                )}
                                             </div>
-                                        ) : (
-                                            // ── CREATE STATE ──
-                                            <div className="flex flex-col gap-2">
-                                                <button
-                                                    onClick={
-                                                        handleCreateElement
-                                                    }
-                                                    disabled={
-                                                        !isFormValid ||
-                                                        isMutating
-                                                    }
-                                                    title={
-                                                        !isFormValid
-                                                            ? "Isi Identifier terlebih dahulu"
-                                                            : "Simpan element ke cloud"
-                                                    }
-                                                    className="flex w-full items-center justify-center gap-2 rounded-md bg-black py-3 text-[10px] font-bold tracking-[0.2em] text-white uppercase transition-all hover:bg-black/80 disabled:cursor-not-allowed disabled:opacity-30 dark:bg-white dark:text-black"
-                                                >
-                                                    {createElementMutation.isPending ? (
-                                                        <Loader2 className="h-3 w-3 animate-spin" />
-                                                    ) : (
-                                                        <Plus className="h-3 w-3" />
-                                                    )}
-                                                    {createElementMutation.isPending
-                                                        ? "Saving..."
-                                                        : "Create Element"}
-                                                </button>
 
-                                                {selectedNode &&
-                                                    label.trim() === "" && (
-                                                        <p className="text-[9px] text-red-500 opacity-80">
-                                                            Identifier wajib
-                                                            diisi
-                                                        </p>
-                                                    )}
-                                            </div>
-                                        )}
+                                            {selectedNode &&
+                                                label.trim() === "" && (
+                                                    <p className="text-center text-[9px] text-red-500 opacity-80">
+                                                        Identifier wajib diisi
+                                                    </p>
+                                                )}
+                                        </div>
                                     </SidebarField>
                                 </motion.div>
                             )}

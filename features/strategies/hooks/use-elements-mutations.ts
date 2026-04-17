@@ -5,9 +5,14 @@ import {
     ElementItemResponse,
     ElementRequest,
     ElementUpdateRequest,
+    ElementUpsertRequest,
 } from "../types/element.types"
 import { toast } from "sonner"
-import { createElement, updateElement } from "../api/elements.api"
+import {
+    createElement,
+    updateElement,
+    upsertElement,
+} from "../api/elements.api"
 
 export function useCreateElementMutation(onSuccess?: () => void) {
     const invalidate = useInvalidateQuery(ELEMENTS_KEY)
@@ -40,6 +45,20 @@ export function useUpdateElementMutation(onSuccess?: () => void) {
 
         onSuccess: () => {
             toast.success("Element updated")
+            invalidate()
+            onSuccess?.()
+        },
+        onError: (error) => toast.error(error.message),
+    })
+}
+
+export function useUpsertElementMutation(onSuccess?: () => void) {
+    const invalidate = useInvalidateQuery(ELEMENTS_KEY)
+
+    return useMutation<ElementItemResponse, Error, ElementUpsertRequest>({
+        mutationFn: upsertElement,
+        onSuccess: () => {
+            toast.success("Element upserted")
             invalidate()
             onSuccess?.()
         },

@@ -21,9 +21,22 @@ export const elementUpdateSchema = elementSchema
         type: true,
     })
     .partial()
+
+export const elementUpsertSchema = elementSchema
     .extend({
-        id: z.string().min(1, "ID element wajib ada"),
+        id: z.string().uuid("ID harus format UUID").optional(),
+    })
+    .partial({
+        type: true,
+        identifier: true,
+        x: true,
+        y: true,
+        width: true,
+        height: true,
+        zIndex: true,
+        parentElementId: true,
     })
 
 export type ElementFormValues = z.infer<typeof elementSchema>
 export type ElementUpdateFormValues = z.infer<typeof elementUpdateSchema>
+export type ElementUpsertValues = z.infer<typeof elementUpsertSchema>

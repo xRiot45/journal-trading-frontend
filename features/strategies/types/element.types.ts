@@ -21,8 +21,21 @@ export interface ElementRequest {
 
 export type ElementUpdateRequest = Partial<
     Omit<ElementRequest, "strategyId" | "type">
-> & {
-    id: string
+>
+
+export interface ElementUpsertRequest {
+    id?: string // id element
+    strategyId: string | string[] // id dari strategy yang menjadi parent dari element ini
+    type: ElementType
+    identifier: string //  title dari node
+    x: number
+    y: number
+    width: number
+    height: number
+    zIndex: number
+    parentElementId: string | null // id dari parent element, null jika tidak memiliki parent (contohnya: node kedua yang terhubung dengan node pertama, maka node kedua memiliki parentElementId yang berisi id dari node pertama)
+    isLocked?: boolean
+    isVisible?: boolean
 }
 
 export interface ElementResponse {
