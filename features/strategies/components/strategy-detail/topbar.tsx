@@ -59,7 +59,7 @@ export function Topbar() {
 
     return (
         <div
-            className="toolbar-glass flex shrink-0 items-center gap-3 border-b px-4"
+            className="toolbar-glass mt-16 flex shrink-0 items-center gap-3 border-b px-4"
             style={{
                 height: 52,
                 borderColor: "var(--canvas-toolbar-border)",
