@@ -103,7 +103,7 @@ export function Sidebar() {
                 onSuccess: (data) => {
                     if (!currentBackendId) {
                         updateNode(selectedNode.id, {
-                            backendElementId: data.id,
+                            backendElementId: data.data?.id,
                         })
                     }
                 },
