@@ -4,46 +4,6 @@ import { useMemo, memo } from "react"
 import { useCanvasStore } from "../../store/canvas.store"
 import { CanvasEdge, CanvasNode } from "../../types/canvas"
 
-function getNodeCenter(node: CanvasNode) {
-    return { x: node.x + node.width / 2, y: node.y + node.height / 2 }
-}
-
-function getEdgePoints(source: CanvasNode, target: CanvasNode) {
-    const sc = getNodeCenter(source)
-    const tc = getNodeCenter(target)
-
-    const dx = tc.x - sc.x
-    const dy = tc.y - sc.y
-
-    // Menghitung titik keluar/masuk tepat di tepi kotak node
-    let sx, sy, ex, ey
-
-    if (Math.abs(dx) / source.width > Math.abs(dy) / source.height) {
-        // Keluar dari sisi kiri atau kanan
-        sx = sc.x + (dx > 0 ? source.width / 2 : -source.width / 2)
-        sy = sc.y + dy * (source.width / 2 / Math.abs(dx))
-
-        ex = tc.x + (dx > 0 ? -target.width / 2 : target.width / 2)
-        ey = tc.y + -dy * (target.width / 2 / Math.abs(dx))
-    } else {
-        // Keluar dari sisi atas atau bawah
-        sx = sc.x + dx * (source.height / 2 / Math.abs(dy))
-        sy = sc.y + (dy > 0 ? source.height / 2 : -source.height / 2)
-
-        ex = tc.x + -dx * (target.height / 2 / Math.abs(dy))
-        ey = tc.y + (dy > 0 ? -target.height / 2 : target.height / 2)
-    }
-
-    // Kalkulasi Control Points untuk kurva Bezier (S-shape horizontal)
-    const offset = Math.min(Math.abs(dx) / 2, 50)
-    const cpx1 = sx + (dx > 0 ? offset : -offset)
-    const cpy1 = sy
-    const cpx2 = ex + (dx > 0 ? -offset : offset)
-    const cpy2 = ey
-
-    return { sx, sy, ex, ey, cpx1, cpy1, cpx2, cpy2 }
-}
-
 const EdgePath = memo(function EdgePath({
     edge,
     nodes,
@@ -57,17 +17,28 @@ const EdgePath = memo(function EdgePath({
     const target = nodes.find((n) => n.id === edge.target)
     if (!source || !target) return null
 
-    const { sx, sy, ex, ey, cpx1, cpy1, cpx2, cpy2 } = getEdgePoints(
-        source,
-        target
-    )
+    const sx = source.x + source.width
+    const sy = source.y + source.height / 2
 
-    // Path string menggunakan Cubic Bezier
-    const d = `M${sx},${sy} C${cpx1},${cpy1} ${cpx2},${cpy2} ${ex},${ey}`
+    const ex = target.x
+    const ey = target.y + target.height / 2
+
+    const dx = ex - sx
+    // const dy = ey - sy
+
+    const curvature = Math.min(Math.abs(dx) * 0.5, 120)
+
+    const cpx1 = sx + curvature
+    const cpy1 = sy
+
+    const cpx2 = ex - curvature
+    const cpy2 = ey
+
+    const d = `M ${sx} ${sy} C ${cpx1} ${cpy1}, ${cpx2} ${cpy2}, ${ex} ${ey}`
 
     return (
         <g>
-            {/* Hit area lebih luas agar mudah diklik */}
+            {/* HIT AREA */}
             <path
                 d={d}
                 fill="none"
@@ -79,18 +50,31 @@ const EdgePath = memo(function EdgePath({
                     onSelect(edge.id)
                 }}
             />
+
+            {/* MAIN LINE */}
             <path
-                className="edge-path"
                 d={d}
                 fill="none"
                 style={{
                     stroke: edge.selected
-                        ? "var(--canvas-accent, #3b82f6)"
+                        ? "var(--canvas-accent, #6366f1)"
                         : "var(--canvas-edge, #94a3b8)",
-                    strokeWidth: edge.selected ? 3 : 1.5,
-                    transition: "stroke 0.2s",
+                    strokeWidth: edge.selected ? 3 : 2,
+                    transition: "all 0.2s ease",
                 }}
-                markerEnd={`url(#arrow-${edge.selected ? "selected" : "default"})`}
+            />
+
+            {/* 🔥 GLOW EFFECT (optional tapi bikin premium) */}
+            <path
+                d={d}
+                fill="none"
+                style={{
+                    stroke: edge.selected
+                        ? "rgba(99,102,241,0.25)"
+                        : "transparent",
+                    strokeWidth: 8,
+                    filter: "blur(6px)",
+                }}
             />
         </g>
     )

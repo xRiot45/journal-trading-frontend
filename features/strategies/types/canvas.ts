@@ -11,6 +11,7 @@ export interface CanvasNode {
     selected: boolean
     zIndex: number
     backendElementId?: string
+    parentId?: string
 }
 
 export interface CanvasEdge {

@@ -2,6 +2,7 @@
 
 import { useRef, useState, useCallback, memo } from "react"
 import { motion } from "framer-motion"
+import { Plus } from "lucide-react"
 import { useCanvasStore } from "../../store/canvas.store"
 import { CanvasNode } from "../../types/canvas"
 import { snapToGrid } from "@/lib/utils"
@@ -34,24 +35,29 @@ export const NodeRenderer = memo(function NodeRenderer({ node }: Props) {
         activeTool,
         startConnect,
         endConnect,
+        createNode, // 🔥 NEW
     } = useCanvasStore()
+
     const [isEditing, setIsEditing] = useState(false)
     const [editLabel, setEditLabel] = useState(node.label)
+    const [isHovered, setIsHovered] = useState(false)
+
     const dragStart = useRef<{
         mx: number
         my: number
         nx: number
         ny: number
     } | null>(null)
+
     const hasDragged = useRef(false)
     const inputRef = useRef<HTMLTextAreaElement>(null)
 
+    // ================= DRAG =================
     const onPointerDown = useCallback(
         (e: React.PointerEvent) => {
             if (isEditing) return
             e.stopPropagation()
 
-            // Connect mode: clicking node completes connection
             if (activeTool === "connect") {
                 endConnect(node.id)
                 return
@@ -65,6 +71,7 @@ export const NodeRenderer = memo(function NodeRenderer({ node }: Props) {
                 nx: node.x,
                 ny: node.y,
             }
+
             hasDragged.current = false
 
             const el = e.currentTarget as HTMLElement
@@ -72,24 +79,29 @@ export const NodeRenderer = memo(function NodeRenderer({ node }: Props) {
 
             const onMove = (me: PointerEvent) => {
                 if (!dragStart.current) return
+
                 const vp = useCanvasStore.getState().viewport
                 const dx = (me.clientX - dragStart.current.mx) / vp.zoom
                 const dy = (me.clientY - dragStart.current.my) / vp.zoom
+
                 if (
                     !hasDragged.current &&
                     (Math.abs(dx) > 2 || Math.abs(dy) > 2)
-                )
+                ) {
                     hasDragged.current = true
+                }
+
                 if (!hasDragged.current) return
 
                 const gs = useCanvasStore.getState().settings.gridSize
                 const doSnap = useCanvasStore.getState().settings.snapToGrid
+
                 const rawX = dragStart.current.nx + dx
                 const rawY = dragStart.current.ny + dy
+
                 const newX = doSnap ? snapToGrid(rawX, gs) : rawX
                 const newY = doSnap ? snapToGrid(rawY, gs) : rawY
 
-                // Move all selected nodes together
                 const store = useCanvasStore.getState()
                 const diffX = newX - node.x
                 const diffY = newY - node.y
@@ -98,9 +110,7 @@ export const NodeRenderer = memo(function NodeRenderer({ node }: Props) {
                     store.selectedNodeIds.forEach((id) => {
                         const n = store.nodes.find((n) => n.id === id)
                         if (!n) return
-                        useCanvasStore
-                            .getState()
-                            .updateNode(id, { x: n.x + diffX, y: n.y + diffY })
+                        store.updateNode(id, { x: n.x + diffX, y: n.y + diffY })
                     })
                 } else {
                     updateNode(node.id, { x: newX, y: newY })
@@ -129,6 +139,7 @@ export const NodeRenderer = memo(function NodeRenderer({ node }: Props) {
         ]
     )
 
+    // ================= EDIT =================
     const onDoubleClick = useCallback(
         (e: React.MouseEvent) => {
             e.stopPropagation()
@@ -147,6 +158,7 @@ export const NodeRenderer = memo(function NodeRenderer({ node }: Props) {
         updateNode(node.id, { label: editLabel })
     }, [editLabel, node.id, updateNode])
 
+    // ================= CONNECT =================
     const onHandleDown = useCallback(
         (e: React.PointerEvent) => {
             e.stopPropagation()
@@ -156,6 +168,20 @@ export const NodeRenderer = memo(function NodeRenderer({ node }: Props) {
         [node.id, startConnect]
     )
 
+    // ================= CREATE CHILD (🔥 CORE FEATURE) =================
+    const handleAddChild = useCallback(() => {
+        const offsetX = 220
+
+        createNode({
+            parentId: node.id,
+            x: node.x + offsetX,
+            y: node.y,
+        })
+
+        useCanvasStore.getState().setTool("select")
+    }, [node, createNode])
+
+    // ================= STYLE =================
     const nodeClass = [
         "canvas-node",
         `type-${node.type}`,
@@ -170,13 +196,8 @@ export const NodeRenderer = memo(function NodeRenderer({ node }: Props) {
         width: node.width,
         height: node.height,
         zIndex: node.selected ? 1000 : node.zIndex,
-        padding:
-            node.type === "text"
-                ? "8px 12px"
-                : node.type === "decision"
-                  ? "0"
-                  : "10px 16px",
         position: "absolute",
+        padding: "10px 16px",
     }
 
     return (
@@ -188,47 +209,42 @@ export const NodeRenderer = memo(function NodeRenderer({ node }: Props) {
             transition={{ type: "spring", stiffness: 420, damping: 26 }}
             onPointerDown={onPointerDown}
             onDoubleClick={onDoubleClick}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
         >
+            {/* LABEL */}
             {isEditing ? (
                 <textarea
                     ref={inputRef}
                     value={editLabel}
                     onChange={(e) => setEditLabel(e.target.value)}
                     onBlur={commitEdit}
-                    onKeyDown={(e) => {
-                        if (e.key === "Enter" && !e.shiftKey) {
-                            e.preventDefault()
-                            commitEdit()
-                        }
-                        if (e.key === "Escape") {
-                            setIsEditing(false)
-                        }
-                    }}
-                    className="h-full w-full resize-none bg-transparent text-center text-sm font-medium outline-none"
-                    style={{
-                        color: "var(--canvas-text)",
-                        fontFamily: "var(--font-sans)",
-                        lineHeight: 1.4,
-                    }}
+                    className="h-full w-full resize-none bg-transparent text-center text-sm outline-none"
                 />
             ) : (
-                <span
-                    className="text-center text-sm leading-snug font-medium wrap-break-word select-none"
-                    style={{
-                        color: "var(--canvas-text)",
-                        display: "-webkit-box",
-                        WebkitLineClamp: 4,
-                        WebkitBoxOrient: "vertical",
-                        overflow: "hidden",
-                        width: "100%",
-                        fontFamily: "var(--font-sans)",
-                    }}
-                >
+                <span className="text-center text-sm font-medium select-none">
                     {node.label}
                 </span>
             )}
 
-            {/* Handles */}
+            {/* ➕ ADD CHILD BUTTON (WHIMSICAL STYLE) */}
+            {(node.selected || isHovered) && (
+                <button
+                    onPointerDown={(e) => {
+                        e.stopPropagation()
+                        e.preventDefault()
+                    }}
+                    onClick={(e) => {
+                        e.stopPropagation()
+                        handleAddChild()
+                    }}
+                    className="absolute top-1/2 -right-8 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full border bg-white shadow hover:bg-gray-100"
+                >
+                    <Plus size={14} />
+                </button>
+            )}
+
+            {/* HANDLES */}
             {HANDLES.map((h) => (
                 <div
                     key={h.id}

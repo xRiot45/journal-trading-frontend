@@ -20,7 +20,7 @@ import {
     CloudOff,
 } from "lucide-react"
 import { ElementType } from "../../types/element.types"
-import { useUpsertElementMutation } from "../../hooks/use-elements-mutations"
+import { useUpsertNodeMutation } from "../../hooks/use-elements-mutations"
 import { useStrategyStore } from "../../store/strategies.store"
 
 export function Sidebar() {
@@ -61,7 +61,7 @@ export function Sidebar() {
         if (selectedEdge) setEdgeLabel(selectedEdge.label || "")
     }, [selectedEdge])
 
-    const upsertElementMutation = useUpsertElementMutation()
+    const upsertNodeMutation = useUpsertNodeMutation()
 
     const backendElementId =
         nodes.find((n) => n.id === selectedNodeId)?.backendElementId ?? null
@@ -74,7 +74,7 @@ export function Sidebar() {
 
     const isNodeSynced = !!backendElementId
 
-    const isMutating = upsertElementMutation.isPending
+    const isMutating = upsertNodeMutation.isPending
 
     // ── UPSERT ─────────────────────────────────────────
     const handleUpsertElement = () => {
@@ -84,7 +84,7 @@ export function Sidebar() {
         const currentNode = nodes.find((n) => n.id === selectedNode.id)
         const currentBackendId = currentNode?.backendElementId ?? null
 
-        upsertElementMutation.mutate(
+        upsertNodeMutation.mutate(
             {
                 id: currentBackendId ?? undefined,
                 strategyId,

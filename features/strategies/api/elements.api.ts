@@ -82,3 +82,22 @@ export async function upsertElement(
         )
     }
 }
+
+export async function upsertNode(
+    payload: ElementRequest
+): Promise<ElementItemResponse> {
+    try {
+        return await httpClient.put<ElementItemResponse>(
+            `${ELEMENTS_ENDPOINT}/node`,
+            payload,
+            {
+                withCredentials: true,
+            }
+        )
+    } catch (err) {
+        throwApiError(
+            err,
+            "Failed to create element. Please check your input and try again."
+        )
+    }
+}

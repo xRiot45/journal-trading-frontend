@@ -20,6 +20,7 @@ interface CanvasStore {
     viewport: Viewport
     settings: CanvasSettings
     title: string
+    parentId?: string | null
 
     // Selection
     selectedNodeIds: string[]
@@ -40,6 +41,13 @@ interface CanvasStore {
 
     // Actions - Nodes
     addNode: (x: number, y: number, type: NodeType) => void
+    createNode: (params: {
+        parentId: string
+        x: number
+        y: number
+        type?: "default"
+    }) => void
+
     updateNode: (id: string, patch: Partial<CanvasNode>) => void
     deleteNode: (id: string) => void
     deleteSelectedNodes: () => void
@@ -116,6 +124,7 @@ export const useCanvasStore = create<CanvasStore>((set, get) => ({
     connectingFrom: null,
     clipboard: [],
     isDark: false,
+    parentId: null,
 
     pushHistory: () => {
         const { nodes, edges, history, historyIndex } = get()
@@ -177,6 +186,68 @@ export const useCanvasStore = create<CanvasStore>((set, get) => ({
             nodes: s.nodes.map((n) => ({ ...n, selected: false })).concat(node),
             selectedNodeIds: [node.id],
             activeTool: "select",
+        }))
+    },
+
+    createNode: ({ parentId, x, y, type = "default" }) => {
+        const { nodes, edges } = get()
+
+        const newId = genId("node")
+
+        let finalX = x
+        let finalY = y
+
+        // 🔥 TREE LAYOUT LOGIC
+        if (parentId) {
+            const parent = nodes.find((n) => n.id === parentId)
+
+            const siblings = nodes.filter((n) =>
+                edges.some((e) => e.source === parentId && e.target === n.id)
+            )
+
+            const spacingX = 220
+            const spacingY = 80
+
+            finalX = (parent?.x ?? x) + spacingX
+
+            const total = siblings.length + 1
+            const startY = (parent?.y ?? y) - ((total - 1) * spacingY) / 2
+
+            finalY = startY + siblings.length * spacingY
+        }
+
+        const node: CanvasNode = {
+            id: newId,
+            type,
+            x: finalX,
+            y: finalY,
+            width: 160,
+            height: 60,
+            label: "New Node",
+            selected: true,
+            zIndex: nodes.length + 1,
+        }
+
+        let newEdges = edges
+
+        if (parentId) {
+            newEdges = [
+                ...edges,
+                {
+                    id: genId("edge"),
+                    source: parentId,
+                    target: newId,
+                    selected: false,
+                },
+            ]
+        }
+
+        get().pushHistory()
+
+        set((s) => ({
+            nodes: s.nodes.map((n) => ({ ...n, selected: false })).concat(node),
+            edges: newEdges,
+            selectedNodeIds: [newId],
         }))
     },
 
