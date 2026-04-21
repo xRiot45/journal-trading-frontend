@@ -54,7 +54,6 @@ export function useUpsertNodeMutation(onSuccess?: () => void) {
     return useMutation<ElementItemResponse, Error, ElementUpsertRequest>({
         mutationFn: upsertNode,
         onSuccess: () => {
-            toast.success("Element Node upserted")
             invalidate()
             onSuccess?.()
         },
