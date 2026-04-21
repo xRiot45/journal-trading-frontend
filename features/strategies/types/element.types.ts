@@ -33,6 +33,8 @@ export interface ElementUpsertRequest {
     width: number
     height: number
     zIndex: number
+    // depth: number | null
+    // path: string | null
     parentElementId: string | null // id dari parent element, null jika tidak memiliki parent (contohnya: node kedua yang terhubung dengan node pertama, maka node kedua memiliki parentElementId yang berisi id dari node pertama)
     isLocked?: boolean
     isVisible?: boolean
@@ -48,6 +50,8 @@ export interface ElementResponse {
     width: number
     height: number
     zIndex: number
+    depth: number | null
+    path: string | null
     parentElementId: string | null // id dari parent element, null jika tidak memiliki parent (contohnya: node kedua yang terhubung dengan node pertama, maka node kedua memiliki parentElementId yang berisi id dari node pertama)
     isLocked?: boolean
     isVisible?: boolean

@@ -8,7 +8,6 @@ import {
     X,
     Settings2,
     Box,
-    Type,
     Trash2,
     ChevronRight,
     Loader2,
@@ -236,39 +235,34 @@ export function Sidebar() {
                                     </SidebarField>
 
                                     <SidebarField label="Geometry Type">
-                                        <div className="grid grid-cols-2 gap-1 rounded-md bg-black/5 p-1 dark:bg-white/5">
-                                            {(["default", "text"] as const).map(
-                                                (t) => (
-                                                    <button
-                                                        key={t}
-                                                        onClick={() => {
-                                                            updateNode(
-                                                                selectedNode.id,
-                                                                { type: t }
-                                                            )
-                                                            // Jika geometry type disimpan ke DB, jalankan ini:
-                                                            // handleAutosave({ type: t })
-                                                        }}
-                                                        className={`flex flex-col items-center justify-center rounded-md py-2 transition-all ${
-                                                            selectedNode.type ===
-                                                            t
-                                                                ? "bg-black text-white shadow-lg dark:bg-white dark:text-black"
-                                                                : "hover:bg-black/10 dark:hover:bg-white/10"
-                                                        }`}
-                                                    >
-                                                        {t === "default" && (
-                                                            <Box className="h-3.5 w-3.5" />
-                                                        )}
-                                                        {t === "text" && (
+                                        <div className="grid grid-cols-1 gap-1 rounded-md bg-black/5 p-1 dark:bg-white/5">
+                                            {(["default"] as const).map((t) => (
+                                                <button
+                                                    key={t}
+                                                    onClick={() => {
+                                                        updateNode(
+                                                            selectedNode.id,
+                                                            { type: t }
+                                                        )
+                                                    }}
+                                                    className={`flex flex-col items-center justify-center rounded-md py-2 transition-all ${
+                                                        selectedNode.type === t
+                                                            ? "bg-black text-white shadow-lg dark:bg-white dark:text-black"
+                                                            : "hover:bg-black/10 dark:hover:bg-white/10"
+                                                    }`}
+                                                >
+                                                    {t === "default" && (
+                                                        <Box className="h-3.5 w-3.5" />
+                                                    )}
+                                                    {/* {t === "text" && (
                                                             <Type className="h-3.5 w-3.5" />
-                                                        )}
+                                                        )} */}
 
-                                                        <span className="mt-1 text-[9px] font-bold uppercase">
-                                                            {t}
-                                                        </span>
-                                                    </button>
-                                                )
-                                            )}
+                                                    <span className="mt-1 text-[9px] font-bold uppercase">
+                                                        {t}
+                                                    </span>
+                                                </button>
+                                            ))}
                                         </div>
                                     </SidebarField>
 

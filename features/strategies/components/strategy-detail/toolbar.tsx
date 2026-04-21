@@ -14,9 +14,9 @@ interface ToolItem {
 const TOOLS: ToolItem[] = [
     { id: "select", label: "Select", icon: "↖", shortcut: "V" },
     { id: "node", label: "Add Node", icon: "□", shortcut: "N" },
-    { id: "text", label: "Add Text", icon: "T", shortcut: "T" },
+    // { id: "text", label: "Add Text", icon: "T", shortcut: "T" },
     // { id: "decision", label: "Decision Node", icon: "◇", shortcut: "D" },
-    { id: "connect", label: "Connect", icon: "⤷", shortcut: "C" },
+    // { id: "connect", label: "Connect", icon: "⤷", shortcut: "C" },
 ]
 
 export function Toolbar() {

@@ -11,13 +11,13 @@ export function useAutosave() {
 
     const triggerAutosave = (
         nodeId: string,
-        overrides?: Partial<CanvasNode>
+        overrides?: Partial<CanvasNode> & { parentElementId?: string | null }
     ) => {
         if (!strategyId) return
 
-        const currentNode = useCanvasStore
-            .getState()
-            .nodes.find((n) => n.id === nodeId)
+        const store = useCanvasStore.getState()
+        const currentNode = store.nodes.find((n) => n.id === nodeId)
+
         if (!currentNode) return
 
         const currentBackendId = currentNode.backendElementId ?? null
@@ -31,6 +31,24 @@ export function useAutosave() {
             return
         }
 
+        let parentBackendId: string | null = null
+
+        if (overrides && overrides.parentElementId !== undefined) {
+            parentBackendId = overrides.parentElementId
+        } else {
+            const incomingEdge = store.edges.find((e) => e.target === nodeId)
+
+            if (incomingEdge) {
+                const parentNode = store.nodes.find(
+                    (n) => n.id === incomingEdge.source
+                )
+
+                if (parentNode && parentNode.backendElementId) {
+                    parentBackendId = parentNode.backendElementId
+                }
+            }
+        }
+
         upsertNodeMutation.mutate(
             {
                 id: currentBackendId ?? undefined,
@@ -42,7 +60,7 @@ export function useAutosave() {
                 width: overrides?.width ?? currentNode.width,
                 height: overrides?.height ?? currentNode.height,
                 zIndex: overrides?.zIndex ?? currentNode.zIndex,
-                parentElementId: null,
+                parentElementId: parentBackendId,
                 isLocked: false,
                 isVisible: true,
             },

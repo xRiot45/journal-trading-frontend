@@ -71,11 +71,17 @@ export function CanvasRoot() {
         if (isSuccess && response?.data) {
             const rawData = response.data
             const mappedNodes: CanvasNode[] = rawData
-                .filter((el) => el.type === "node")
-                .map((el) => ({
+                .filter(
+                    (el: any) =>
+                        el.type === "node" ||
+                        el.type === "default" ||
+                        el.type === "decision" ||
+                        el.type === "text"
+                )
+                .map((el: any) => ({
                     id: crypto.randomUUID(),
                     backendElementId: el.id,
-                    type: "default",
+                    type: el.type === "node" ? "default" : el.type,
                     x: el.x,
                     y: el.y,
                     width: el.width || 160,
@@ -85,21 +91,37 @@ export function CanvasRoot() {
                     zIndex: el.zIndex || 1,
                 }))
 
-            // 2. Map Edges (Jika nanti API mengembalikan tipe 'edge')
-            const mappedEdges: CanvasEdge[] = rawData
-                .filter((el: any) => el.type === "edge")
-                .map((el: any) => ({
-                    id: el.id,
-                    source: el.sourceId,
-                    target: el.targetId,
-                    label: el.identifier || "",
-                    selected: false,
-                }))
+            // ─── LOGIC PERBAIKAN EDGES ─────────────────────────────────────
+            // Karena UI generate random UUID, kita butuh "Kamus" untuk mencocokkan
+            // backendElementId dengan frontend ID yang baru dibuat di atas.
+            const backendToFrontendIdMap = new Map(
+                mappedNodes.map((node) => [node.backendElementId, node.id])
+            )
 
-            // 3. Simpan ke Store
+            // 2. Reconstruct Edges dari parentElementId
+            const mappedEdges: CanvasEdge[] = []
+
+            rawData.forEach((el: any) => {
+                if (el.parentElementId) {
+                    const sourceId = backendToFrontendIdMap.get(
+                        el.parentElementId
+                    )
+                    const targetId = backendToFrontendIdMap.get(el.id)
+
+                    if (sourceId && targetId) {
+                        mappedEdges.push({
+                            id: crypto.randomUUID(),
+                            source: sourceId,
+                            target: targetId,
+                            label: "",
+                            selected: false,
+                        })
+                    }
+                }
+            })
+
             setElements(mappedNodes, mappedEdges)
 
-            // Beri sedikit delay agar DOM selesai render sebelum kalkulasi fitScreen
             requestAnimationFrame(() => {
                 fitScreen()
             })

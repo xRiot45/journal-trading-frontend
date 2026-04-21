@@ -5,12 +5,9 @@ import { motion } from "framer-motion"
 import { useCanvasStore } from "../../store/canvas.store"
 
 export function Minimap() {
-    // --- 1. HOOKS (Harus di paling atas) ---
     const { nodes, viewport, setViewport } = useCanvasStore()
     const mapRef = useRef<HTMLDivElement>(null)
 
-    // Pindahkan useCallback ke sini agar selalu terpanggil
-    // Kita pindahkan variabel pendukung (scale, minX, minY) ke dalam scope yang tepat nanti
     const onMinimapClick = useCallback(
         (e: React.MouseEvent) => {
             if (!nodes.length) return // Guard inside callback

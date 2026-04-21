@@ -39,7 +39,7 @@ export const NodeRenderer = memo(function NodeRenderer({ node }: Props) {
         createNode,
     } = useCanvasStore()
 
-    const { triggerAutosave } = useAutosave() // 🚀 Inisialisasi Autosave Hook
+    const { triggerAutosave } = useAutosave()
 
     const [isEditing, setIsEditing] = useState(false)
     const [editLabel, setEditLabel] = useState(node.label)
@@ -61,8 +61,17 @@ export const NodeRenderer = memo(function NodeRenderer({ node }: Props) {
             if (isEditing) return
             e.stopPropagation()
 
+            // ─── LOGIC PENYAMBUNGAN (CONNECTING) ───
             if (activeTool === "connect") {
+                // Saat user mengeklik node ini sebagai TARGET koneksi
                 endConnect(node.id)
+
+                // Beri sedikit jeda agar store edges terupdate,
+                // lalu trigger autosave agar parentElementId baru dikirim ke backend
+                setTimeout(() => {
+                    triggerAutosave(node.id)
+                }, 50)
+
                 return
             }
 
@@ -124,9 +133,7 @@ export const NodeRenderer = memo(function NodeRenderer({ node }: Props) {
                 if (hasDragged.current) {
                     pushHistory()
 
-                    // 🚀 TRIGGER AUTOSAVE SETELAH DRAG SELESAI
-                    // Jika ada multiple selection (geser banyak kotak sekaligus),
-                    // kamu perlu meloopingnya. Tapi untuk amannya, kita panggil untuk current node dulu.
+                    // 🚀 AUTOSAVE SAAT SELESAI GESER NODE
                     const store = useCanvasStore.getState()
                     if (store.selectedNodeIds.length > 1) {
                         store.selectedNodeIds.forEach((id) => {
@@ -154,14 +161,13 @@ export const NodeRenderer = memo(function NodeRenderer({ node }: Props) {
             node,
             updateNode,
             pushHistory,
-            triggerAutosave, // 🚀 Dependency array update
+            triggerAutosave,
         ]
     )
 
     // ================= EDIT =================
     const onDoubleClick = useCallback(
         (e: React.MouseEvent) => {
-            // ... (Tidak ada perubahan di onDoubleClick)
             e.stopPropagation()
             setEditLabel(node.label)
             setIsEditing(true)
@@ -177,7 +183,7 @@ export const NodeRenderer = memo(function NodeRenderer({ node }: Props) {
         setIsEditing(false)
         updateNode(node.id, { label: editLabel })
 
-        // 🚀 TRIGGER AUTOSAVE SAAT SELESAI EDIT (DOUBLE CLICK -> KETIK -> ENTER/BLUR)
+        // 🚀 AUTOSAVE SAAT SELESAI EDIT TEKS
         triggerAutosave(node.id, { label: editLabel })
     }, [editLabel, node.id, updateNode, triggerAutosave])
 
@@ -186,6 +192,8 @@ export const NodeRenderer = memo(function NodeRenderer({ node }: Props) {
         (e: React.PointerEvent) => {
             e.stopPropagation()
             e.preventDefault()
+
+            // Saat user mulai menarik garis dari node ini
             startConnect(node.id)
         },
         [node.id, startConnect]
@@ -194,11 +202,17 @@ export const NodeRenderer = memo(function NodeRenderer({ node }: Props) {
     // ================= CREATE CHILD  =================
     const handleAddChild = useCallback(() => {
         const offsetX = 220
+        const newChildX = node.x + offsetX
+        const newChildY = node.y
 
+        // Jika fungsi createNode kamu menghasilkan ID node baru,
+        // akan sangat baik jika createNode juga men-trigger autosave untuk node baru tersebut.
+        // Jika tidak, biarkan fungsi ini memanipulasi state lokal, dan asumsikan kamu
+        // punya watcher atau logic autosave terpisah untuk node yang baru dibuat.
         createNode({
             parentId: node.id,
-            x: node.x + offsetX,
-            y: node.y,
+            x: newChildX,
+            y: newChildY,
         })
 
         useCanvasStore.getState().setTool("select")
@@ -241,7 +255,13 @@ export const NodeRenderer = memo(function NodeRenderer({ node }: Props) {
                     ref={inputRef}
                     value={editLabel}
                     onChange={(e) => setEditLabel(e.target.value)}
-                    onBlur={commitEdit}
+                    onBlur={commitEdit} // Memicu autosave saat klik di luar kotak
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                            e.preventDefault()
+                            commitEdit() // Memicu autosave saat tekan Enter
+                        }
+                    }}
                     className="h-full w-full resize-none bg-transparent text-center text-sm outline-none"
                 />
             ) : (
@@ -250,7 +270,7 @@ export const NodeRenderer = memo(function NodeRenderer({ node }: Props) {
                 </span>
             )}
 
-            {/* ➕ ADD CHILD BUTTON (WHIMSICAL STYLE) */}
+            {/* ➕ ADD CHILD BUTTON */}
             {(node.selected || isHovered) && (
                 <button
                     onPointerDown={(e) => {
