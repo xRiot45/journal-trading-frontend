@@ -3,20 +3,16 @@
 
 import { motion, AnimatePresence } from "framer-motion"
 import { useCanvasStore } from "../../store/canvas.store"
-import { NodeType } from "../../types/canvas"
 import { useState, useEffect } from "react"
 import {
     X,
     Settings2,
     Box,
     Type,
-    Diamond,
     Trash2,
     ChevronRight,
     Loader2,
     CheckCircle2,
-    RefreshCw,
-    CloudUpload,
     CloudOff,
 } from "lucide-react"
 import { ElementType } from "../../types/element.types"
@@ -66,34 +62,36 @@ export function Sidebar() {
     const backendElementId =
         nodes.find((n) => n.id === selectedNodeId)?.backendElementId ?? null
 
-    const isFormValid =
-        !!selectedNode &&
-        label.trim() !== "" &&
-        selectedNode.width > 0 &&
-        selectedNode.height > 0
-
     const isNodeSynced = !!backendElementId
-
     const isMutating = upsertNodeMutation.isPending
 
-    // ── UPSERT ─────────────────────────────────────────
-    const handleUpsertElement = () => {
-        if (!strategyId || !selectedNode || !isFormValid) return
+    // ── UPSERT AUTOMATIS (AUTOSAVE) ─────────────────────────
+    const handleAutosave = (overrides?: Partial<typeof selectedNode>) => {
+        if (!strategyId || !selectedNode) return
 
-        // 🔥 ambil fresh dari store saat klik
         const currentNode = nodes.find((n) => n.id === selectedNode.id)
         const currentBackendId = currentNode?.backendElementId ?? null
+
+        const finalLabel = (overrides?.label ?? label).trim()
+
+        if (
+            !finalLabel ||
+            (overrides?.width ?? selectedNode.width) <= 0 ||
+            (overrides?.height ?? selectedNode.height) <= 0
+        ) {
+            return
+        }
 
         upsertNodeMutation.mutate(
             {
                 id: currentBackendId ?? undefined,
                 strategyId,
                 type: ElementType.NODE,
-                identifier: label.trim(),
-                x: selectedNode.x,
-                y: selectedNode.y,
-                width: selectedNode.width,
-                height: selectedNode.height,
+                identifier: finalLabel,
+                x: overrides?.x ?? selectedNode.x,
+                y: overrides?.y ?? selectedNode.y,
+                width: overrides?.width ?? selectedNode.width,
+                height: overrides?.height ?? selectedNode.height,
                 zIndex: selectedNode.zIndex ?? nodes.length + 1,
                 parentElementId: null,
                 isLocked: false,
@@ -101,9 +99,9 @@ export function Sidebar() {
             },
             {
                 onSuccess: (data) => {
-                    if (!currentBackendId) {
+                    if (!currentBackendId && data.data?.id) {
                         updateNode(selectedNode.id, {
-                            backendElementId: data.data?.id,
+                            backendElementId: data.data.id,
                         })
                     }
                 },
@@ -171,17 +169,49 @@ export function Sidebar() {
                                     }}
                                     className="flex flex-col gap-5"
                                 >
+                                    {/* Status Indicator (Pengganti Tombol Save) */}
+                                    <div className="flex items-center justify-between rounded-md bg-black/5 px-3 py-2 dark:bg-white/5">
+                                        <span className="text-[10px] font-bold uppercase opacity-60">
+                                            Status
+                                        </span>
+                                        <div className="flex items-center gap-1.5 text-[10px] font-bold tracking-widest uppercase">
+                                            {isMutating ? (
+                                                <>
+                                                    <Loader2 className="h-3 w-3 animate-spin text-blue-500" />
+                                                    <span className="text-blue-500">
+                                                        Syncing...
+                                                    </span>
+                                                </>
+                                            ) : isNodeSynced ? (
+                                                <>
+                                                    <CheckCircle2 className="h-3 w-3 text-green-500" />
+                                                    <span className="text-green-500">
+                                                        Synced
+                                                    </span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <CloudOff className="h-3 w-3 text-amber-500" />
+                                                    <span className="text-amber-500">
+                                                        Pending
+                                                    </span>
+                                                </>
+                                            )}
+                                        </div>
+                                    </div>
+
                                     <SidebarField label="Identifier">
                                         <textarea
                                             value={label}
                                             onChange={(e) =>
                                                 setLabel(e.target.value)
                                             }
-                                            onBlur={() =>
+                                            onBlur={() => {
                                                 updateNode(selectedNode.id, {
                                                     label,
                                                 })
-                                            }
+                                                handleAutosave({ label })
+                                            }}
                                             onKeyDown={(e) => {
                                                 if (
                                                     e.key === "Enter" &&
@@ -192,49 +222,53 @@ export function Sidebar() {
                                                         selectedNode.id,
                                                         { label }
                                                     )
+                                                    handleAutosave({ label }) // 🚀 Trigger Autosave
                                                 }
                                             }}
                                             rows={3}
                                             className="sidebar-input-web3"
                                         />
+                                        {label.trim() === "" && (
+                                            <p className="mt-1 text-center text-[9px] text-red-500 opacity-80">
+                                                Identifier wajib diisi
+                                            </p>
+                                        )}
                                     </SidebarField>
 
                                     <SidebarField label="Geometry Type">
                                         <div className="grid grid-cols-2 gap-1 rounded-md bg-black/5 p-1 dark:bg-white/5">
-                                            {(
-                                                [
-                                                    "default",
-                                                    "text",
-                                                ] as NodeType[]
-                                            ).map((t) => (
-                                                <button
-                                                    key={t}
-                                                    onClick={() =>
-                                                        updateNode(
-                                                            selectedNode.id,
-                                                            { type: t }
-                                                        )
-                                                    }
-                                                    className={`flex flex-col items-center justify-center rounded-md py-2 transition-all ${
-                                                        selectedNode.type === t
-                                                            ? "bg-black text-white shadow-lg dark:bg-white dark:text-black"
-                                                            : "hover:bg-black/10 dark:hover:bg-white/10"
-                                                    }`}
-                                                >
-                                                    {t === "default" && (
-                                                        <Box className="h-3.5 w-3.5" />
-                                                    )}
-                                                    {t === "text" && (
-                                                        <Type className="h-3.5 w-3.5" />
-                                                    )}
-                                                    {t === "decision" && (
-                                                        <Diamond className="h-3.5 w-3.5" />
-                                                    )}
-                                                    <span className="mt-1 text-[9px] font-bold uppercase">
-                                                        {t}
-                                                    </span>
-                                                </button>
-                                            ))}
+                                            {(["default", "text"] as const).map(
+                                                (t) => (
+                                                    <button
+                                                        key={t}
+                                                        onClick={() => {
+                                                            updateNode(
+                                                                selectedNode.id,
+                                                                { type: t }
+                                                            )
+                                                            // Jika geometry type disimpan ke DB, jalankan ini:
+                                                            // handleAutosave({ type: t })
+                                                        }}
+                                                        className={`flex flex-col items-center justify-center rounded-md py-2 transition-all ${
+                                                            selectedNode.type ===
+                                                            t
+                                                                ? "bg-black text-white shadow-lg dark:bg-white dark:text-black"
+                                                                : "hover:bg-black/10 dark:hover:bg-white/10"
+                                                        }`}
+                                                    >
+                                                        {t === "default" && (
+                                                            <Box className="h-3.5 w-3.5" />
+                                                        )}
+                                                        {t === "text" && (
+                                                            <Type className="h-3.5 w-3.5" />
+                                                        )}
+
+                                                        <span className="mt-1 text-[9px] font-bold uppercase">
+                                                            {t}
+                                                        </span>
+                                                    </button>
+                                                )
+                                            )}
                                         </div>
                                     </SidebarField>
 
@@ -255,6 +289,13 @@ export function Sidebar() {
                                                         }
                                                     )
                                                 }
+                                                onBlur={(e) =>
+                                                    handleAutosave({
+                                                        x: Number(
+                                                            e.target.value
+                                                        ),
+                                                    })
+                                                } // 🚀 Trigger Autosave
                                                 className="sidebar-input-web3"
                                             />
                                         </SidebarField>
@@ -274,6 +315,13 @@ export function Sidebar() {
                                                         }
                                                     )
                                                 }
+                                                onBlur={(e) =>
+                                                    handleAutosave({
+                                                        y: Number(
+                                                            e.target.value
+                                                        ),
+                                                    })
+                                                } // 🚀 Trigger Autosave
                                                 className="sidebar-input-web3"
                                             />
                                         </SidebarField>
@@ -293,6 +341,13 @@ export function Sidebar() {
                                                         }
                                                     )
                                                 }
+                                                onBlur={(e) =>
+                                                    handleAutosave({
+                                                        width: Number(
+                                                            e.target.value
+                                                        ),
+                                                    })
+                                                } // 🚀 Trigger Autosave
                                                 className="sidebar-input-web3"
                                             />
                                         </SidebarField>
@@ -312,6 +367,13 @@ export function Sidebar() {
                                                         }
                                                     )
                                                 }
+                                                onBlur={(e) =>
+                                                    handleAutosave({
+                                                        height: Number(
+                                                            e.target.value
+                                                        ),
+                                                    })
+                                                } // 🚀 Trigger Autosave
                                                 className="sidebar-input-web3"
                                             />
                                         </SidebarField>
@@ -326,67 +388,6 @@ export function Sidebar() {
                                         <Trash2 className="group-hover:shake h-3.5 w-3.5" />
                                         Remove Object
                                     </button>
-
-                                    {/* ── Actions: Upsert ── */}
-                                    <SidebarField label="Actions">
-                                        <div className="flex flex-col gap-2">
-                                            <button
-                                                onClick={handleUpsertElement}
-                                                disabled={
-                                                    !isFormValid || isMutating
-                                                }
-                                                title={
-                                                    !isFormValid
-                                                        ? "Isi Identifier terlebih dahulu"
-                                                        : isNodeSynced
-                                                          ? "Perbarui element di cloud"
-                                                          : "Simpan element ke cloud"
-                                                }
-                                                className="flex w-full items-center justify-center gap-2 rounded-md bg-black py-3 text-[10px] font-bold tracking-[0.2em] text-white uppercase transition-all hover:bg-black/80 disabled:cursor-not-allowed disabled:opacity-30 dark:bg-white dark:text-black dark:hover:bg-white/80"
-                                            >
-                                                {isMutating ? (
-                                                    <Loader2 className="h-3 w-3 animate-spin" />
-                                                ) : isNodeSynced ? (
-                                                    <RefreshCw className="h-3 w-3" />
-                                                ) : (
-                                                    <CloudUpload className="h-3 w-3" />
-                                                )}
-                                                {isMutating
-                                                    ? "Syncing..."
-                                                    : isNodeSynced
-                                                      ? "Sync Changes"
-                                                      : "Save to Cloud"}
-                                            </button>
-
-                                            {/* Status indicator */}
-                                            <div
-                                                className={`flex items-center justify-center gap-1.5 text-[9px] font-bold tracking-[0.15em] uppercase transition-opacity ${
-                                                    isNodeSynced
-                                                        ? "opacity-40"
-                                                        : "text-amber-500 opacity-60"
-                                                }`}
-                                            >
-                                                {isNodeSynced ? (
-                                                    <>
-                                                        <CheckCircle2 className="h-2.5 w-2.5" />
-                                                        Synced to cloud
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <CloudOff className="h-2.5 w-2.5" />
-                                                        Not saved yet
-                                                    </>
-                                                )}
-                                            </div>
-
-                                            {selectedNode &&
-                                                label.trim() === "" && (
-                                                    <p className="text-center text-[9px] text-red-500 opacity-80">
-                                                        Identifier wajib diisi
-                                                    </p>
-                                                )}
-                                        </div>
-                                    </SidebarField>
                                 </motion.div>
                             )}
 
@@ -420,6 +421,7 @@ export function Sidebar() {
                                                         ),
                                                     })
                                                 )
+                                                // Jika edge juga disimpan ke DB, tambahkan logic upsert edge di sini
                                             }}
                                             className="sidebar-input-web3"
                                         />

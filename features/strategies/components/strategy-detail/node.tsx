@@ -6,6 +6,7 @@ import { Plus } from "lucide-react"
 import { useCanvasStore } from "../../store/canvas.store"
 import { CanvasNode } from "../../types/canvas"
 import { snapToGrid } from "@/lib/utils"
+import { useAutosave } from "../../hooks/use-autosave"
 
 interface Props {
     node: CanvasNode
@@ -35,8 +36,10 @@ export const NodeRenderer = memo(function NodeRenderer({ node }: Props) {
         activeTool,
         startConnect,
         endConnect,
-        createNode, // 🔥 NEW
+        createNode,
     } = useCanvasStore()
+
+    const { triggerAutosave } = useAutosave() // 🚀 Inisialisasi Autosave Hook
 
     const [isEditing, setIsEditing] = useState(false)
     const [editLabel, setEditLabel] = useState(node.label)
@@ -118,7 +121,22 @@ export const NodeRenderer = memo(function NodeRenderer({ node }: Props) {
             }
 
             const onUp = () => {
-                if (hasDragged.current) pushHistory()
+                if (hasDragged.current) {
+                    pushHistory()
+
+                    // 🚀 TRIGGER AUTOSAVE SETELAH DRAG SELESAI
+                    // Jika ada multiple selection (geser banyak kotak sekaligus),
+                    // kamu perlu meloopingnya. Tapi untuk amannya, kita panggil untuk current node dulu.
+                    const store = useCanvasStore.getState()
+                    if (store.selectedNodeIds.length > 1) {
+                        store.selectedNodeIds.forEach((id) => {
+                            triggerAutosave(id)
+                        })
+                    } else {
+                        triggerAutosave(node.id)
+                    }
+                }
+
                 dragStart.current = null
                 hasDragged.current = false
                 el.removeEventListener("pointermove", onMove)
@@ -136,12 +154,14 @@ export const NodeRenderer = memo(function NodeRenderer({ node }: Props) {
             node,
             updateNode,
             pushHistory,
+            triggerAutosave, // 🚀 Dependency array update
         ]
     )
 
     // ================= EDIT =================
     const onDoubleClick = useCallback(
         (e: React.MouseEvent) => {
+            // ... (Tidak ada perubahan di onDoubleClick)
             e.stopPropagation()
             setEditLabel(node.label)
             setIsEditing(true)
@@ -156,7 +176,10 @@ export const NodeRenderer = memo(function NodeRenderer({ node }: Props) {
     const commitEdit = useCallback(() => {
         setIsEditing(false)
         updateNode(node.id, { label: editLabel })
-    }, [editLabel, node.id, updateNode])
+
+        // 🚀 TRIGGER AUTOSAVE SAAT SELESAI EDIT (DOUBLE CLICK -> KETIK -> ENTER/BLUR)
+        triggerAutosave(node.id, { label: editLabel })
+    }, [editLabel, node.id, updateNode, triggerAutosave])
 
     // ================= CONNECT =================
     const onHandleDown = useCallback(
@@ -168,7 +191,7 @@ export const NodeRenderer = memo(function NodeRenderer({ node }: Props) {
         [node.id, startConnect]
     )
 
-    // ================= CREATE CHILD (🔥 CORE FEATURE) =================
+    // ================= CREATE CHILD  =================
     const handleAddChild = useCallback(() => {
         const offsetX = 220
 
