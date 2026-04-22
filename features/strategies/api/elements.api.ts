@@ -33,7 +33,7 @@ export async function getElementsByStrategyId(
 ): Promise<ElementListResponse> {
     try {
         return await httpClient.get<ElementListResponse>(
-            `${ELEMENTS_ENDPOINT}/${strategyId}`,
+            `${ELEMENTS_ENDPOINT}/strategy/${strategyId}`,
             {
                 withCredentials: true,
             }

@@ -15,7 +15,10 @@ import {
     CloudOff,
 } from "lucide-react"
 import { ElementType } from "../../types/element.types"
-import { useUpsertNodeMutation } from "../../hooks/use-elements-mutations"
+import {
+    useRemoveElementMutation,
+    useUpsertNodeMutation,
+} from "../../hooks/use-elements-mutations"
 import { useStrategyStore } from "../../store/strategies.store"
 
 export function Sidebar() {
@@ -57,6 +60,7 @@ export function Sidebar() {
     }, [selectedEdge])
 
     const upsertNodeMutation = useUpsertNodeMutation()
+    const removeElementMutation = useRemoveElementMutation()
 
     const backendElementId =
         nodes.find((n) => n.id === selectedNodeId)?.backendElementId ?? null
@@ -106,6 +110,16 @@ export function Sidebar() {
                 },
             }
         )
+    }
+
+    const handleRemoveElement = (backendElementId: string) => {
+        if (!selectedNode?.id) return
+
+        removeElementMutation.mutate(backendElementId, {
+            onSuccess: () => {
+                deleteNode(selectedNode.id)
+            },
+        })
     }
 
     return (
@@ -375,7 +389,9 @@ export function Sidebar() {
 
                                     <button
                                         onClick={() =>
-                                            deleteNode(selectedNode.id)
+                                            handleRemoveElement(
+                                                backendElementId!
+                                            )
                                         }
                                         className="group flex w-full items-center justify-center gap-2 rounded-md border border-black/10 py-2.5 text-[11px] font-bold tracking-widest uppercase transition-all hover:border-red-500 hover:text-red-500 dark:border-white/10"
                                     >
