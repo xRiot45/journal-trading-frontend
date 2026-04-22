@@ -1,4 +1,4 @@
-import { httpClient } from "@/configs/http"
+import { ApiSuccessResponse, httpClient } from "@/configs/http"
 import {
     ElementItemResponse,
     ElementListResponse,
@@ -80,5 +80,20 @@ export async function upsertNode(
             err,
             "Failed to create element. Please check your input and try again."
         )
+    }
+}
+
+export async function removeElement(
+    elementId: string
+): Promise<ApiSuccessResponse> {
+    try {
+        return await httpClient.delete<ApiSuccessResponse>(
+            `${ELEMENTS_ENDPOINT}/${elementId}`,
+            {
+                withCredentials: true,
+            }
+        )
+    } catch (err) {
+        throwApiError(err, "Failed to delete element. Please try again later.")
     }
 }

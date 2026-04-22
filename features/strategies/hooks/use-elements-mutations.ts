@@ -7,7 +7,8 @@ import {
     ElementUpsertRequest,
 } from "../types/element.types"
 import { toast } from "sonner"
-import { createElement, upsertNode } from "../api/elements.api"
+import { createElement, removeElement, upsertNode } from "../api/elements.api"
+import { ApiSuccessResponse } from "@/configs/http"
 
 export function useCreateElementMutation(onSuccess?: () => void) {
     const invalidate = useInvalidateQuery(ELEMENTS_KEY)
@@ -29,6 +30,20 @@ export function useUpsertNodeMutation(onSuccess?: () => void) {
     return useMutation<ElementItemResponse, Error, ElementUpsertRequest>({
         mutationFn: upsertNode,
         onSuccess: () => {
+            invalidate()
+            onSuccess?.()
+        },
+        onError: (error) => toast.error(error.message),
+    })
+}
+
+export function useRemoveElementMutation(onSuccess?: () => void) {
+    const invalidate = useInvalidateQuery(ELEMENTS_KEY)
+
+    return useMutation<ApiSuccessResponse, Error, string>({
+        mutationFn: removeElement,
+        onSuccess: () => {
+            toast.success("Element deleted")
             invalidate()
             onSuccess?.()
         },
