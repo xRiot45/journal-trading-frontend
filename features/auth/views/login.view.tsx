@@ -18,49 +18,19 @@ import FeatureItem from "../components/ui/feature-item"
 export default function LoginView() {
     return (
         <>
-            <style>{`
-        @keyframes blob-drift {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          33% { transform: translate(30px, -20px) scale(1.05); }
-          66% { transform: translate(-20px, 20px) scale(0.97); }
-        }
-        @keyframes float-up {
-          from { opacity: 0; transform: translateY(16px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes bar-rise {
-          from { transform: scaleY(0); }
-          to   { transform: scaleY(1); }
-        }
-        .blob-1 { animation: blob-drift 12s ease-in-out infinite; }
-        .blob-2 { animation: blob-drift 16s ease-in-out infinite reverse; }
-        .fade-in-1 { animation: float-up 0.5s ease forwards; }
-        .fade-in-2 { animation: float-up 0.5s 0.1s ease both; }
-        .fade-in-3 { animation: float-up 0.5s 0.2s ease both; }
-        .fade-in-4 { animation: float-up 0.5s 0.3s ease both; }
-        .grid-overlay {
-          background-image:
-            linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
-          background-size: 52px 52px;
-        }
-        .dark .grid-overlay {
-          background-image:
-            linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
-        }
-      `}</style>
-
-            <div className="relative flex min-h-screen w-full overflow-hidden bg-white font-[Outfit,system-ui,sans-serif] text-black transition-colors dark:bg-black dark:text-white">
+            <div className="relative flex min-h-screen w-full overflow-y-hidden bg-white text-black dark:bg-black dark:text-white">
                 {/* ── LEFT PANEL — Form ───────────────────────────────────────── */}
                 <div className="relative z-10 flex w-full flex-col lg:w-[45%] xl:w-[42%]">
-                    <div className="absolute inset-0 bg-[#fafafa] dark:bg-[#0a0a0a]" />
-                    <div className="absolute inset-y-0 right-0 w-px bg-linear-to-b from-transparent via-black/10 to-transparent dark:via-white/10" />
+                    {/* Background Base */}
+                    <div className="absolute inset-0 bg-white dark:bg-black" />
+
+                    {/* Divider Line */}
+                    <div className="absolute inset-y-0 right-0 w-px bg-linear-to-b from-transparent via-neutral-200 to-transparent dark:via-neutral-800" />
 
                     <div className="relative flex flex-1 flex-col justify-center px-8 py-14 sm:px-12 lg:px-14 xl:px-32">
                         {/* Logo */}
                         <div className="mb-12 flex items-center gap-2.5">
-                            <div className="flex size-9 items-center justify-center rounded-xl bg-black text-white shadow-[0_0_20px_rgba(0,0,0,0.08)] dark:bg-white dark:text-black dark:shadow-[0_0_20px_rgba(255,255,255,0.12)]">
+                            <div className="flex size-9 items-center justify-center rounded-xl bg-black text-white shadow-sm dark:bg-white dark:text-black">
                                 <TrendingUp className="size-4.5" />
                             </div>
                             <span className="text-[15px] font-semibold tracking-tight text-black dark:text-white">
@@ -68,31 +38,31 @@ export default function LoginView() {
                             </span>
                         </div>
 
-                        {/* Heading */}
+                        {/* Heading Area */}
                         <div className="mb-8 fade-in-1">
-                            <p className="mb-1.5 text-xs font-medium tracking-[0.15em] text-black/55 uppercase dark:text-white/55">
+                            <p className="mb-1.5 text-xs font-medium tracking-[0.15em] text-neutral-500 uppercase dark:text-neutral-400">
                                 Welcome back
                             </p>
-                            <h1 className="text-[28px] leading-tight font-semibold tracking-tight text-black dark:text-white">
+                            <h1 className="text-[28px] leading-tight font-bold tracking-tight text-black dark:text-white">
                                 Sign in to your
                                 <br />
-                                <span className="text-black/70 dark:text-white/75">
+                                <span className="text-neutral-400 dark:text-neutral-500">
                                     trading dashboard
                                 </span>
                             </h1>
-                            <p className="mt-3 text-sm leading-relaxed text-black/45 dark:text-white/40">
+                            <p className="mt-3 text-sm leading-relaxed text-neutral-600 dark:text-neutral-400">
                                 Access your journal, analytics, and performance
                                 insights.
                             </p>
                         </div>
 
-                        {/* Form card */}
+                        {/* Form Card */}
                         <div className="rounded-2xl backdrop-blur-sm fade-in-2">
                             <LoginForm />
                         </div>
 
                         {/* Footer */}
-                        <p className="mt-5 text-center text-[11px] text-black/20 dark:text-white/15">
+                        <p className="mt-5 text-center text-xs text-neutral-400 dark:text-neutral-600">
                             © {new Date().getFullYear()} TradeJournal · All
                             rights reserved
                         </p>

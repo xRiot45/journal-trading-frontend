@@ -33,7 +33,7 @@ export default function RootLayout({
                 <ThemeProvider>
                     <QueryProvider>
                         {children}
-                        <Toaster position="top-right" duration={3000} />
+                        <Toaster position="top-center" duration={3000} />
                     </QueryProvider>
                 </ThemeProvider>
             </body>

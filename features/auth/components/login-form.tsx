@@ -73,20 +73,12 @@ export function LoginForm() {
 
             {/* Password */}
             <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                    <Label
-                        htmlFor="password"
-                        className="text-xs font-medium tracking-wider text-black/60 uppercase dark:text-white/60"
-                    >
-                        Password
-                    </Label>
-                    <button
-                        type="button"
-                        className="text-[11px] text-black/55 transition-colors hover:text-black/80 dark:text-white/55 dark:hover:text-white/80"
-                    >
-                        Forgot password?
-                    </button>
-                </div>
+                <Label
+                    htmlFor="password"
+                    className="text-xs font-medium tracking-wider text-black/60 uppercase dark:text-white/60"
+                >
+                    Password
+                </Label>
                 <div className="relative">
                     <Lock className="absolute top-1/2 left-3.5 size-3.75 -translate-y-1/2 text-black/30 dark:text-white/30" />
                     <Input
