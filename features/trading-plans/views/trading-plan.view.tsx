@@ -89,13 +89,13 @@ export default function TradingPlanView() {
     }
 
     return (
-        <Container size="full">
+        <Container size="2xl">
             <div className="space-y-6">
                 {/* Top Section */}
                 <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                     <PageBreadcrumb
                         title="Trading Plans"
-                        description="Manage your trading plans to organize your trading sessions effectively."
+                        description="Document, organize, and track your daily trading plans and setups."
                         items={[
                             { label: "Home", href: "/" },
                             { label: "Trading Plans", href: "/trading-plans" },
@@ -140,7 +140,7 @@ export default function TradingPlanView() {
                 {error ? (
                     <TradingPlanErrorState />
                 ) : isLoading ? (
-                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-3">
                         {Array.from({ length: 8 }).map((_, i) => (
                             <TradingPlanCardSkeleton key={i} />
                         ))}
@@ -151,7 +151,7 @@ export default function TradingPlanView() {
                         onResetFilters={resetFilter}
                     />
                 ) : (
-                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-3">
                         {filteredPlans.map((plan) => (
                             <TradingPlanCard
                                 key={plan.id}

@@ -14,17 +14,19 @@ interface PlanContentProps {
 
 export function PlanContent({ plan }: PlanContentProps) {
     return (
-        <article className="mx-auto max-w-170">
+        <article className="mx-auto max-w-4xl">
             {/* ── Back navigation ─────────────────────────────────── */}
             <nav className="mb-10">
                 <Button
                     variant="ghost"
                     size="sm"
-                    className="-ml-1 gap-2 pl-0 text-neutral-500 hover:bg-transparent hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100"
+                    className="mt-6 gap-2 pl-0 text-neutral-500 hover:bg-transparent hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-100"
                     onClick={() => window.history.back()}
                 >
                     <ArrowLeft className="h-4 w-4" />
-                    <span className="text-sm font-medium">Back</span>
+                    <span className="text-sm font-medium">
+                        Back to previous page
+                    </span>
                 </Button>
             </nav>
 

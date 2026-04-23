@@ -3,6 +3,7 @@ import { Metadata } from "next"
 
 export const metadata: Metadata = {
     title: "Detail Trading Plan",
+    description: "View an existing trading plan.",
 }
 
 export default async function DetailTradingPlanPage({
