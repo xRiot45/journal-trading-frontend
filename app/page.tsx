@@ -6,6 +6,6 @@ export const metadata: Metadata = {
     description: "Journal Trading",
 }
 
-export default function Page() {
+export default function HomePage() {
     return <HomeView />
 }
