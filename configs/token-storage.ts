@@ -1,29 +1,35 @@
+import Cookies from "js-cookie"
+
 const ACCESS_TOKEN_KEY = "accessToken"
 const REFRESH_TOKEN_KEY = "refreshToken"
 
-export function getAccessToken(): string | null {
-    if (typeof window === "undefined") return null
-    return localStorage.getItem(ACCESS_TOKEN_KEY)
+export function getAccessToken(): string | undefined {
+    return Cookies.get("accessToken")
 }
 
-export function getRefreshToken(): string | null {
-    if (typeof window === "undefined") return null
-    return localStorage.getItem(REFRESH_TOKEN_KEY)
+export function getRefreshToken(): string | undefined {
+    return Cookies.get("refreshToken")
 }
 
 export function setAuthTokens(params: {
     accessToken: string
     refreshToken: string
 }): void {
-    if (typeof window === "undefined") return
+    // Set cookie dengan opsi keamanan
+    Cookies.set(ACCESS_TOKEN_KEY, params.accessToken, {
+        expires: 1, // Kadaluarsa dalam 1 hari
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+    })
 
-    localStorage.setItem(ACCESS_TOKEN_KEY, params.accessToken)
-    localStorage.setItem(REFRESH_TOKEN_KEY, params.refreshToken)
+    Cookies.set(REFRESH_TOKEN_KEY, params.refreshToken, {
+        expires: 7, // Kadaluarsa dalam 7 hari untuk refresh token
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+    })
 }
 
 export function clearAuthTokens(): void {
-    if (typeof window === "undefined") return
-
-    localStorage.removeItem(ACCESS_TOKEN_KEY)
-    localStorage.removeItem(REFRESH_TOKEN_KEY)
+    Cookies.remove(ACCESS_TOKEN_KEY)
+    Cookies.remove(REFRESH_TOKEN_KEY)
 }
