@@ -8,10 +8,10 @@ export default function SessionView() {
             <div className="space-y-6">
                 <PageBreadcrumb
                     title="Sessions"
-                    description="Manage your sessions for your trading experience."
+                    description="Track and manage active market hours and trading periods."
                     items={[
                         { label: "Home", href: "/" },
-                        { label: "Pair", href: "/pair" },
+                        { label: "Sessions", href: "/sessions" },
                     ]}
                 />
 
