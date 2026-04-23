@@ -8,7 +8,7 @@ export default function PairView() {
             <div className="space-y-6">
                 <PageBreadcrumb
                     title="Pair"
-                    description="Manage your pairs for your trading experience."
+                    description="Manage and monitor asset pairs for your trading strategies."
                     items={[
                         { label: "Home", href: "/" },
                         { label: "Pair", href: "/pair" },

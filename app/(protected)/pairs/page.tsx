@@ -3,7 +3,7 @@ import { Metadata } from "next"
 
 export const metadata: Metadata = {
     title: "Pair",
-    description: "Monitor aktivitas, statistik, dan ringkasan aplikasi Anda.",
+    description: "Manage and monitor asset pairs for your trading strategies.",
 }
 
 export default function PairPage() {
