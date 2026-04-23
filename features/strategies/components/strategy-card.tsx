@@ -39,16 +39,8 @@ export function StrategyCard({ strategy, onEdit, onDelete, onOpen }: Props) {
                 </div>
             </CardHeader>
 
-            {/* ================= PREVIEW ================= */}
-            <CardContent className="p-0">
-                <div className="relative h-40 w-full overflow-hidden rounded-md border border-none border-neutral-200 bg-[radial-gradient(circle,#000_1px,transparent_1px)] bg-size-[16px_16px] dark:border-neutral-800 dark:bg-[radial-gradient(circle,#fff_1px,transparent_1px)]">
-                    {/* subtle overlay */}
-                    <div className="absolute inset-0 bg-linear-to-b from-transparent to-black/5 dark:to-white/5" />
-                </div>
-            </CardContent>
-
             {/* ================= FOOTER ================= */}
-            <div className="flex items-center justify-between border-t border-neutral-200 px-4 py-3 dark:border-neutral-800">
+            <div className="flex items-center justify-between border-neutral-200 px-4 py-3 dark:border-neutral-800">
                 {/* Left Info */}
                 <div className="text-xs text-neutral-500 dark:text-neutral-400">
                     Zoom {strategy.viewport.zoom.toFixed(1)}x
