@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 import { loginSchema, type LoginFormValues } from "../schemas/login.schema"
-import { useLogin } from "../hooks/use-login"
+import { useLogin } from "../hooks/use-auth-mutations"
 
 interface FieldErrorProps {
     message: string

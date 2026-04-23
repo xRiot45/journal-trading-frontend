@@ -11,8 +11,8 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { useCurrentUser } from "@/features/auth/hooks/use-current-user"
-import { useLogout } from "@/features/auth/hooks/use-logout"
+import { useCurrentUser } from "@/features/auth/hooks/use-auth-queries"
+import { useLogout } from "@/features/auth/hooks/use-auth-mutations"
 
 export function UserMenu() {
     const { data, isLoading, isError } = useCurrentUser()
