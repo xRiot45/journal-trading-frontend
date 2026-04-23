@@ -22,11 +22,10 @@ export default function StrategiesView() {
 
     return (
         <Container size="2xl">
-            {/* HEADER */}
             <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <PageBreadcrumb
                     title="Strategies"
-                    description="Manage your strategies for your trading experience."
+                    description="Create, refine, and manage your personal trading strategies."
                     items={[
                         { label: "Home", href: "/" },
                         { label: "Strategies", href: "/strategies" },

@@ -3,7 +3,7 @@ import { Metadata } from "next"
 
 export const metadata: Metadata = {
     title: "Strategies",
-    description: "Manage your strategies for your trading experience.",
+    description: "Create, refine, and manage your personal trading strategies.",
 }
 
 export default function StrategiesPage() {
