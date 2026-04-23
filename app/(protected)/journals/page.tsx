@@ -3,7 +3,8 @@ import { Metadata } from "next"
 
 export const metadata: Metadata = {
     title: "Journal",
-    description: "Manage your journals for your trading experience.",
+    description:
+        "Log your trade entries, track executions, and review your performance.",
 }
 
 export default function JournalPage() {

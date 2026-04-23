@@ -8,7 +8,7 @@ export default function JournalView() {
             <div className="space-y-6">
                 <PageBreadcrumb
                     title="Journal"
-                    description="Manage your journals for your trading experience."
+                    description="Log your trade entries, track executions, and review your performance."
                     items={[
                         { label: "Home", href: "/" },
                         { label: "Journals", href: "/journals" },
