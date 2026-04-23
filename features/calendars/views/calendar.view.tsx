@@ -3,7 +3,7 @@ import { CalendarContainer } from "../components"
 
 export default function CalendarView() {
     return (
-        <Container size="full">
+        <Container size="2xl">
             <CalendarContainer />
         </Container>
     )
