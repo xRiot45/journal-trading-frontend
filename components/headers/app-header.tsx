@@ -1,24 +1,18 @@
 "use client"
 
 import { cn } from "@/lib/utils"
-import { UserMenuData } from "./user-menu"
 import { HeaderSheetItem } from "./header-sheet-list"
 import { HeaderLogo } from "./header-logo"
 import { HeaderActions } from "./header-action"
+import { UserResponse } from "@/features/auth/types/user.types"
 
 export type AppHeaderProps = {
     className?: string
     logoTitle?: string
     logoHref?: string
-    user?: UserMenuData
+    user?: UserResponse
     notifications?: HeaderSheetItem[]
     messages?: HeaderSheetItem[]
-}
-
-const defaultUser: UserMenuData = {
-    name: "Thomas Alberto",
-    email: "thomas@example.com",
-    avatarUrl: "",
 }
 
 const defaultNotifications: HeaderSheetItem[] = [
@@ -76,7 +70,6 @@ export function AppHeader({
     className,
     logoTitle = "Journal Trading",
     logoHref = "/",
-    user = defaultUser,
     notifications = defaultNotifications,
     messages = defaultMessages,
 }: AppHeaderProps) {
@@ -92,7 +85,6 @@ export function AppHeader({
                 <HeaderActions
                     notifications={notifications}
                     messages={messages}
-                    user={user}
                 />
             </div>
         </header>

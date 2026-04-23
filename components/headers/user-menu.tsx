@@ -1,13 +1,11 @@
 "use client"
 
-import Link from "next/link"
-import { CreditCard, LogOut, Settings, UserCircle2 } from "lucide-react"
+import { LogOut } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuGroup,
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
@@ -100,7 +98,7 @@ export function UserMenu() {
 
                 <DropdownMenuSeparator />
 
-                <DropdownMenuGroup>
+                {/* <DropdownMenuGroup>
                     <DropdownMenuItem asChild className="p-2">
                         <Link href="/profile" className="cursor-pointer">
                             <UserCircle2 className="mr-2 h-4 w-4" />
@@ -121,9 +119,7 @@ export function UserMenu() {
                             Settings
                         </Link>
                     </DropdownMenuItem>
-                </DropdownMenuGroup>
-
-                <DropdownMenuSeparator />
+                </DropdownMenuGroup> */}
 
                 <DropdownMenuItem
                     onClick={() => logout()}

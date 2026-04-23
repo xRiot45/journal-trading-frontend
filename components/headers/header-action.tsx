@@ -13,13 +13,12 @@ import {
     SheetTrigger,
 } from "@/components/ui/sheet"
 import { HeaderSheetItem, HeaderSheetList } from "./header-sheet-list"
-import { UserMenu, UserMenuData } from "./user-menu"
+import { UserMenu } from "./user-menu"
 import { ThemeToggle } from "../theme-toggle"
 
 type HeaderActionsProps = {
     notifications: HeaderSheetItem[]
     messages: HeaderSheetItem[]
-    user: UserMenuData
 }
 
 function countUnread(items: HeaderSheetItem[]): number {
@@ -57,11 +56,7 @@ function IconButtonWithBadge({
     )
 }
 
-export function HeaderActions({
-    notifications,
-    messages,
-    user,
-}: HeaderActionsProps) {
+export function HeaderActions({ notifications, messages }: HeaderActionsProps) {
     const unreadNotifications = countUnread(notifications)
     const unreadMessages = countUnread(messages)
 
@@ -127,7 +122,7 @@ export function HeaderActions({
                 </SheetContent>
             </Sheet>
 
-            <UserMenu user={user} />
+            <UserMenu />
         </div>
     )
 }
