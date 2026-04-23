@@ -86,7 +86,7 @@ export function JournalFormFields({ form }: JournalFormFieldsProps) {
                                         <SelectItem
                                             key={val}
                                             value={val}
-                                            className="py-4"
+                                            className="cursor-pointer p-4"
                                         >
                                             {val}
                                         </SelectItem>
@@ -118,7 +118,11 @@ export function JournalFormFields({ form }: JournalFormFieldsProps) {
                             </FormControl>
                             <SelectContent>
                                 {Object.values(TradeStatusEnum).map((val) => (
-                                    <SelectItem key={val} value={val}>
+                                    <SelectItem
+                                        key={val}
+                                        value={val}
+                                        className="cursor-pointer p-4"
+                                    >
                                         {val}
                                     </SelectItem>
                                 ))}
@@ -418,8 +422,18 @@ export function JournalFormFields({ form }: JournalFormFieldsProps) {
                             </FormControl>
 
                             <SelectContent>
-                                <SelectItem value="1">Yes</SelectItem>
-                                <SelectItem value="0">No</SelectItem>
+                                <SelectItem
+                                    value="1"
+                                    className="cursor-pointer p-4"
+                                >
+                                    Yes
+                                </SelectItem>
+                                <SelectItem
+                                    value="0"
+                                    className="cursor-pointer p-4"
+                                >
+                                    No
+                                </SelectItem>
                             </SelectContent>
                         </Select>
 
